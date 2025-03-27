@@ -18,7 +18,7 @@ export default function Register() {
     }
 
     axios
-      .post("http://localhost:5269/api/utilizadores/sign-in-user", {
+      .post("http://localhost:5173/api/utilizadores/register", {
         email: email,
         password: password,
       })
