@@ -53,7 +53,7 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   class="form-control"
-                  placeholder="Enter email"
+                  placeholder="Insira o seu email"
                 />
               </div>
               <div class="mb-3">
@@ -65,7 +65,7 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   class="form-control"
-                  placeholder="Insira o seu email"
+                  placeholder="Insira a palavra-passe"
                 />
               </div>
               <div class="mb-3">
@@ -83,8 +83,9 @@ export default function Register() {
               <button
                 type="submit"
                 class="btn btn-success w-25 d-block mx-auto"
+                
               >
-                Login
+                Criar Conta
               </button>
               <Link
                 to="/"
