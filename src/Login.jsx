@@ -47,20 +47,21 @@ export default function Login() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     class="form-control"
-                                    placeholder="Enter email"
+                                    placeholder="Insira o email"
+                                    required
                                 />
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password:</label>
+                                <label for="password" class="form-label">Palavra-passe:</label>
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     class="form-control"
-                                    placeholder="Enter password"
+                                    placeholder="Insira a palavra-passe"
                                 />
                             </div>
-                            <button type="submit" class="btn btn-primary w-25 d-block mx-auto">Login</button>
+                            <button type="submit" class="btn btn-success w-25 d-block mx-auto">Login</button>
                             <Link to="/" class="d-block text-center mt-3 text-decoration-none text-dark">Criar Conta</Link>
                         </form>
                     </div>
