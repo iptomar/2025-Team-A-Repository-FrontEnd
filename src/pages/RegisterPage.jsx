@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function Register() {
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -88,11 +88,8 @@ export default function Register() {
                 Criar Conta
               </button>
               <Link
-                to="/"
-                class="d-block text-center mt-3 text-decoration-none text-dark"
-              >
-                Criar Conta
-              </Link>
+                to="/login"
+                class="d-block text-center mt-3 text-decoration-none text-dark">Iniciar Sessão</Link>
             </form>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import "./horario.css";
+import "../css/horario.css";
 
 const initialLessons = {
     disponiveis: ["Matemática", "Português", "História", "Física", "Química", "Inglês"],
@@ -12,7 +12,7 @@ const initialLessons = {
     sábado: [],
 };
 
-const Horario = () => {
+const SchedulePage = () => {
     const [lessons, setLessons] = useState(initialLessons);
 
     const handleDragEnd = (result) => {
@@ -119,4 +119,4 @@ const Horario = () => {
     );
 };
 
-export default Horario;
+export default SchedulePage;
