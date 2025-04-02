@@ -4,16 +4,18 @@ import LogInPage from "./pages/LogInPage";
 import SchedulePage from "./pages/SchedulePage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
+import Navbar from "./components/Navbar";
 
 export const ROUTES = {
   LOG_IN: "/login",
   REGISTER: "/register",
   HOME: "/home",
-  HORARIO: "/horario",
+  SCHEDULE: "/schedule",
 };
 
 const App = () => (
   <HashRouter>
+    <Navbar/>
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route key={ROUTES.HOME} path={ROUTES.HOME} element={<HomePage />} />
@@ -24,8 +26,8 @@ const App = () => (
         element={<RegisterPage />}
       />
       <Route
-        key={ROUTES.HORARIO}
-        path={ROUTES.HORARIO}
+        key={ROUTES.SCHEDULE}
+        path={ROUTES.SCHEDULE}
         element={<SchedulePage />}
       />
     </Routes>
