@@ -27,7 +27,32 @@ const Navbar = () => {
                                 <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.SCHEDULE)}}><strong>Horários</strong></button>
 
                             </li> 
-                            
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.DOCENTES)}}><strong>Docentes</strong></button>
+
+                            </li> 
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.ESCOLAS)}}><strong>Escolas</strong></button>
+
+                            </li> 
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.UNIDADES_CURRICULARES)}}><strong>Unidades Curriculares</strong></button>
+
+                            </li> 
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.SALAS)}}><strong>Salas</strong></button>
+
+                            </li> 
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.CURSOS)}}><strong>Cursos</strong></button>
+
+                            </li> 
+
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.MANCHAS_HORARIAS)}}><strong>Manchas Horárias</strong></button>
+
+                            </li> 
+
 
                     </ul>
 

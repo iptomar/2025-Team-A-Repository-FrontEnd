@@ -4,6 +4,12 @@ import LogInPage from "./pages/LogInPage";
 import SchedulePage from "./pages/SchedulePage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
+import DocentesPage from "./pages/DocentesPage";
+import EscolasPage from "./pages/EscolasPage";
+import SalasPage from "./pages/SalasPage"; 
+import CursosPage from "./pages/CursosPage";
+import ManchasHorariasPage from "./pages/ManchasHorariasPage";
+import UnidadesCurricularesPage from "./pages/UnidadesCurricularesPage";
 import Navbar from "./components/Navbar";
 
 export const ROUTES = {
@@ -11,6 +17,12 @@ export const ROUTES = {
   REGISTER: "/register",
   HOME: "/home",
   SCHEDULE: "/schedule",
+  DOCENTES: "/docentes",
+  ESCOLAS: "/escolas", 
+  SALAS: "/salas",
+  CURSOS: "/cursos",
+  MANCHAS_HORARIAS: "/manchas_horarias",
+  UNIDADES_CURRICULARES: "/unidades_curriculares",
 };
 
 const App = () => (
@@ -30,6 +42,12 @@ const App = () => (
         path={ROUTES.SCHEDULE}
         element={<SchedulePage />}
       />
+      <Route key={ROUTES.DOCENTES} path={ROUTES.DOCENTES} element={<DocentesPage />} />
+      <Route key={ROUTES.ESCOLAS} path={ROUTES.ESCOLAS} element={<EscolasPage />} />
+      <Route key={ROUTES.SALAS} path={ROUTES.SALAS} element={<SalasPage />} />
+      <Route key={ROUTES.CURSOS} path={ROUTES.CURSOS} element={<CursosPage />} />
+      <Route key={ROUTES.MANCHAS_HORARIAS} path={ROUTES.MANCHAS_HORARIAS} element={<ManchasHorariasPage />} />
+      <Route key={ROUTES.UNIDADES_CURRICULARES} path={ROUTES.UNIDADES_CURRICULARES} element={<UnidadesCurricularesPage />} />
     </Routes>
   </HashRouter>
 );
