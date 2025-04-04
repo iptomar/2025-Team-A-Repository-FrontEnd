@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { register } from "../api/api";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -16,19 +16,21 @@ export default function RegisterPage() {
       alert("Preencha todos os campos");
       return;
     }
+    if(password !== password2) {
+      alert("As palavras-passe não coincidem");
+      return;
+    }
 
-    axios
-      .post("http://localhost:5173/api/utilizadores/register", {
-        email: email,
-        password: password,
-      })
+
+    register(email, password)
       .then((res) => {
         console.log(res);
-        navigate("/");
+        alert("Conta criada com sucesso!");
+        navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        alert("Erro ao tentar fazer login");
+        alert("Erro ao criar a conta. Tente novamente.");
       });
   }
 
