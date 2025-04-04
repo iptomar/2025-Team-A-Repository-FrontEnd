@@ -32,7 +32,7 @@ export default function UnidadesCurricularesPage() {
     <>
       <h2 className="text-center mt-5">Unidades Curriculares</h2>
       <div className="d-flex justify-content-center mt-4">
-        <a href="/criar-uc" className="btn btn-primary">
+        <a href="#/criar-uc" className="btn btn-primary">
           Criar unidade curricular
         </a>
       </div>

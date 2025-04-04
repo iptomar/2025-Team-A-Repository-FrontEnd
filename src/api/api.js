@@ -12,3 +12,19 @@ export function apagaUC(id) {
     })
 }
 
+// Função para criar uma nova uc 
+export function criarUc(d) {
+    return fetch('https://localhost:7008/api/API_UnidadesCurriculares', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(d)
+    });
+}
+
+
+// Função para obter a lista de cursos
+export function getCursos() {
+    return fetch('https://localhost:7008/api/API_Cursos');
+}
