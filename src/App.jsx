@@ -12,6 +12,9 @@ import ManchasHorariasPage from "./pages/ManchasHorariasPage";
 import UnidadesCurricularesPage from "./pages/UnidadesCurricularesPage";
 import Navbar from "./components/Navbar";
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export const ROUTES = {
   LOG_IN: "/login",
   REGISTER: "/register",
@@ -28,6 +31,9 @@ export const ROUTES = {
 const App = () => (
   <HashRouter>
     <Navbar/>
+
+    <ToastContainer closeButton={false}/>
+
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route key={ROUTES.HOME} path={ROUTES.HOME} element={<HomePage />} />
