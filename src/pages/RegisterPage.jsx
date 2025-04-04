@@ -20,11 +20,11 @@ export default function RegisterPage() {
     register(email, password, password2)
       .then((res) => {
         console.log(res);
-        navigate("/");
+        navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        alert("Erro ao tentar registar");
+        alert(err.message || 'Erro ao tentar registar');
       });
   }
 

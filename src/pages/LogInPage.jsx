@@ -19,11 +19,11 @@ export default function Login() {
         login(email, password)
             .then(res => {
                 console.log(res);
-                navigate('/');
+                navigate('/home');
             })
             .catch(err => {
                 console.error(err);
-                alert('Erro ao tentar fazer login');
+                alert(err.message || 'Erro ao tentar iniciar sessão');
             });
     }
 
