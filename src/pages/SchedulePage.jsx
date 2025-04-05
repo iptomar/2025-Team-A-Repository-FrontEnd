@@ -8,7 +8,6 @@ import {
   addMinutes,
 } from "date-fns";
 import pt from "date-fns/locale/pt";
-import Toast from "../components/Toast";
 import "../css/horario.css";
 
 const SchedulePage = () => {
@@ -16,8 +15,6 @@ const SchedulePage = () => {
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   const [aulas, setAulas] = useState([]);
-  const [toastVisivel, setToastVisivel] = useState(false);
-  const [toastMensagem, setToastMensagem] = useState("");
 
   const diasDaSemana = eachDayOfInterval({
     start: currentWeekStart,
@@ -25,7 +22,7 @@ const SchedulePage = () => {
   });
 
   const horas = Array.from({ length: 33 }, (_, i) =>
-    addMinutes(startOfDay(new Date()), 30 * i + 480)
+    addMinutes(startOfDay(new Date()), 480 + 30 * i)
   );
 
   const [novaAula, setNovaAula] = useState({
@@ -39,18 +36,8 @@ const SchedulePage = () => {
   });
 
   const adicionarAula = () => {
-    if (
-      novaAula.cadeira.trim() &&
-      novaAula.professor.trim() &&
-      novaAula.sala.trim()
-    ) {
-      setAulas([...aulas, novaAula]);
-      setNovaAula({ ...novaAula, cadeira: "", professor: "" });
-      setToastMensagem("Aula adicionada com sucesso!");
-    } else {
-      setToastMensagem("Erro: Preencha todos os campos obrigatórios.");
-    }
-    setToastVisivel(true);
+    setAulas([...aulas, novaAula]);
+    setNovaAula({ ...novaAula, cadeira: "", professor: "" });
   };
 
   const mudarSemana = (direcao) => {
@@ -62,78 +49,61 @@ const SchedulePage = () => {
     <div className="horario-container">
       <div className="header">
         <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
-        <h2>{`${format(currentWeekStart, "EEEE, dd 'de' MMMM", { locale: pt })} - ${format(
-          add(currentWeekStart, { days: 5 }),
-          "EEEE, dd 'de' MMMM",
-          { locale: pt }
-        )}`}</h2>
+        <h2>{`${format(currentWeekStart, "EEEE, dd 'de' MMMM", {
+          locale: pt,
+        })} - ${format(add(currentWeekStart, { days: 5 }), "EEEE, dd 'de' MMMM", {
+          locale: pt,
+        })}`}</h2>
         <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
       </div>
 
       <div className="formulario">
         <h3>Adicionar Aula</h3>
-        <label>
-          Cadeira
-          <input
-            placeholder="Cadeira"
-            value={novaAula.cadeira}
-            onChange={(e) => setNovaAula({ ...novaAula, cadeira: e.target.value })}
-          />
-        </label>
-        <label>
-          Tipo de Aula
-          <select
-            value={novaAula.tipo}
-            onChange={(e) => setNovaAula({ ...novaAula, tipo: e.target.value })}
-          >
+
+        <div className="campo-form">
+            <label htmlFor="cadeira">Cadeira</label>
+            <input id="cadeira" placeholder="Nome da cadeira" value={novaAula.cadeira} onChange={(e) => setNovaAula({ ...novaAula, cadeira: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="tipo">Tipo</label>
+            <select id="tipo" value={novaAula.tipo} onChange={(e) => setNovaAula({ ...novaAula, tipo: e.target.value })}>
             <option value="TP">TP</option>
             <option value="PL">PL</option>
-          </select>
-        </label>
-        <label>
-          Professor
-          <input
-            placeholder="Professor"
-            value={novaAula.professor}
-            onChange={(e) => setNovaAula({ ...novaAula, professor: e.target.value })}
-          />
-        </label>
-        <label>
-          Sala
-          <select
-            value={novaAula.sala}
-            onChange={(e) => setNovaAula({ ...novaAula, sala: e.target.value })}
-          >
+            </select>
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="professor">Professor</label>
+            <input id="professor" placeholder="Nome do professor" value={novaAula.professor} onChange={(e) => setNovaAula({ ...novaAula, professor: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="sala">Sala</label>
+            <select id="sala" value={novaAula.sala} onChange={(e) => setNovaAula({ ...novaAula, sala: e.target.value })}>
             <option value="Sala 101">Sala 101</option>
             <option value="Sala 102">Sala 102</option>
-          </select>
-        </label>
-        <label>
-          Data
-          <input
-            type="date"
-            value={novaAula.dia}
-            onChange={(e) => setNovaAula({ ...novaAula, dia: e.target.value })}
-          />
-        </label>
-        <label>
-          Hora de Início
-          <input
-            type="time"
-            value={novaAula.horaInicio}
-            onChange={(e) => setNovaAula({ ...novaAula, horaInicio: e.target.value })}
-          />
-        </label>
-        <label>
-          Hora de Fim
-          <input
-            type="time"
-            value={novaAula.horaFim}
-            onChange={(e) => setNovaAula({ ...novaAula, horaFim: e.target.value })}
-          />
-        </label>
+            </select>
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="dia">Data</label>
+            <input id="dia" type="date" value={novaAula.dia} onChange={(e) => setNovaAula({ ...novaAula, dia: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="horaInicio">Hora de Início</label>
+            <input id="horaInicio" type="time" value={novaAula.horaInicio} onChange={(e) => setNovaAula({ ...novaAula, horaInicio: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="horaFim">Hora de Fim</label>
+            <input id="horaFim" type="time" value={novaAula.horaFim} onChange={(e) => setNovaAula({ ...novaAula, horaFim: e.target.value })} />
+        </div>
+
         <button onClick={adicionarAula}>Adicionar Aula</button>
-      </div>
+        </div>
+
 
       <div className="grelha">
         <div className="grelha-header">
@@ -149,42 +119,39 @@ const SchedulePage = () => {
             <div key={index} className="linha">
               <div className="hora">{format(hora, "HH:mm")}</div>
               {diasDaSemana.map((dia) => {
-                const aula = aulas.find(
-                  (a) =>
-                    a.dia === format(dia, "yyyy-MM-dd") &&
-                    a.horaInicio === format(hora, "HH:mm")
+                const aulasDoDia = aulas.filter(
+                  (a) => a.dia === format(dia, "yyyy-MM-dd") && a.horaInicio === format(hora, "HH:mm")
                 );
-                if (aula) {
-                  const [h1, m1] = aula.horaInicio.split(":").map(Number);
-                  const [h2, m2] = aula.horaFim.split(":").map(Number);
-                  const duracaoMinutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-                  const altura = (duracaoMinutos / 30) * 40;
 
-                  return (
-                    <div
-                      key={`${dia}-${hora}`}
-                      className="aula"
-                      style={{ height: `${altura}px` }}
-                    >
-                      <strong>{aula.cadeira}</strong>
-                      <em>{aula.tipo}</em>
-                      <div>{aula.professor}</div>
-                      <div>{aula.sala}</div>
-                    </div>
-                  );
-                }
-                return <div key={`${dia}-${hora}`} className="slot"></div>;
+                return (
+                  <div key={`${dia}-${hora}`} className="slot">
+                    {aulasDoDia.map((aula, i) => {
+                      const [hStart, mStart] = aula.horaInicio.split(":" ).map(Number);
+                      const [hEnd, mEnd] = aula.horaFim.split(":" ).map(Number);
+                      const minutosInicio = hStart * 60 + mStart;
+                      const minutosFim = hEnd * 60 + mEnd;
+                      const altura = (minutosFim - minutosInicio) * (40 / 30);
+
+                      return (
+                        <div
+                          key={`${dia}-${hora}-${i}`}
+                          className="aula"
+                          style={{ height: `${altura}px`, top: 0 }}
+                        >
+                          <strong>{aula.cadeira}</strong>
+                          <em>{aula.tipo}</em>
+                          <div>{aula.professor}</div>
+                          <div>{aula.sala}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
               })}
             </div>
           ))}
         </div>
       </div>
-
-      <Toast
-        message={toastMensagem}
-        show={toastVisivel}
-        onClose={() => setToastVisivel(false)}
-      />
     </div>
   );
 };
