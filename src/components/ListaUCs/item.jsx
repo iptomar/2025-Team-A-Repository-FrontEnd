@@ -67,10 +67,10 @@ export default function ItemUC({ uc, setUnidadesCurriculares }) {
         ))}
       </td>
       <td className="px-4">
-        <a title="Ver" className="btn btn-info btn-sm me-2" href={`/ucs/${uc.id}/detalhes`}>
+        <a title="Ver" className="btn btn-info btn-sm me-2" href={`/#/unidades_curriculares/detalhes/${uc.id}`}>
           <HiEye />
         </a>
-        <a title="Editar" className="btn btn-warning btn-sm me-2" href={`/ucs/${uc.id}`}>
+        <a title="Editar" className="btn btn-warning btn-sm me-2" href={`/#/unidades_curriculares/editar/${uc.id}`}>
           <HiPencil />
         </a>
         <button title="Apagar" className="btn btn-danger btn-sm" onClick={() => handleDelete(uc.id)}>

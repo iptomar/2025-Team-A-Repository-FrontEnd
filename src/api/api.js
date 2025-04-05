@@ -23,6 +23,11 @@ export function criarUc(d) {
     });
 }
 
+// Função para ver detalhes de uma UC
+export const getDetalheUC = (id) => {
+    return fetch(`https://localhost:7008/api/API_UnidadesCurriculares/${id}`); // Rota da API para obter uma UC pelo id
+}
+
 
 // Função para obter a lista de cursos
 export function getCursos() {
