@@ -1,122 +1,159 @@
 import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  add,
+  startOfWeek,
+  format,
+  eachDayOfInterval,
+  startOfDay,
+  addMinutes,
+} from "date-fns";
+import pt from "date-fns/locale/pt";
 import "../css/horario.css";
 
-const initialLessons = {
-    disponiveis: ["Matemática", "Português", "História", "Física", "Química", "Inglês"],
-    segunda: [],
-    terça: [],
-    quarta: [],
-    quinta: [],
-    sexta: [],
-    sábado: [],
-};
-
 const SchedulePage = () => {
-    const [lessons, setLessons] = useState(initialLessons);
+  const [currentWeekStart, setCurrentWeekStart] = useState(
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
+  const [aulas, setAulas] = useState([]);
 
-    const handleDragEnd = (result) => {
-        if (!result.destination) return; // Se não for largado em nenhum local, ignora
+  const diasDaSemana = eachDayOfInterval({
+    start: currentWeekStart,
+    end: add(currentWeekStart, { days: 5 }),
+  });
 
-        const { source, destination } = result;
-        const sourceDay = source.droppableId;
-        const destDay = destination.droppableId;
+  const horas = Array.from({ length: 33 }, (_, i) =>
+    addMinutes(startOfDay(new Date()), 480 + 30 * i)
+  );
 
-        const newLessons = { ...lessons };
+  const [novaAula, setNovaAula] = useState({
+    cadeira: "",
+    tipo: "TP",
+    professor: "",
+    sala: "",
+    dia: format(currentWeekStart, "yyyy-MM-dd"),
+    horaInicio: "09:00",
+    horaFim: "10:00",
+  });
 
-        // Se for arrastado de volta para o painel de disciplinas disponíveis
-        if (destDay === "disponiveis") {
-            // Apenas remove a disciplina do dia de origem (não duplica)
-            if (sourceDay !== "disponiveis") {
-                const [movedLesson] = newLessons[sourceDay].splice(source.index, 1);
+  const adicionarAula = () => {
+    setAulas([...aulas, novaAula]);
+    setNovaAula({ ...novaAula, cadeira: "", professor: "" });
+  };
 
-                // Evita adicionar duplicatas na lista de disponíveis
-                if (!newLessons[destDay].includes(movedLesson)) {
-                    newLessons[destDay].push(movedLesson);
-                }
-            }
-        } else {
-            // Se for arrastado da área de disciplinas disponíveis para um dia da semana, faz uma cópia
-            if (sourceDay === "disponiveis") {
-                const movedLesson = newLessons[sourceDay][source.index];
+  const mudarSemana = (direcao) => {
+    const novaSemana = add(currentWeekStart, { weeks: direcao });
+    setCurrentWeekStart(novaSemana);
+  };
 
-                // Evita duplicatas no mesmo dia
-                if (!newLessons[destDay].includes(movedLesson)) {
-                    newLessons[destDay].splice(destination.index, 0, movedLesson);
-                }
-            } else {
-                // Se for movido entre os dias da semana, apenas move normalmente
-                const [movedLesson] = newLessons[sourceDay].splice(source.index, 1);
-                newLessons[destDay].splice(destination.index, 0, movedLesson);
-            }
-        }
+  return (
+    <div className="horario-container">
+      <div className="header">
+        <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
+        <h2>{`${format(currentWeekStart, "EEEE, dd 'de' MMMM", {
+          locale: pt,
+        })} - ${format(add(currentWeekStart, { days: 5 }), "EEEE, dd 'de' MMMM", {
+          locale: pt,
+        })}`}</h2>
+        <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
+      </div>
 
-        setLessons(newLessons);
-    };
+      <div className="formulario">
+        <h3>Adicionar Aula</h3>
 
-    return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="container">
-                {/* Área Lateral */}
-                <Droppable droppableId="disponiveis" direction="horizontal">
-                    {(provided) => (
-                        <div className="top-panel" ref={provided.innerRef} {...provided.droppableProps}>
-                            <h3>Disciplinas Disponíveis</h3>
-                            <div className="disciplinas-wrapper">
-                                {lessons.disponiveis.map((lesson, index) => (
-                                    <Draggable key={lesson} draggableId={lesson} index={index}>
-                                        {(provided) => (
-                                            <div
-                                                className="lesson"
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                            >
-                                                {lesson}
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                            </div>
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
+        <div className="campo-form">
+            <label htmlFor="cadeira">Cadeira</label>
+            <input id="cadeira" placeholder="Nome da cadeira" value={novaAula.cadeira} onChange={(e) => setNovaAula({ ...novaAula, cadeira: e.target.value })} />
+        </div>
 
-                {/* Área do Horário */}
-                <div className="horario">
-                    {Object.keys(lessons)
-                        .filter((day) => day !== "disponiveis")
-                        .map((day) => (
-                            <Droppable droppableId={day} key={day}>
-                                {(provided) => (
-                                    <div className="day-column" ref={provided.innerRef} {...provided.droppableProps}>
-                                        <h3>{day}</h3>
-                                        <div className="grid-disciplinas">
-                                            {lessons[day].map((lesson, index) => (
-                                                <Draggable key={`${lesson}-${day}-${index}`} draggableId={`${lesson}-${day}-${index}`} index={index}>
-                                                    {(provided) => (
-                                                        <div
-                                                            className="lesson"
-                                                            ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                        >
-                                                            {lesson}
-                                                        </div>
-                                                    )}
-                                                </Draggable>
-                                            ))}
-                                        </div>
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                        ))}
-                </div>
+        <div className="campo-form">
+            <label htmlFor="tipo">Tipo</label>
+            <select id="tipo" value={novaAula.tipo} onChange={(e) => setNovaAula({ ...novaAula, tipo: e.target.value })}>
+            <option value="TP">TP</option>
+            <option value="PL">PL</option>
+            </select>
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="professor">Professor</label>
+            <input id="professor" placeholder="Nome do professor" value={novaAula.professor} onChange={(e) => setNovaAula({ ...novaAula, professor: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="sala">Sala</label>
+            <select id="sala" value={novaAula.sala} onChange={(e) => setNovaAula({ ...novaAula, sala: e.target.value })}>
+            <option value="Sala 101">Sala 101</option>
+            <option value="Sala 102">Sala 102</option>
+            </select>
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="dia">Data</label>
+            <input id="dia" type="date" value={novaAula.dia} onChange={(e) => setNovaAula({ ...novaAula, dia: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="horaInicio">Hora de Início</label>
+            <input id="horaInicio" type="time" value={novaAula.horaInicio} onChange={(e) => setNovaAula({ ...novaAula, horaInicio: e.target.value })} />
+        </div>
+
+        <div className="campo-form">
+            <label htmlFor="horaFim">Hora de Fim</label>
+            <input id="horaFim" type="time" value={novaAula.horaFim} onChange={(e) => setNovaAula({ ...novaAula, horaFim: e.target.value })} />
+        </div>
+
+        <button onClick={adicionarAula}>Adicionar Aula</button>
+        </div>
+
+
+      <div className="grelha">
+        <div className="grelha-header">
+          <div className="hora"></div>
+          {diasDaSemana.map((dia) => (
+            <div key={dia} className="dia">
+              {format(dia, "EEEE, dd 'de' MMMM", { locale: pt })}
             </div>
-        </DragDropContext>
-    );
+          ))}
+        </div>
+        <div className="grelha-body">
+          {horas.map((hora, index) => (
+            <div key={index} className="linha">
+              <div className="hora">{format(hora, "HH:mm")}</div>
+              {diasDaSemana.map((dia) => {
+                const aulasDoDia = aulas.filter(
+                  (a) => a.dia === format(dia, "yyyy-MM-dd") && a.horaInicio === format(hora, "HH:mm")
+                );
+
+                return (
+                  <div key={`${dia}-${hora}`} className="slot">
+                    {aulasDoDia.map((aula, i) => {
+                      const [hStart, mStart] = aula.horaInicio.split(":" ).map(Number);
+                      const [hEnd, mEnd] = aula.horaFim.split(":" ).map(Number);
+                      const minutosInicio = hStart * 60 + mStart;
+                      const minutosFim = hEnd * 60 + mEnd;
+                      const altura = (minutosFim - minutosInicio) * (40 / 30);
+
+                      return (
+                        <div
+                          key={`${dia}-${hora}-${i}`}
+                          className="aula"
+                          style={{ height: `${altura}px`, top: 0 }}
+                        >
+                          <strong>{aula.cadeira}</strong>
+                          <em>{aula.tipo}</em>
+                          <div>{aula.professor}</div>
+                          <div>{aula.sala}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default SchedulePage;
