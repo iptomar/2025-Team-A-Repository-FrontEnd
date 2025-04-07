@@ -13,6 +13,7 @@ import UnidadesCurricularesPage from "./pages/UnidadesCurricularesPage";
 import Navbar from "./components/Navbar";
 import CriarUC from "./pages/CriarUC";
 import DetalheUC from "./pages/DetalheUC";
+import EditarUC from "./pages/EditarUC";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,6 +31,7 @@ export const ROUTES = {
   UNIDADES_CURRICULARES: "/unidades_curriculares",
   CRIAR_UC: "/criar-uc",
   DETALHE_UC: "/unidades_curriculares/detalhes/:id",
+  EDITAR_UC: "/unidades_curriculares/editar/:id",
 };
 
 const App = () => (
@@ -59,6 +61,7 @@ const App = () => (
       <Route key={ROUTES.MANCHAS_HORARIAS} path={ROUTES.MANCHAS_HORARIAS} element={<ManchasHorariasPage />} />
       <Route key={ROUTES.UNIDADES_CURRICULARES} path={ROUTES.UNIDADES_CURRICULARES} element={<UnidadesCurricularesPage />} />
       <Route key={ROUTES.CRIAR_UC} path={ROUTES.CRIAR_UC} element={<CriarUC />} />
+      <Route key={ROUTES.EDITAR_UC} path={ROUTES.EDITAR_UC} element={<EditarUC />} /> 
       <Route key={ROUTES.DETALHE_UC} path={ROUTES.DETALHE_UC} element={<DetalheUC />} /> {/* Rota para os detalhes da UC */}
     </Routes>
   </HashRouter>

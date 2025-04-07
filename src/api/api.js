@@ -28,7 +28,17 @@ export const getDetalheUC = (id) => {
     return fetch(`https://localhost:7008/api/API_UnidadesCurriculares/${id}`); // Rota da API para obter uma UC pelo id
 }
 
-
+// Atualizar uma Unidade Curricular 
+export const updateUC = (id, uc) => {
+    return fetch(`https://localhost:7008/api/API_UnidadesCurriculares/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(uc)        
+    });
+}
+  
 // Função para obter a lista de cursos
 export function getCursos() {
     return fetch('https://localhost:7008/api/API_Cursos');
