@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from 'axios'
+import { login } from '../api/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Login() {
@@ -16,18 +16,15 @@ export default function Login() {
             return
         }
 
-        axios.post('http://localhost:5269/api/utilizadores/sign-in-user', {
-            email: email,
-            password: password
-        })
-        .then(res => {
-            console.log(res)
-            navigate('/')
-        })
-        .catch(err => {
-            console.error(err)
-            alert('Erro ao tentar fazer login')
-        })
+        login(email, password)
+            .then(res => {
+                console.log(res);
+                navigate('/home');
+            })
+            .catch(err => {
+                console.error(err);
+                alert(err.message || 'Erro ao tentar iniciar sessão');
+            });
     }
 
     return (
@@ -47,7 +44,7 @@ export default function Login() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     class="form-control"
-                                    placeholder="Insira o email"
+                                    placeholder="Insira o seu email"
                                     required
                                 />
                             </div>

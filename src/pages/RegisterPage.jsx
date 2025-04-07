@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { register } from "../api/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function RegisterPage() {
@@ -17,18 +17,14 @@ export default function RegisterPage() {
       return;
     }
 
-    axios
-      .post("http://localhost:5173/api/utilizadores/register", {
-        email: email,
-        password: password,
-      })
+    register(email, password, password2)
       .then((res) => {
         console.log(res);
-        navigate("/");
+        navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        alert("Erro ao tentar fazer login");
+        alert(err.message || 'Erro ao tentar registar');
       });
   }
 
@@ -77,7 +73,7 @@ export default function RegisterPage() {
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
                   class="form-control"
-                  placeholder="Insira a Palavra-Passe"
+                  placeholder="Insira a palavra-Passe"
                 />
               </div>
               <button
