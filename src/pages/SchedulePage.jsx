@@ -6,6 +6,7 @@ import {
   eachDayOfInterval,
   startOfDay,
   addMinutes,
+  set,
 } from "date-fns";
 import pt from "date-fns/locale/pt";
 import "../css/horario.css";
@@ -139,6 +140,9 @@ const SchedulePage = () => {
                         };
                         dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
                         setAulas((prev) => [...prev, novaAula]);
+                        setBlocos((prev) =>
+                          prev.filter((bloco) => bloco.id !== data.id)
+                        );
                       }}
                     >
                       {aulasDoDia.map((aula, i) => {
@@ -164,6 +168,8 @@ const SchedulePage = () => {
                                 )
                             )
                           );
+                          setBlocos((prev) => [...prev, aula]);
+                          dragBloco(aula.id, "00:00:00", "0001-01-01");
                         };
 
                         return (
