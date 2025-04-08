@@ -103,3 +103,28 @@ export const adicionarManchaHoraria = async (aula) => {
         console.error("Erro ao adicionar a mancha horária:", error);
       }
   };
+
+  //PUTS
+
+  //Função que atualiza os dados quando um bloco é colocado na grelha
+  export async function dragBloco(id, horaInicio, dia) {
+    try {
+      const response = await axios.put(
+        API_URL + "api/API_ManchasHorarias/drag-bloco/" + id,
+        {
+          horaInicio, 
+          dia,        
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      console.log('Mancha atualizada com sucesso:', response.data);
+    } catch (error) {
+      console.error('Erro ao atualizar mancha:', error.response?.data || error.message);
+    }
+  };
+  

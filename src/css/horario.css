@@ -50,6 +50,7 @@
     position: relative;
     overflow-y: auto;
     max-height: 600px; 
+    max-width: 80%;
   }
   
   .grelha-header {
@@ -166,12 +167,6 @@
     padding: 1rem;
   }
   
-  .sidebar {
-    width: 200px;
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-  }
   
   .main-content {
     flex: 1;
@@ -186,3 +181,23 @@
     cursor: grab;
   }
   
+
+  .main-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* Espaçamento entre a grelha e os blocos */
+
+  }
+  
+  .grelha {
+    flex: 5; /* A grelha ocupa mais espaço */
+  }
+  
+
+  .sidebar {
+    margin-left: 10px; /* Espaço entre a grelha e a sidebar */
+    max-height: 600px; /* Limita a altura da sidebar à altura da janela */
+    overflow-y: auto; /* Adiciona rolagem vertical quando necessário */
+    padding-right: 10px; /* Espaço para evitar sobreposição com a barra de rolagem */
+    box-sizing: border-box; /* Inclui o padding no cálculo do tamanho */
+  }
