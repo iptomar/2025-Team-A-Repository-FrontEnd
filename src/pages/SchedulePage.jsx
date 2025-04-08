@@ -26,29 +26,23 @@ const SchedulePage = () => {
     addMinutes(startOfDay(new Date()), 480 + 30 * i)
   );
 
-  const [novaAula, setNovaAula] = useState({
-    cadeira: "",
-    tipo: "TP",
-    professor: 0,
-    sala: "",
-    dia: format(currentWeekStart, "yyyy-MM-dd"),
-    horaInicio: "09:00",
-    horaFim: "10:00",
-  });
+  const blocosPorDefeito = [
+    {
+      cadeira: "Programação",
+      tipo: "TP",
+      professor: "Ana",
+      sala: "101",
+      duracao: 90,
+    },
+    {
+      cadeira: "Matemática",
+      tipo: "PL",
+      professor: "João",
+      sala: "102",
+      duracao: 60,
+    },
+  ];
 
-  const [formData, setFormData] = useState({
-    horaInicio: novaAula.horaInicio,
-    diaSemana: novaAula.dia,
-    tipoAula: '',
-    numSlots: 0,
-    docenteFK: 0,
-    salaFK: 0,
-    ucFK: 0
-});
-
-  const [docentes, setDocentes] = useState([]);
-
-  
   const mudarSemana = (direcao) => {
     const novaSemana = add(currentWeekStart, { weeks: direcao });
     setCurrentWeekStart(novaSemana);
@@ -120,163 +114,125 @@ const SchedulePage = () => {
         <h2>
           {`${format(currentWeekStart, "EEEE, dd 'de' MMMM", {
             locale: pt,
-          })} - ${format(
-            add(currentWeekStart, { days: 5 }),
-            "EEEE, dd 'de' MMMM",
-            {
-              locale: pt,
-            }
-          )}`}
+          })} - ${format(add(currentWeekStart, { days: 5 }), "EEEE, dd 'de' MMMM", {
+            locale: pt,
+          })}`}
         </h2>
         <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
       </div>
 
-      <form
-        className="formulario"
-        onSubmit={(e) => {
-          e.preventDefault(); 
-          adicionarAula(); 
-        }}
-      >
-        <h3>Adicionar Aula</h3>
-
-        <div className="campo-form">
-          <label htmlFor="cadeira">Cadeira</label>
-          <input
-            id="cadeira"
-            placeholder="Nome da cadeira"
-            value={novaAula.cadeira}
-            onChange={(e) =>
-              setNovaAula({ ...novaAula, cadeira: e.target.value })
-            }
-          />
+      <div className="main-grid">
+        <div className="sidebar">
+          <h3>Blocos por Defeito</h3>
+          {blocosPorDefeito.map((bloco, i) => (
+            <div
+              key={i}
+              className="bloco-default"
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("application/json", JSON.stringify(bloco));
+              }}
+            >
+              <strong>{bloco.cadeira}</strong> ({bloco.tipo})<br />
+              Prof. {bloco.professor}<br />
+              {bloco.sala}<br />
+              {bloco.duracao} min
+            </div>
+          ))}
         </div>
 
-        <div className="campo-form">
-          <label htmlFor="tipo">Tipo</label>
-          <select
-            id="tipo"
-            value={novaAula.tipo}
-            onChange={(e) => setNovaAula({ ...novaAula, tipo: e.target.value })}
-          >
-            <option value="TP">TP</option>
-            <option value="PL">PL</option>
-          </select>
-        </div>
-
-        <div className="campo-form">
-          <label htmlFor="professor">Professor</label>
-          <select
-            id="professor"
-            value={novaAula.professor}
-            onChange={(e) =>
-              setNovaAula({ ...novaAula, professor: e.target.value })
-            }
-          >
-            {docentes.map((docente) => (
-              <option key={docente.id} value={docente.id}> {docente.nome} </option>
+        <div className="grelha">
+          <div className="grelha-header">
+            <div className="hora"></div>
+            {diasDaSemana.map((dia) => (
+              <div key={dia} className="dia">
+                {format(dia, "EEEE, dd 'de' MMMM", { locale: pt })}
+              </div>
             ))}
-          </select>
-        </div>
+          </div>
+          <div className="grelha-body">
+            {horas.map((hora, index) => (
+              <div key={index} className="linha">
+                <div className="hora">{format(hora, "HH:mm")}</div>
+                {diasDaSemana.map((dia) => {
+                  const aulasDoDia = aulas.filter(
+                    (a) => a.dia === format(dia, "yyyy-MM-dd") && a.horaInicio === format(hora, "HH:mm")
+                  );
 
-        <div className="campo-form">
-          <label htmlFor="sala">Sala</label>
-          <select
-            id="sala"
-            value={novaAula.sala}
-            onChange={(e) => setNovaAula({ ...novaAula, sala: e.target.value })}
-          >
-            <option value="Sala 101">Sala 101</option>
-            <option value="Sala 102">Sala 102</option>
-          </select>
-        </div>
+                  return (
+                    <div
+                      key={`${dia}-${hora}`}
+                      className="slot"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const data = JSON.parse(e.dataTransfer.getData("application/json"));
+                        const novaAula = {
+                          ...data,
+                          dia: format(dia, "yyyy-MM-dd"),
+                          horaInicio: format(hora, "HH:mm"),
+                          horaFim: format(addMinutes(hora, data.duracao), "HH:mm"),
+                        };
+                        setAulas((prev) => [...prev, novaAula]);
+                      }}
+                    >
+                      {aulasDoDia.map((aula, i) => {
+                  const [hStart, mStart] = aula.horaInicio.split(":").map(Number);
+                  const [hEnd, mEnd] = aula.horaFim.split(":").map(Number);
+                  const minutosInicio = hStart * 60 + mStart;
+                  const minutosFim = hEnd * 60 + mEnd;
+                  const altura = (minutosFim - minutosInicio) * (40 / 30);
 
-        <div className="campo-form">
-          <label htmlFor="dia">Data</label>
-          <input
-            id="dia"
-            type="date"
-            value={novaAula.dia}
-            onChange={(e) => setNovaAula({ ...novaAula, dia: e.target.value })}
-          />
-        </div>
+                  const removerAula = () => {
+                    setAulas((prev) =>
+                      prev.filter(
+                        (a) =>
+                          !(
+                            a.cadeira === aula.cadeira &&
+                            a.professor === aula.professor &&
+                            a.dia === aula.dia &&
+                            a.horaInicio === aula.horaInicio
+                          )
+                      )
+                    );
+                  };
 
-        <div className="campo-form">
-          <label htmlFor="horaInicio">Hora de Início</label>
-          <input
-            id="horaInicio"
-            type="time"
-            value={novaAula.horaInicio}
-            onChange={(e) =>
-              setNovaAula({ ...novaAula, horaInicio: e.target.value })
-            }
-          />
-        </div>
+                  return (
+                    <div
+                      key={`${dia}-${hora}-${i}`}
+                      className="aula"
+                      style={{ height: `${altura}px`, top: 0, position: "relative" }}
+                    >
+                      <button
+                        onClick={removerAula}
+                        style={{
+                          position: "absolute",
+                          top: "4px",
+                          right: "6px",
+                          background: "transparent",
+                          border: "none",
+                          color: "#fff",
+                          fontSize: "14px",
+                          cursor: "pointer",
+                        }}
+                        title="Remover aula"
+                      >
+                        ×
+                      </button>
+                      <strong>{aula.cadeira}</strong>
+                      <em>{aula.tipo}</em>
+                      <div>{aula.professor}</div>
+                      <div>{aula.sala}</div>
+                    </div>
+                  );
+                })}
 
-        <div className="campo-form">
-          <label htmlFor="horaFim">Hora de Fim</label>
-          <input
-            id="horaFim"
-            type="time"
-            value={novaAula.horaFim}
-            onChange={(e) =>
-              setNovaAula({ ...novaAula, horaFim: e.target.value })
-            }
-          />
-        </div>
-
-        <button type="submit">Adicionar Aula</button>
-      </form>
-
-      <div className="grelha">
-        <div className="grelha-header">
-          <div className="hora"></div>
-          {diasDaSemana.map((dia) => (
-            <div key={dia} className="dia">
-              {format(dia, "EEEE, dd 'de' MMMM", { locale: pt })}
-            </div>
-          ))}
-        </div>
-        <div className="grelha-body">
-          {horas.map((hora, index) => (
-            <div key={index} className="linha">
-              <div className="hora">{format(hora, "HH:mm")}</div>
-              {diasDaSemana.map((dia) => {
-                const aulasDoDia = aulas.filter(
-                  (a) =>
-                    a.dia === format(dia, "yyyy-MM-dd") &&
-                    a.horaInicio === format(hora, "HH:mm")
-                );
-
-                return (
-                  <div key={`${dia}-${hora}`} className="slot">
-                    {aulasDoDia.map((aula, i) => {
-                      const [hStart, mStart] = aula.horaInicio
-                        .split(":")
-                        .map(Number);
-                      const [hEnd, mEnd] = aula.horaFim.split(":").map(Number);
-                      const minutosInicio = hStart * 60 + mStart;
-                      const minutosFim = hEnd * 60 + mEnd;
-                      const altura = (minutosFim - minutosInicio) * (40 / 30);
-
-                      return (
-                        <div
-                          key={`${dia}-${hora}-${i}`}
-                          className="aula"
-                          style={{ height: `${altura}px`, top: 0 }}
-                        >
-                          <strong>{aula.cadeira}</strong>
-                          <em>{aula.tipo}</em>
-                          <div>{aula.professor}</div>
-                          <div>{aula.sala}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
