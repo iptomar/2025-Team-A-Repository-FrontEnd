@@ -11,6 +11,7 @@ import {
 import pt from "date-fns/locale/pt";
 import "../css/horario.css";
 import { getManchasHorarias, dragBloco } from "../api/api";
+import * as signalR from "@microsoft/signalr";
 
 const SchedulePage = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
@@ -78,6 +79,71 @@ const SchedulePage = () => {
       }
     };
     inic();
+  }, []);
+
+  // Cria uma conexão SignalR
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://localhost:7008/horarioHub", {
+      withCredentials: true,
+      transport: signalR.HttpTransportType.WebSockets,
+    })
+    .withAutomaticReconnect()
+    .build();
+
+    connection.start().then(() => {
+      console.log("Ligado ao SignalR");
+
+      connection.on("AulaAtualizada", async (data) => {
+        console.log("Aula atualizada via socket:", data);
+
+        try {
+          const mH = await getManchasHorarias();
+          const blocosFormatados = mH.map((bloco) => ({
+            id: bloco.id,
+            cadeira: bloco.uc.nome,
+            tipo: bloco.tipoDeAula,
+            horaInicio: bloco.horaInicio,
+            dia: bloco.dia,
+            professor: bloco.docente.nome,
+            sala: bloco.sala.nome,
+            duracao: bloco.numSlots * 30,
+          }));
+          const b = [];
+          const a = [];
+          blocosFormatados.forEach((element) => {
+            if (
+              element.horaInicio === "00:00:00" ||
+              element.dia === "0001-01-01"
+            ) {
+              b.push(element);
+            }
+            a.push({
+              ...element,
+              horaInicio: format(
+                new Date(`1970-01-01T${element.horaInicio}`),
+                "HH:mm"
+              ),
+              horaFim: format(
+                addMinutes(
+                  new Date(`1970-01-01T${element.horaInicio}`),
+                  element.duracao
+                ),
+                "HH:mm"
+              ),
+            });
+          });
+          setBlocos(b);
+          setAulas(a);
+        } catch (error) {
+          console.error("Erro ao obter os dados:", error);
+        }
+      });
+    });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   return (
