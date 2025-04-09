@@ -16,23 +16,19 @@ export default function RegisterPage() {
       alert("Preencha todos os campos");
       return;
     }
-    if(password !== password2) {
-      alert("As palavras-passe não coincidem");
-      return;
-    }
 
-
-    register(email, password)
+    register(email, password, password2)
       .then((res) => {
         console.log(res);
-        alert("Conta criada com sucesso!");
         navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        alert("Erro ao criar a conta. Tente novamente.");
+        alert(err.message || 'Erro ao tentar registar');
       });
   }
+
+ 
 
   return (
     <>
@@ -79,7 +75,7 @@ export default function RegisterPage() {
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
                   class="form-control"
-                  placeholder="Insira a Palavra-Passe"
+                  placeholder="Insira a palavra-Passe"
                 />
               </div>
               <button
