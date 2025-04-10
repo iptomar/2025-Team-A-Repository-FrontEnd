@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "https://localhost:7008/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -147,7 +147,18 @@ export const getDocentes = async () => {
     console.error("Erro ao ir buscar os docentes:", error);
   }
 };
+// ////////////////////////////////////////////////////////////////////////////
+// SALAS
 
+export const getSalas = async () => {
+  try {
+    const response = await axios.get(`${API_URL}api/API_Salas`);
+    console.log("Dados recebidos:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao ir buscar as salas:", error);
+  }
+}
 // ////////////////////////////////////////////////////////////////////////////
 // Manchas Horárias
 
@@ -161,17 +172,24 @@ export const getManchasHorarias = async () => {
   }
 };
 
+export const deleteManchaHoraria = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}api/API_ManchasHorarias/${id}`);
+    console.log("Mancha horária eliminada com sucesso:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao eliminar a mancha horária:", error);
+  }
+};
 // Criar mancha horária
-export const adicionarManchaHoraria = async (aula) => {
+export const criarManchaHoraria = async (mh) => {
   try {
     const formData = new FormData();
-    formData.append("tipoAula", aula.tipoAula);
-    formData.append("numSlots", aula.numSlots);
-    formData.append("horaInicio", aula.horaInicio);
-    formData.append("diaSemana", aula.diaSemana);
-    formData.append("docenteFK", aula.docenteFK);
-    formData.append("salaFK", aula.salaFK);
-    formData.append("ucFK", aula.ucFK);
+    formData.append("tipoAula", mh.tipoAula);
+    formData.append("numSlots", mh.numSlots);
+    formData.append("docenteFK", mh.docenteFK);
+    formData.append("salaFK", mh.salaFK);
+    formData.append("ucFK", mh.ucFK);
 
     const response = await axios.post(`${API_URL}api/API_ManchasHorarias`, formData, {
       headers: {
@@ -210,6 +228,11 @@ export async function dragBloco(id, horaInicio, dia) {
     console.error("Erro ao atualizar mancha:", error.response?.data || error.message);
   }
 }
+
+// Obter detalhes de uma mancha horaria
+export const getDetalhesManchaHoraria= (id) => {
+  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
+};
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
