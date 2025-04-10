@@ -1,14 +1,14 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import ListaEscolas from "../components/Listas/ListaEscolas";
-import { getEscolas } from "../api/api";
+import { getEscola } from "../api/api";
 
 export default function EscolasPage() {
   const [escolas, setEscolas] = useState(null);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    getEscolas()
+    getEscola()
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao obter escolas: " + res.status);
         return res.json();

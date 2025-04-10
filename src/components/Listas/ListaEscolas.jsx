@@ -6,7 +6,7 @@ import Item from "../common/Item";
 export default function ListaEscolas() {
   return (
     <Lista
-      endpoint={Api.getEscolas}
+      endpoint={Api.getEscola}
       colunas={["Nome"]}
       nomeEntidade="Escola"
       deleteFn={Api.apagaEscola}

@@ -97,7 +97,7 @@ export const updateTurma = (id, tm) => {
 // Escolas
 
 // Obter todas as escolas
-export function getEscolas() {
+export function getEscola() {
   return fetch(`${API_URL}api/API_Escolas`);
 }
 
@@ -109,7 +109,7 @@ export function apagaEscola(id) {
 }
 
 // Criar nova escola
-export function criarEscolas(d) {
+export function criarEscola(d) {
   return fetch(`${API_URL}api/API_Escolas`, {
     method: "POST",
     headers: {

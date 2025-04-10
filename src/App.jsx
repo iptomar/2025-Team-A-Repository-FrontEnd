@@ -19,6 +19,7 @@ import DetalhesTurma from "./pages/DetalhesPage/DetalhesTurma";
 import CriarTurma from "./pages/CriarPage/CriarTurma"
 import EditarTurma from "./pages/EditarPage/EditarTurma";
 import DetalhesEscola from "./pages/DetalhesPage/DetalhesEscola";
+import CriarEscola from "./pages/CriarPage/CriarEscola";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,7 +43,7 @@ export const ROUTES = {
   CRIAR_TURMA: "/criar-turma",
   EDITAR_TURMA: "/turmas/editar/:id",
   DETALHES_ESCOLA: "/escolas/detalhes/:id",
-  
+  CRIAR_ESCOLA: "/criar-escola",
 };
 
 const App = () => (
@@ -79,6 +80,7 @@ const App = () => (
       <Route key={ROUTES.CRIAR_TURMA} path={ROUTES.CRIAR_TURMA} element={<CriarTurma />} />
       <Route key={ROUTES.EDITAR_TURMA} path={ROUTES.EDITAR_TURMA} element={<EditarTurma />} />
       <Route key={ROUTES.DETALHES_ESCOLA} path={ROUTES.DETALHES_ESCOLA} element={<DetalhesEscola />} />
+      <Route key={ROUTES.CRIAR_ESCOLA} path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
     </Routes>
   </HashRouter>
 );
