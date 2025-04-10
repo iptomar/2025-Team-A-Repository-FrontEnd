@@ -48,8 +48,9 @@ export function getCursos() {
 // catarina 
 ////////////////////////////////////////////////////////////////////////
 
-const API_URL = 'http://localhost:5251/'
+const API_URL = 'http://localhost:7008/'
 
+// Função para fazer login
 export const login = async (email, password) => {
     try {
         const response = await fetch(`${API_URL}login`, {
@@ -74,6 +75,7 @@ export const login = async (email, password) => {
     }
 };
 
+// Função para fazer o registo
 export const register = async (email, password) => {
     try {
         const response = await fetch(`${API_URL}register`, {
@@ -97,3 +99,44 @@ export const register = async (email, password) => {
     }
 };
 
+
+////// TURMAS //////
+
+// Função para obter a lista de turmas
+export function getTurmas() {
+    return fetch(`https://localhost:7008/api/API_Turmas`);
+}
+
+// Função para apagar uma turma
+export function apagaTurma(id) {
+    return fetch(`https://localhost:7008/api/API_Turmas/${id}`, {
+        method: "DELETE",        
+    })
+}
+
+/// Função para criar uma nova turma
+export function criarTurma(d) {
+    return fetch(`https://localhost:7008/api/API_Turmas`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(d)
+    });
+}
+
+/// Função para ver detalhes de uma turma
+export const getDetalheTurma = (id) => {
+    return fetch(`https://localhost:7008/api/API_Turmas/${id}`);
+}
+
+// Função para obter a lista de cursos
+export const updateTurma = (id, tm) => {
+    return fetch(`https://localhost:7008/api/API_Turmas/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tm)        
+    });
+}

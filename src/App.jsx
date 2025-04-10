@@ -15,6 +15,7 @@ import Navbar from "./components/Navbar";
 import CriarUC from "./pages/CriarUC";
 import DetalheUC from "./pages/DetalheUC";
 import EditarUC from "./pages/EditarUC";
+import DetalhesTurma from "./pages/DetalhesPage/DetalhesTurma";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,6 +35,7 @@ export const ROUTES = {
   CRIAR_UC: "/criar-uc",
   DETALHE_UC: "/unidades_curriculares/detalhes/:id",
   EDITAR_UC: "/unidades_curriculares/editar/:id",
+  DETALHES_TURMA: "/turmas/detalhes/:id",
 };
 
 const App = () => (
@@ -66,6 +68,7 @@ const App = () => (
       <Route key={ROUTES.EDITAR_UC} path={ROUTES.EDITAR_UC} element={<EditarUC />} /> 
       <Route key={ROUTES.DETALHE_UC} path={ROUTES.DETALHE_UC} element={<DetalheUC />} /> {/* Rota para os detalhes da UC */}
       <Route key={ROUTES.TURMAS} path={ROUTES.TURMAS} element={<TurmasPage />} />
+      <Route key={ROUTES.DETALHES_TURMA} path={ROUTES.DETALHES_TURMA} element={<DetalhesTurma />} />
     </Routes>
   </HashRouter>
 );
