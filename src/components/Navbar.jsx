@@ -61,13 +61,18 @@ const Navbar = () => {
 
                     </ul>
 
-                        <ul className="navbar-nav">
+                        {/* <ul className="navbar-nav">
                             <li className="nav-item">
                                 <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.REGISTER)}}><strong>Criar Conta</strong></button>
                             </li>
                             <li className="nav-item">
                                 <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.LOG_IN)}}><strong>Iniciar Sessão</strong></button>
 
+                            </li>
+                        </ul> */}
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link" onClick={() => {}}><strong>Olá!</strong></button>
                             </li>
                         </ul>
                 </div>

@@ -59,7 +59,7 @@ export default function Login() {
                                 />
                             </div>
                             <button type="submit" class="btn btn-success w-25 d-block mx-auto">Entrar</button>
-                            <Link to="/" class="d-block text-center mt-3 text-decoration-none text-dark">Criar Conta</Link>
+                            <Link to="/register" class="d-block text-center mt-3 text-decoration-none text-dark">Criar Conta</Link>
                         </form>
                     </div>
                 </div>
