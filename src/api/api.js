@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:7008/";
+const API_URL = "https://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -90,6 +90,48 @@ export const updateTurma = (id, tm) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(tm),
+  });
+};
+
+// ////////////////////////////////////////////////////////////////////////////
+// Escolas
+
+// Obter todas as escolas
+export function getEscola() {
+  return fetch(`${API_URL}api/API_Escolas`);
+}
+
+// Apagar uma escola
+export function apagaEscola(id) {
+  return fetch(`${API_URL}api/API_Escolas/${id}`, {
+    method: "DELETE",
+  });
+}
+
+// Criar nova escola
+export function criarEscola(d) {
+  return fetch(`${API_URL}api/API_Escolas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
+// Obter detalhes de uma escola
+export const getDetalheEscola = (id) => {
+  return fetch(`${API_URL}api/API_Escolas/${id}`);
+};
+
+// Atualizar escola
+export const updateEscola = (id, esc) => {
+  return fetch(`${API_URL}api/API_Escolas/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(esc),
   });
 };
 
