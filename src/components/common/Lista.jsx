@@ -70,9 +70,9 @@ export default function Lista({
   if (loading) return <div>Carregando...</div>;
 
   return (
-    <div className="container mt-4">
+    <div className="mt-2 d-flex justify-content-center">
       <div className="table-responsive">
-        <table className="table table-striped">
+      <table className="table table-striped justify-content-center table-sm w-auto">
           <thead>
             <tr>
               {colunas.map((coluna, index) => (
