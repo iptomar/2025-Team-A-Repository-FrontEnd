@@ -49,6 +49,11 @@ const Navbar = () => {
                             </li> 
 
                             <li className="nav-item">
+                                <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.TURMAS)}}><strong>Turmas</strong></button>
+
+                            </li>
+
+                            <li className="nav-item">
                                 <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.MANCHAS_HORARIAS)}}><strong>Manchas Horárias</strong></button>
 
                             </li> 
