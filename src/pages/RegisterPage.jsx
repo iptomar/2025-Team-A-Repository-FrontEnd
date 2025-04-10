@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "../api/api";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { register } from "../api/api";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -27,6 +27,8 @@ export default function RegisterPage() {
         alert(err.message || 'Erro ao tentar registar');
       });
   }
+
+ 
 
   return (
     <>
