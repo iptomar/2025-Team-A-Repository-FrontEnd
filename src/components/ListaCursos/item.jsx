@@ -27,7 +27,7 @@ export default function ItemCurso({ curso, setCursos }) {
     // Função para apagar o curso
     function apagaCurso(id) {
         console.log('A apagar curso com id:', id);
-        Api.apagaUC(id)
+        Api.apagaCurso(id)
             .then((response) => {
                 if (response.ok) {
                     toast.success('Curso removido com sucesso!');

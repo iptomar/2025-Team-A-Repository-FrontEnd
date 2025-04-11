@@ -51,6 +51,13 @@ export function getCursos() {
   return fetch(`${API_URL}api/API_Cursos`);
 }
 
+// Apagar um curso
+export function apagaCurso(id) {
+  return fetch(`${API_URL}api/API_Cursos/${id}`, {
+    method: "DELETE",
+  });
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // Turmas
 
