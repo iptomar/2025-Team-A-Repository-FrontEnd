@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:7008/";
+const API_URL = "http://localhost:5251/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -50,6 +50,40 @@ export const updateUC = (id, uc) => {
 export function getCursos() {
   return fetch(`${API_URL}api/API_Cursos`);
 }
+
+// Obter detalhes de um curso
+export const getDetalheCurso = (id) => {
+  return fetch(`${API_URL}api/API_Cursos/${id}`);
+};
+
+// Apagar um curso
+export function apagaCurso(id) {
+  return fetch(`${API_URL}api/API_Cursos/${id}`, {
+    method: "DELETE",
+  });
+}
+
+// Criar um novo curso
+export function criarCurso(d) {
+  return fetch(`${API_URL}api/API_Cursos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
+// Atualizar um Curso
+export const updateCurso = (id, uc) => {
+  return fetch(`${API_URL}api/API_Cursos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(uc),
+  });
+};
 
 // ////////////////////////////////////////////////////////////////////////////
 // Turmas

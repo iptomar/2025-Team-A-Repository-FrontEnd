@@ -21,6 +21,9 @@ import EditarTurma from "./pages/EditarPage/EditarTurma";
 import DetalhesEscola from "./pages/DetalhesPage/DetalhesEscola";
 import CriarEscola from "./pages/CriarPage/CriarEscola";
 import EditarEscola from "./pages/EditarPage/EditarEscola";
+import CriarCurso from "./pages/CriarPage/CriarCurso";
+import DetalhesCurso from "./pages/DetalhesPage/DetalhesCurso";
+import EditarCurso from "./pages/EditarPage/EditarCurso";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -46,6 +49,9 @@ export const ROUTES = {
   DETALHES_ESCOLA: "/escolas/detalhes/:id",
   CRIAR_ESCOLA: "/criar-escola",
   EDITAR_ESCOLA: "/escolas/editar/:id",
+  CRIAR_CURSO: "/criar-curso",
+  DETALHES_CURSO: "/cursos/detalhes/:id",
+  EDITAR_CURSO: "/cursos/editar/:id",
 };
 
 // const App = () => (
@@ -119,6 +125,9 @@ const AppRoutes = () => {
         <Route path={ROUTES.DETALHES_ESCOLA} element={<DetalhesEscola />} />
         <Route path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
         <Route path={ROUTES.EDITAR_ESCOLA} element={<EditarEscola />} />
+        <Route path={ROUTES.CRIAR_CURSO} element={<CriarCurso />} />
+        <Route path={ROUTES.DETALHES_CURSO} element={<DetalhesCurso />} />
+        <Route path={ROUTES.EDITAR_CURSO} element={<EditarCurso />} />
       </Routes>
     </>
   );
