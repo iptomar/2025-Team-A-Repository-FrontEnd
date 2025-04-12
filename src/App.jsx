@@ -27,6 +27,9 @@ import EditarCurso from "./pages/EditarPage/EditarCurso";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CriarSala from "./pages/CriarPage/CriarSala";
+import EditarSala from "./pages/EditarPage/EditarSala";
+import DetalhesSala from "./pages/DetalhesPage/DetalhesSala";
 
 export const ROUTES = {
   LOG_IN: "/login",
@@ -36,6 +39,9 @@ export const ROUTES = {
   DOCENTES: "/docentes",
   ESCOLAS: "/escolas", 
   SALAS: "/salas",
+  CRIAR_SALA: "/criar-sala",
+  EDITAR_SALA: "/salas/editar/:id",
+  DETALHES_SALA: "/salas/detalhes/:id",
   CURSOS: "/cursos",
   MANCHAS_HORARIAS: "/manchas_horarias",
   UNIDADES_CURRICULARES: "/unidades_curriculares",
@@ -112,6 +118,9 @@ const AppRoutes = () => {
         <Route path={ROUTES.DOCENTES} element={<DocentesPage />} />
         <Route path={ROUTES.ESCOLAS} element={<EscolasPage />} />
         <Route path={ROUTES.SALAS} element={<SalasPage />} />
+        <Route path={ROUTES.CRIAR_SALA} element={<CriarSala />} />
+        <Route path={ROUTES.EDITAR_SALA} element={<EditarSala />} />
+        <Route path={ROUTES.DETALHES_SALA} element={<DetalhesSala />} />
         <Route path={ROUTES.CURSOS} element={<CursosPage />} />
         <Route path={ROUTES.MANCHAS_HORARIAS} element={<ManchasHorariasPage />} />
         <Route path={ROUTES.UNIDADES_CURRICULARES} element={<UnidadesCurricularesPage />} />
