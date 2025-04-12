@@ -51,7 +51,7 @@ export function getCursos() {
   return fetch(`${API_URL}api/API_Cursos`);
 }
 
-// Obter detalhes de uma UC
+// Obter detalhes de um curso
 export const getDetalheCurso = (id) => {
   return fetch(`${API_URL}api/API_Cursos/${id}`);
 };
@@ -73,6 +73,17 @@ export function criarCurso(d) {
     body: JSON.stringify(d),
   });
 }
+
+// Atualizar um Curso
+export const updateCurso = (id, uc) => {
+  return fetch(`${API_URL}api/API_Cursos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(uc),
+  });
+};
 
 // ////////////////////////////////////////////////////////////////////////////
 // Turmas
