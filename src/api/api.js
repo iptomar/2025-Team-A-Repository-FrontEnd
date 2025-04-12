@@ -51,6 +51,11 @@ export function getCursos() {
   return fetch(`${API_URL}api/API_Cursos`);
 }
 
+// Obter detalhes de uma UC
+export const getDetalheCurso = (id) => {
+  return fetch(`${API_URL}api/API_Cursos/${id}`);
+};
+
 // Apagar um curso
 export function apagaCurso(id) {
   return fetch(`${API_URL}api/API_Cursos/${id}`, {

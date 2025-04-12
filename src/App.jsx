@@ -22,6 +22,7 @@ import DetalhesEscola from "./pages/DetalhesPage/DetalhesEscola";
 import CriarEscola from "./pages/CriarPage/CriarEscola";
 import EditarEscola from "./pages/EditarPage/EditarEscola";
 import CriarCurso from "./pages/CriarPage/CriarCurso";
+import DetalhesCurso from "./pages/DetalhesPage/DetalhesCurso";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -48,6 +49,7 @@ export const ROUTES = {
   CRIAR_ESCOLA: "/criar-escola",
   EDITAR_ESCOLA: "/escolas/editar/:id",
   CRIAR_CURSO: "/criar-curso",
+  DETALHES_CURSO: "/cursos/detalhes/:id",
 };
 
 // const App = () => (
@@ -122,6 +124,7 @@ const AppRoutes = () => {
         <Route path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
         <Route path={ROUTES.EDITAR_ESCOLA} element={<EditarEscola />} />
         <Route path={ROUTES.CRIAR_CURSO} element={<CriarCurso />} />
+        <Route path={ROUTES.DETALHES_CURSO} element={<DetalhesCurso />} />
       </Routes>
     </>
   );
