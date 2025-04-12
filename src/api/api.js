@@ -58,6 +58,17 @@ export function apagaCurso(id) {
   });
 }
 
+// Criar um novo curso
+export function criarCurso(d) {
+  return fetch(`${API_URL}api/API_Cursos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // Turmas
 
