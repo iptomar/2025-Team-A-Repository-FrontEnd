@@ -4,10 +4,12 @@ import * as Api from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../../components/common/TextInput";
 import SubmitButton from "../../components/common/SubmitButton";
-import CursoSelect from "../../components/common/SelectCurso";
+import UCSSelect from "../../components/common/SelectUC";
+import DocentesSelect from "../../components/common/SelectDocente";
+import SalasSelect from "../../components/common/SelectSala";
 import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
-import { Select } from "@mui/material";
+import { Select, MenuItem} from "@mui/material";
 
 export default function CriarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -19,7 +21,7 @@ export default function CriarManchaHoraria() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!uc || !tipoAula || !numSlots || !docente || !sala) {
@@ -40,34 +42,26 @@ export default function CriarManchaHoraria() {
 
     setLoading(true);
 
-    Api.criarManchaHoraria(dataASubmeter)
-      .then((response) => {
-        console.log("Resposta da API:", response);
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text);
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setLoading(false);
-        if (data.erro) {
-          toast.error(data.erro);
-        } else {
-          toast.success("Mancha horária criada com sucesso!");
-          navigate("/turmas");
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error("Ocorreu um erro ao criar a turma.");
-        console.error(error);
-      });
+    try {
+      const response = await Api.criarManchaHoraria(dataASubmeter);
+      console.log("Resposta da API:", response);
+  
+      if (response.data.erro) {
+        toast.error(response.data.erro);
+      } else {
+        toast.success("Mancha horária criada com sucesso!");
+        navigate("/manchas_horarias");
+      }
+    } catch (error) {
+      console.error("Erro ao criar a mancha horária:", error);
+      toast.error("Ocorreu um erro ao criar a mancha horária.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <CriarPage titulo="Criar Turma">
+    <CriarPage titulo="Criar Mancha Horária">
       <form onSubmit={handleSubmit}>
         <UCSSelect
           id="uc"
@@ -82,15 +76,18 @@ export default function CriarManchaHoraria() {
           value={docente}
           onChange={setDocente}
         />
-        <Select
-          id="tipoAula"
-          label="Tipo de Aula"
-          value={tipoAula}
-          onChange={setTipoAula}
-        >
-          <option value="teorica">TP</option>
-          <option value="pratica">PL</option>
-        </Select>
+        <label className="form-label">Selecione o Tipo de Aula</label>
+          <Select
+          style={{marginLeft:'15px', width:'200px'}}
+            labelId="tipoAula-label"
+            id="tipoAula"
+            value={tipoAula}
+            onChange={(e) => setTipoAula(e.target.value)}
+          >
+            <MenuItem value="TP">TP</MenuItem>
+            <MenuItem value="PL">PL</MenuItem>
+          </Select>
+
         <SalasSelect id="sala" label="Sala" value={sala} onChange={setSala} />
 
         <TextInput

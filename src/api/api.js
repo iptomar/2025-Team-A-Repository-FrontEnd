@@ -140,9 +140,7 @@ export const updateEscola = (id, esc) => {
 
 export const getDocentes = async () => {
   try {
-    const response = await axios.get(`${API_URL}api/API_Docentes`);
-    console.log("Dados recebidos:", response.data);
-    return response.data;
+    return fetch(`${API_URL}api/API_Docentes`);
   } catch (error) {
     console.error("Erro ao ir buscar os docentes:", error);
   }
@@ -152,9 +150,7 @@ export const getDocentes = async () => {
 
 export const getSalas = async () => {
   try {
-    const response = await axios.get(`${API_URL}api/API_Salas`);
-    console.log("Dados recebidos:", response.data);
-    return response.data;
+    return fetch(`${API_URL}api/API_Salas`);
   } catch (error) {
     console.error("Erro ao ir buscar as salas:", error);
   }
@@ -162,24 +158,19 @@ export const getSalas = async () => {
 // ////////////////////////////////////////////////////////////////////////////
 // Manchas Horárias
 
+// Obter todas as manchas horárias
 export const getManchasHorarias = async () => {
   try {
-    const response = await axios.get(`${API_URL}api/API_ManchasHorarias`);
-    console.log("Dados recebidos:", response.data);
-    return response.data;
+    return fetch(`${API_URL}api/API_ManchasHorarias`);
   } catch (error) {
     console.error("Erro ao ir buscar as machas horarias:", error);
   }
 };
-
+//Eliminar uma Mancha Horária
 export const deleteManchaHoraria = async (id) => {
-  try {
-    const response = await axios.delete(`${API_URL}api/API_ManchasHorarias/${id}`);
-    console.log("Mancha horária eliminada com sucesso:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao eliminar a mancha horária:", error);
-  }
+  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
+    method: "DELETE",
+  });
 };
 // Criar mancha horária
 export const criarManchaHoraria = async (mh) => {
@@ -197,11 +188,7 @@ export const criarManchaHoraria = async (mh) => {
       },
     });
 
-    if (response.status === 200) {
-      console.log("Mancha horária adicionada com sucesso!");
-    } else {
-      console.error("Erro ao adicionar a mancha horária:", response.statusText);
-    }
+    return response;
   } catch (error) {
     console.error("Erro ao adicionar a mancha horária:", error);
   }
@@ -232,6 +219,17 @@ export async function dragBloco(id, horaInicio, dia) {
 // Obter detalhes de uma mancha horaria
 export const getDetalhesManchaHoraria= (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
+};
+
+// Atualizar Mancha Horária
+export const updateManchaHoraria = (id, mH) => {
+  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(mH),
+  });
 };
 
 // ////////////////////////////////////////////////////////////////////////////

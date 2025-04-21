@@ -5,15 +5,14 @@ import ListaManchasHorarias from "../components/Listas/ListaManchasHorarias";
 // import { set } from "date-fns";
 
 const ManchasHorariasPage = () => {
-
-const [manchasHorarias, setManchasHorarias] = useState(null);
-const [erro, setErro] = useState(null);
-
+  const [manchasHorarias, setManchasHorarias] = useState(null);
+  const [erro, setErro] = useState(null);
 
   useEffect(() => {
     const inic = async () => {
       try {
-        const mH = await getManchasHorarias();
+        const response = await getManchasHorarias();
+        const mH = await response.json();
         const blocosFormatados = mH.map((bloco) => ({
           id: bloco.id,
           cadeira: bloco.uc.nome,
@@ -52,7 +51,8 @@ const [erro, setErro] = useState(null);
           setManchasHorarias={setManchasHorarias}
         />
       </div>
-    </>)
-}
+    </>
+  );
+};
 
 export default ManchasHorariasPage;

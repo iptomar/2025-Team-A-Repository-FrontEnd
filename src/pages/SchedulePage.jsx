@@ -37,7 +37,8 @@ const SchedulePage = () => {
   useEffect(() => {
     const inic = async () => {
       try {
-        const mH = await getManchasHorarias();
+        const response = await getManchasHorarias();
+        const mH = await response.json();
         const blocosFormatados = mH.map((bloco) => ({
           id: bloco.id,
           cadeira: bloco.uc.nome,

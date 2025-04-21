@@ -21,8 +21,8 @@ export default function ListaManchasHorarias() {
             (mh) => mh.sala.nome,
             (mh) => mh.numSlots,
           ]}
-          detalhes="turmas/detalhes"
-          editar="turmas/editar"
+          detalhes="manchahoraria/detalhes"
+          editar="manchahoraria/editar"
           deleteFn={handleDelete}
         />
       )}

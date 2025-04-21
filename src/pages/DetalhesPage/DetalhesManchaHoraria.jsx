@@ -8,7 +8,7 @@ export default function DetalhesManchaHoraria() {
       campos={[
         { label: "Unidade Curricular", key: "uc.nome" },
         { label: "Docente", key: "docente.nome" },
-        { label: "Tipo de Aula", key: "tipoAula" },
+        { label: "Tipo de Aula", key: "tipoDeAula" },
         { label: "Sala", key: "sala.nome" },
         { label: "Número de Slots", key: "numSlots" },
       ]}

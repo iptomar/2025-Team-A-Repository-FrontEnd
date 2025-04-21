@@ -22,7 +22,8 @@ import DetalhesEscola from "./pages/DetalhesPage/DetalhesEscola";
 import CriarEscola from "./pages/CriarPage/CriarEscola";
 import EditarEscola from "./pages/EditarPage/EditarEscola";
 import CriarManchaHoraria from "./pages/CriarPage/CriarManchaHoraria";
- 
+import EditarManchaHoraria from "./pages/EditarPage/EditarManchaHoraria"; 
+import DetalhesManchaHoraria from "./pages/DetalhesPage/DetalhesManchaHoraria";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -89,9 +90,10 @@ const App = () => (
       <Route key={ROUTES.DETALHES_ESCOLA} path={ROUTES.DETALHES_ESCOLA} element={<DetalhesEscola />} />
       <Route key={ROUTES.CRIAR_ESCOLA} path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
       <Route key={ROUTES.EDITAR_ESCOLA} path={ROUTES.EDITAR_ESCOLA} element={<EditarEscola />} />
-      <Route key={ROUTES.DETALHES_MANCHAHORARIA} path={ROUTES.DETALHES_MANCHAHORARIA} element={<DetalhesTurma />} />
+      <Route key={ROUTES.DETALHES_MANCHAHORARIA} path={ROUTES.DETALHES_MANCHAHORARIA} element={<DetalhesManchaHoraria />} />
       <Route key={ROUTES.CRIAR_MANCHAHORARIA} path={ROUTES.CRIAR_MANCHAHORARIA} element={<CriarManchaHoraria />} />
-      <Route key={ROUTES.EDITAR_MANCHAHORARIA} path={ROUTES.EDITAR_MANCHAHORARIA} element={<EditarTurma />} />
+      <Route key={ROUTES.EDITAR_MANCHAHORARIA} path={ROUTES.EDITAR_MANCHAHORARIA} element={<EditarManchaHoraria />} />
+
     </Routes>
   </HashRouter>
 );
