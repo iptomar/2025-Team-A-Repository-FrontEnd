@@ -221,16 +221,7 @@ export const getDetalhesManchaHoraria= (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
 };
 
-// Atualizar Mancha Horária
-export const updateManchaHoraria = (id, mH) => {
-  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(mH),
-  });
-};
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
