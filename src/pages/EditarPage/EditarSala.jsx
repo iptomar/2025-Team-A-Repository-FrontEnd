@@ -1,46 +1,111 @@
 import { useEffect, useState } from "react";
 import { updateSala, getDetalheSala, getEscola } from "../../api/api";
 import { useNavigate, useParams } from "react-router-dom";
+import CriarPage from "../CriarPage/CriarPage"; 
+import Select from "react-select"; 
+import SubmitButton from "../../components/common/SubmitButton"; 
+import ReturnButton from "../../components/common/ReturnButton"; 
+import { toast } from "react-toastify"; 
 
 function EditarSala() {
-  const { id } = useParams();
-  const [nome, setNome] = useState("");
-  const [escolaFK, setEscolaFK] = useState("");
-  const [escolas, setEscolas] = useState([]);
-  const navigate = useNavigate();
+  const { id } = useParams(); // id da sala a editar
+  const [nome, setNome] = useState(""); // estado para o nome da sala
+  const [escolaSelecionada, setEscolaSelecionada] = useState(null); // estado para a escola selecionada
+  const [listaEscolas, setListaEscolas] = useState([]); // lista para o select
+  const [loading, setLoading] = useState(false); // estado loading
+  const navigate = useNavigate(); // hook para navegação
 
   useEffect(() => {
-    getDetalheSala(id).then(res => res.json()).then(s => {
-      setNome(s.nome);
-      setEscolaFK(s.escolaFK);
-    });
-    getEscola().then(res => res.json()).then(setEscolas);
+    getDetalheSala(id)
+      .then(res => res.json())
+      .then(s => {
+        setNome(s.nome);
+        if (s.escolaFK) {
+          setEscolaSelecionada({ value: s.escolaFK, label: s.escola });
+        }
+      })
+      .catch(() => toast.error("Erro ao carregar detalhes da sala."));
+
+    // Carrega escolas ao montar o componente
+    getEscola()
+      .then(res => res.json())
+      .then(data => {
+        const escolas = data.map(e => ({ value: e.id, label: e.nome }));
+        setListaEscolas(escolas);
+      })
+      .catch(() => toast.error("Erro ao carregar escolas."));
   }, [id]);
 
+  // Função para lidar com o envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateSala(id, { nome, escolaFK: parseInt(escolaFK) });
-    navigate("/salas");
+
+    if (!nome || !escolaSelecionada) {
+      toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    // Encontra a escola selecionada na lista 
+    const salaAtualizada = {
+      nome,
+      escolaFK: escolaSelecionada.value,
+    };
+
+    // Log para depuração
+    console.log("Sala atualizada:", salaAtualizada);
+
+    // Envia os dados para a API
+    setLoading(true);
+    try {
+      const res = await updateSala(id, salaAtualizada);
+      if (res.ok) {
+        toast.success("Sala atualizada com sucesso!");
+        navigate("/salas");
+      } else {
+        toast.error("Erro ao atualizar sala.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao atualizar sala.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Renderiza o formulário de edição de sala
   return (
-    <div className="container mt-5">
-      <h2>Editar Sala</h2>
+    <CriarPage titulo="Editar Sala"> {/* usar o layout padrão */}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Nome</label>
-          <input className="form-control" value={nome} onChange={e => setNome(e.target.value)} required />
+          <label className="form-label">Nome da Sala</label>
+          <input
+            type="text"
+            className="form-control"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
+          />
         </div>
+
+        {/* Select para escolher a escola */}
         <div className="mb-3">
           <label className="form-label">Escola</label>
-          <select className="form-control" value={escolaFK} onChange={e => setEscolaFK(e.target.value)} required>
-            <option value="">Escolha uma escola</option>
-            {escolas.map(esc => <option key={esc.id} value={esc.id}>{esc.nome}</option>)}
-          </select>
+          <Select
+            options={listaEscolas}
+            value={escolaSelecionada}
+            onChange={setEscolaSelecionada}
+            placeholder="Escolha uma escola"
+            required
+          />
         </div>
-        <button type="submit" className="btn btn-primary">Guardar</button>
+
+        {/* Botões de ação */}
+        <div className="d-flex justify-content-between mt-4">
+          <SubmitButton loading={loading} text="Guardar" />
+          <ReturnButton text="Voltar" endpoint="/salas" />
+        </div>
       </form>
-    </div>
+    </CriarPage>
   );
 }
 
