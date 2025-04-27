@@ -44,6 +44,37 @@ export const updateUC = (id, uc) => {
 };
 
 // ////////////////////////////////////////////////////////////////////////////
+// Salas
+
+export function getSalas() {
+  return fetch(`${API_URL}api/API_Salas`);
+}
+
+export function apagaSala(id) {
+  return fetch(`${API_URL}api/API_Salas/${id}`, { method: "DELETE" });
+}
+
+export function criarSala(sala) {
+  return fetch(`${API_URL}api/API_Salas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sala)
+  });
+}
+
+export function updateSala(id, sala) {
+  return fetch(`${API_URL}api/API_Salas/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sala)
+  });
+}
+
+export function getDetalheSala(id) {
+  return fetch(`${API_URL}api/API_Salas/${id}`);
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Cursos
 
 // Obter todos os cursos

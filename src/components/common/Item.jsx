@@ -11,7 +11,7 @@ export default function Item({
   return (
     <tr>
       {campos.map((campo, index) => (
-        <td key={index} className="px-4">
+        <td key={index} className="px-4 text-center">
           {typeof campo === "function" ? campo(item) : item[campo] || "—"}
         </td>
       ))}
