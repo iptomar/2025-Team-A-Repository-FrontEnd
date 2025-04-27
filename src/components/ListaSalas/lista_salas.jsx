@@ -1,25 +1,29 @@
-import ItemSala from './item_sala';
+import React from "react";
+import * as Api from "../../api/api";
+import Lista from "../common/Lista";
+import Item from "../common/Item";
 
-function ListaSalas({ salas, setSalas }) {
+function ListaSalas() {
     return (
-      <div className="container mt-4">
-        <div className="table-responsive">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Escola</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salas.map((sala) => (
-                <ItemSala key={sala.id} sala={sala} setSalas={setSalas} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          <Lista
+            endpoint={Api.getSalas}
+            colunas={["Nome", "Escola"]}
+            nomeEntidade="Sala"
+            deleteFn={Api.apagaSala}
+            renderItem={(sala, handleDelete) => (
+              <Item
+                key={sala.id}
+                item={sala}
+                campos={[
+                  (s) => s.nome,
+                  (s) => s.escola,
+                ]}
+                detalhes="salas/detalhes"
+                editar="salas/editar"
+                deleteFn={handleDelete}
+              />
+            )}
+          />
     );
   }
 

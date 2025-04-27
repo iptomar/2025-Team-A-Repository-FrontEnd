@@ -5,10 +5,14 @@ import CriarPage from "../CriarPage/CriarPage";
 import ReturnButton from "../../components/common/ReturnButton"; 
 import { toast } from "react-toastify"; 
 
+// Função para obter os detalhes da sala
+// e exibir as informações
 function DetalhesSala() {
   const { id } = useParams();
   const [sala, setSala] = useState(null);
 
+  // Carrega os detalhes da sala ao montar o componente
+  // e formata para o Select
   useEffect(() => {
     getDetalheSala(id)
       .then((res) => {
@@ -22,8 +26,11 @@ function DetalhesSala() {
       });
   }, [id]);
 
+  // Verifica se houve erro ao carregar os detalhes
   if (!sala) return <p className="text-center mt-5">A carregar detalhes...</p>; // Melhorado o carregamento
 
+  // Retorna o layout da página com os detalhes da sala
+  // e o botão de voltar
   return (
     <CriarPage titulo="Detalhes da Sala"> {/* usar o layout padrão */}
     <hr />
