@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/navbar.css';
-import { ROUTES } from '../App';
+import { ROUTES } from '../Routes';
 import logo from "../assets/logoIPT.png";
 
 const Navbar = () => {
