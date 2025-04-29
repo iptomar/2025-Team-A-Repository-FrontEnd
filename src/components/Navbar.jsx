@@ -72,7 +72,7 @@ const Navbar = () => {
                         </ul> */}
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <button className="nav-link btn btn-link" onClick={() => {}}><strong>Olá!</strong></button>
+                                <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.LOG_IN)}}><strong>Logout</strong></button>
                             </li>
                         </ul>
                 </div>
