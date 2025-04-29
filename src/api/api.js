@@ -210,16 +210,40 @@ export const getDocentes = async () => {
     console.error("Erro ao ir buscar os docentes:", error);
   }
 };
-// ////////////////////////////////////////////////////////////////////////////
-// SALAS
 
-export const getSalas = async () => {
-  try {
-    return fetch(`${API_URL}api/API_Salas`);
-  } catch (error) {
-    console.error("Erro ao ir buscar as salas:", error);
-  }
+// Apagar um docente
+export function eliminaDocente(id) {
+  return fetch(`${API_URL}api/API_Docentes/${id}`, {
+    method: "DELETE",
+  });
 }
+
+// Criar novo docente
+export function criarDocente(d) {
+  return fetch(`${API_URL}api/API_Docentes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
+// Obter detalhes de um docente
+export const getDetalhesDocente= (id) => {
+  return fetch(`${API_URL}api/API_Docentes/${id}`);
+};
+
+// Atualizar um docente
+export const updateDocente = (id, esc) => {
+  return fetch(`${API_URL}api/API_Docentes/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(esc),
+  });
+};
 // ////////////////////////////////////////////////////////////////////////////
 // Manchas Horárias
 

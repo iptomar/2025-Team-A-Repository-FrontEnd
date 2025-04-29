@@ -4,7 +4,7 @@ import * as Api from "../../api/api";
 export default function DetalhesManchaHoraria() {
   return (
     <Detalhes
-      entidadeNome="Mancha Horaria"
+      entidadeNome="da Mancha Horaria"
       campos={[
         { label: "Unidade Curricular", key: "uc.nome" },
         { label: "Docente", key: "docente.nome" },

@@ -28,7 +28,7 @@ export default function Detalhes({ entidadeNome, campos, fetchFn, voltarPath }) 
     <div className="d-flex justify-content-center mt-5">
       <div className="card" style={{ width: '50%' }}>
         <div className="card-body">
-          <h2 className="card-title text-center">Detalhe da {entidadeNome}</h2>
+          <h2 className="card-title text-center">Detalhes {entidadeNome}</h2>
           <hr />
           {dados ? (
             <div className="text-center mb-4">
