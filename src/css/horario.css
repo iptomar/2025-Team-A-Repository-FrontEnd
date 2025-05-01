@@ -202,7 +202,7 @@
     box-sizing: border-box; /* Inclui o padding no cálculo do tamanho */
   }
 
-  //* Estilos para a parte de criar/selecionar os horários */
+  /* Estilos para a parte de criar/selecionar os horários */
   .collapsed-card .form-label,
   .collapsed-card .form-select,
   .collapsed-card form,
