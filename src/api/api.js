@@ -310,6 +310,24 @@ export const getDetalhesManchaHoraria= (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
 };
 
+// ////////////////////////////////////////////////////////////////////////////
+// Horarios
+
+// Obter todos os horarios
+export function getHorarios() {
+  return fetch(`${API_URL}api/API_Horarios`);
+}
+// Criar um novo horario
+export function criarHorario(d) {
+  return fetch(`${API_URL}api/API_Horarios`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
 
 
 // ////////////////////////////////////////////////////////////////////////////

@@ -6,7 +6,6 @@ import {
   eachDayOfInterval,
   startOfDay,
   addMinutes,
-  // set,
 } from "date-fns";
 import "../css/horario.css";
 import { getManchasHorarias } from "../api/api";
@@ -15,66 +14,49 @@ import GestaoHorarios from "../components/GestaoHorarios";
 import GrelhaHorario from "../components/GrelhaHorarios";
 
 const HorariosPage = () => {
+  // Estado para guardar o início da semana atual
   const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 })
+    startOfWeek(new Date(), { weekStartsOn: 1 }) // Define o início da semana como segunda-feira
   );
+
+  // Estado para guardar as aulas formatadas
   const [aulas, setAulas] = useState([]);
 
+  // Estado para guardar blocos de horários não alocados
   const [blocos, setBlocos] = useState([]);
+
+  // Estado para guardar o horário atualmente selecionado
+  const [horarioSelecionado, setHorarioSelecionado] = useState(null);
+
+  // Estado para controlar a visibilidade do formulário de criação de horário
+  const [mostrarCriar, setMostrarCriar] = useState(false);
+
+  // Gera os dias da semana atual
   const diasDaSemana = eachDayOfInterval({
     start: currentWeekStart,
-    end: add(currentWeekStart, { days: 5 }),
+    end: add(currentWeekStart, { days: 5 }), // Inclui de segunda a sexta-feira
   });
 
+  // Gera os horários do dia (das 8:00 às 23:30, com intervalos de 30 minutos)
   const horas = Array.from({ length: 33 }, (_, i) =>
-    addMinutes(startOfDay(new Date()), 480 + 30 * i)
+    addMinutes(startOfDay(new Date()), 480 + 30 * i) // Começa às 8:00 (480 minutos) e adiciona intervalos de 30 minutos
   );
 
+  // Função para mudar a semana exibida
   const mudarSemana = (direcao) => {
-    const novaSemana = add(currentWeekStart, { weeks: direcao });
-    setCurrentWeekStart(novaSemana);
-  };
-  ////////////////////////////////////////////////////////////////
-  const horariosExemplo = [
-    { id: 1, nome: "2024/25 LEI 1ºA" },
-    { id: 2, nome: "2024/25 LEI 2ºB" },
-  ];
-  const [horarios, setHorarios] = useState([]);
-  const [horarioSelecionado, setHorarioSelecionado] = useState(null);
-  const [mostrarCriar, setMostrarCriar] = useState(false);
-  const [novoHorarioNome, setNovoHorarioNome] = useState("");
-
-  // Carregar lista de horários (simulação ou chamada à API)
-  useEffect(() => {
-    // Substituir por chamada real à API
-    setHorarios(horariosExemplo);
-  }, []);
-
-  const criarHorario = async (nome) => {
-    try {
-      // Criar novo horário via API
-      const novo = { id: Date.now(), nome };
-      setHorarios((prev) => [...prev, novo]);
-      setHorarioSelecionado(novo);
-      setMostrarCriar(false);
-      setNovoHorarioNome("");
-      carregarManchasDoHorario(novo.id);
-    } catch (err) {
-      console.error("Erro ao criar horário:", err);
-    }
+    const novaSemana = add(currentWeekStart, { weeks: direcao }); // Adiciona ou subtrai semanas
+    setCurrentWeekStart(novaSemana); // Atualiza o estado com a nova semana
   };
 
-  const carregarManchasDoHorario = (id) => {
-    console.log("Carregar manchas do horário:", id);
-    // Chamada para ir buscar as manchas desse horário específico
-    // setAulas(...) etc.
-  };
-  ///////////////////////////////////////////////////////
+  // Efeito para carregar as manchas horárias ao montar o componente
   useEffect(() => {
     const inic = async () => {
       try {
+        // Obtém as manchas horárias da API
         const response = await getManchasHorarias();
         const mH = await response.json();
+
+        // Formata os blocos de horários recebidos
         const blocosFormatados = mH.map((bloco) => ({
           id: bloco.id,
           cadeira: bloco.uc.nome,
@@ -83,58 +65,65 @@ const HorariosPage = () => {
           dia: bloco.dia,
           professor: bloco.docente.nome,
           sala: bloco.sala.nome,
-          duracao: bloco.numSlots * 30,
+          duracao: bloco.numSlots * 30, // Duração em minutos
         }));
-        const b = [];
-        const a = [];
+
+        const b = []; // Blocos não alocados
+        const a = []; // Aulas formatadas
+
+        // Processa os blocos para separar os não alocados e formatar os horários
         blocosFormatados.forEach((element) => {
           if (
-            element.horaInicio === "00:00:00" ||
-            element.dia === "0001-01-01"
+            element.horaInicio === "00:00:00" || // Verifica se o horário não está definido
+            element.dia === "0001-01-01" // Verifica se o dia não está definido
           ) {
-            b.push(element);
+            b.push(element); // Adiciona aos blocos não alocados
           }
           a.push({
             ...element,
             horaInicio: format(
               new Date(`1970-01-01T${element.horaInicio}`),
               "HH:mm"
-            ),
+            ), // Formata a hora de início
             horaFim: format(
               addMinutes(
                 new Date(`1970-01-01T${element.horaInicio}`),
                 element.duracao
               ),
               "HH:mm"
-            ),
+            ), // Calcula e formata a hora de término
           });
         });
-        setBlocos(b);
-        setAulas(a);
+
+        setBlocos(b); // Atualiza o estado com os blocos não alocados
+        setAulas(a); // Atualiza o estado com as aulas formatadas
       } catch (error) {
-        console.error("Erro ao obter os dados:", error);
+        console.error("Erro ao obter os dados:", error); // Loga erros no console
       }
     };
-    inic();
+    inic(); // Chama a função de inicialização
   }, []);
 
-  // Cria uma conexão SignalR
+  // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:7008/horarioHub", {
         withCredentials: true,
-        transport: signalR.HttpTransportType.WebSockets,
+        transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
       })
-      .withAutomaticReconnect()
+      .withAutomaticReconnect() // Reconecta automaticamente em caso de desconexão
       .build();
 
+    // Inicia a conexão
     connection.start().then(() => {
       console.log("Ligado ao SignalR");
 
+      // Define o evento para receber atualizações de aulas
       connection.on("AulaAtualizada", async (data) => {
         console.log("Aula atualizada via socket:", data);
 
         try {
+          // Atualiza as manchas horárias ao receber uma atualização
           const response = await getManchasHorarias();
           const mH = await response.json();
           const blocosFormatados = mH.map((bloco) => ({
@@ -147,8 +136,10 @@ const HorariosPage = () => {
             sala: bloco.sala.nome,
             duracao: bloco.numSlots * 30,
           }));
+
           const b = [];
           const a = [];
+
           blocosFormatados.forEach((element) => {
             if (
               element.horaInicio === "00:00:00" ||
@@ -171,6 +162,7 @@ const HorariosPage = () => {
               ),
             });
           });
+
           setBlocos(b);
           setAulas(a);
         } catch (error) {
@@ -179,6 +171,7 @@ const HorariosPage = () => {
       });
     });
 
+    // Limpa a conexão ao desmontar o componente
     return () => {
       connection.stop();
     };
@@ -186,18 +179,15 @@ const HorariosPage = () => {
 
   return (
     <>
+      {/* Componente para gerenciar horários */}
       <GestaoHorarios
-        horarios={horarios}
         horarioSelecionado={horarioSelecionado}
         setHorarioSelecionado={setHorarioSelecionado}
         mostrarCriar={mostrarCriar}
         setMostrarCriar={setMostrarCriar}
-        novoHorarioNome={novoHorarioNome}
-        setNovoHorarioNome={setNovoHorarioNome}
-        criarHorario={criarHorario}
-        carregarManchasDoHorario={carregarManchasDoHorario}
       />
 
+      {/* Exibe a grelha de horários se um horário estiver selecionado */}
       {horarioSelecionado && (
         <GrelhaHorario
           diasDaSemana={diasDaSemana}

@@ -98,7 +98,8 @@
     right: 0;
     width: calc(100% - 4px);
     margin: 2px;
-    background-color: #1d4ed8;
+    /* background-color: #1d4ed8; */
+    background-color: #25a830;
     color: white;
     padding: 4px 6px;
     border-radius: 8px;
@@ -152,7 +153,8 @@
   }
   
   .bloco-aula {
-    background-color: #1e50e7;
+    /* background-color: #1e50e7; */
+    background-color: #25a830;
     color: white;
     padding: 0.5rem;
     border-radius: 8px;
@@ -173,7 +175,8 @@
   }
   
   .bloco-default {
-    background-color: #2563eb;
+    /* background-color: #2563eb; */
+    background-color: #25a830;
     color: white;
     padding: 0.5rem;
     border-radius: 8px;
