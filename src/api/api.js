@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:7008/";
+const API_URL = "http://localhost:5251/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -316,14 +316,14 @@ export const getDetalhesManchaHoraria= (id) => {
 // Autenticação
 
 // Login
-export const login = async (email, password) => {
+export const login = async (escola, curso, password) => {
   try {
     const response = await fetch(`${API_URL}login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ escola, curso, password }),
     });
 
     if (!response.ok) {
