@@ -316,14 +316,14 @@ export const getDetalhesManchaHoraria= (id) => {
 // Autenticação
 
 // Login
-export const login = async (escola, curso, password) => {
+export const login = async (nome, password) => {
   try {
     const response = await fetch(`${API_URL}login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ escola, curso, password }),
+      body: JSON.stringify({ nome, password }),
     });
 
     if (!response.ok) {
@@ -341,14 +341,14 @@ export const login = async (escola, curso, password) => {
 };
 
 // Registo
-export const register = async (escola, curso, password) => {
+export const register = async (nome, escola, curso, password) => {
   try {
     const response = await fetch(`${API_URL}register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ escola, curso, password }),
+      body: JSON.stringify({ nome, escola, curso, password }),
     });
 
     if (response.ok) {
