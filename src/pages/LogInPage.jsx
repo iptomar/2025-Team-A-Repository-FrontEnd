@@ -4,7 +4,8 @@ import { login } from '../api/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Login() {
-    const [email, setEmail] = useState('')
+    const [escola, setEscola] = useState('')
+    const [curso, setCurso] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
 
@@ -38,13 +39,24 @@ export default function Login() {
                         <h2 class="mb-4">Iniciar Sessão</h2>
                         <form onSubmit={handleSubmit}>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email:</label>
+                                <label for="email" class="form-label">Escola:</label>
                                 <input
                                     type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={escola}
+                                    onChange={(e) => setEscola(e.target.value)}
                                     class="form-control"
-                                    placeholder="Insira o seu email"
+                                    placeholder="Insira o acrónimo da escola"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Curso:</label>
+                                <input
+                                    type="email"
+                                    value={curso}
+                                    onChange={(e) => setCurso(e.target.value)}
+                                    class="form-control"
+                                    placeholder="Insira o curso a que pertence"
                                     required
                                 />
                             </div>
