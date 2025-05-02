@@ -316,14 +316,14 @@ export const getDetalhesManchaHoraria= (id) => {
 // Autenticação
 
 // Login
-export const login = async (nome, password) => {
+export const login = async (email, password) => {
   try {
     const response = await fetch(`${API_URL}login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ nome, password }),
+      body: JSON.stringify({ email, password }), 
     });
 
     if (!response.ok) {
@@ -333,12 +333,15 @@ export const login = async (nome, password) => {
 
     const data = await response.json();
     console.log("Login bem-sucedido:", data);
-    return data;
+    //jwt token fica aqui
+    //podes manipular como quiseres
+    return data; 
   } catch (error) {
     console.error("Erro no login:", error);
     throw error;
   }
 };
+
 
 // Registo
 export const register = async (nome, email, escolaFK, cursoFK, password) => {
