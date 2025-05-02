@@ -60,6 +60,9 @@ const GestaoHorarios = ({
         toast.success("Horário criado com sucesso!");
         setMostrarCriar(false); // Esconde o formulário de criação
         setHorarioCriado(true); // Atualiza o estado para indicar que o horário foi criado
+        setanoLetivo(""); // Limpa o campo de ano letivo
+        setSemestre(""); // Limpa o campo de semestre
+        setTurma(null); // Limpa o campo de turma
       }
     } catch (err) {
       console.log("catch");
