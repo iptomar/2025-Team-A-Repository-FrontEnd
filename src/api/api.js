@@ -343,7 +343,7 @@ export const login = async (nome, password) => {
 // Registo
 export const register = async (nome, email, escolaFK, cursoFK, password) => {
   try {
-    const response = await fetch(`${API_URL}register`, {
+    const response = await fetch(`${API_URL}api/API_Auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
