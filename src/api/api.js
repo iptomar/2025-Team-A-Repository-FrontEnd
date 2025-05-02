@@ -341,14 +341,14 @@ export const login = async (nome, password) => {
 };
 
 // Registo
-export const register = async (nome, escola, curso, password) => {
+export const register = async (nome, email, escolaFK, cursoFK, password) => {
   try {
     const response = await fetch(`${API_URL}register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ nome, escola, curso, password }),
+      body: JSON.stringify({ nome, email, escolaFK, cursoFK, password }),
     });
 
     if (response.ok) {

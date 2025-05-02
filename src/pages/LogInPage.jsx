@@ -40,7 +40,7 @@ export default function Login() {
                             <div class="mb-3">
                                 <label for="nome" class="form-label">Nome:</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     value={nome}
                                     onChange={(e) => setNome(e.target.value)}
                                     class="form-control"
