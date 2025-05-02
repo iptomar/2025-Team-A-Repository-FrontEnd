@@ -26,33 +26,35 @@ export default function RegisterPage() {
       .then(async ([resEscola, resCurso]) => {
         const dataEscola = await resEscola.json();
         const dataCurso = await resCurso.json();
-
+  
         setRawEscolas(dataEscola);
         setListaEscolas(dataEscola.map(e => ({ value: e.id, label: e.nome })));
 
         setRawCursos(dataCurso);
-        setListaCursos(dataCurso.map(c => ({ value: c.id, label: c.nome })));
+        setListaCursos(dataCurso.map(c => ({ value: c.codCurso, label: c.nome })));
       })
       .catch(() => toast.error("Erro ao carregar escolas ou cursos"));
   }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
-
+  
     const escolaFK = rawEscolas.find(e => e.id === escolaSelecionada?.value);
-    const cursoFK = rawCursos.find(c => c.id === cursoSelecionado?.value);
-
+    const cursoFK = rawCursos.find(c => c.codCurso === cursoSelecionado?.value);
+  
     if (!nome || !email || !escolaFK || !cursoFK || !password || !password2) {
       toast.error("Preencha todos os campos");
       return;
     }
-
+  
     if (password !== password2) {
       toast.error("As palavras-passe não coincidem");
       return;
     }
 
-    register(nome, email, escolaFK.id, cursoFK.id, password, password2)
+    console.log(nome +";"+ email +";"+ escolaFK.id +";"+ cursoFK.codCurso +";"+ password)
+  
+    register(nome, email, escolaFK.id, cursoFK.codCurso, password)
       .then(() => {
         toast.success("Conta criada com sucesso!");
         navigate("/login");
@@ -99,8 +101,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Escola</label>
+              <label htmlFor="escolaFK" className="form-label">Escola</label>
               <Select
+                id="escolaFK"
                 options={listaEscolas}
                 value={escolaSelecionada}
                 onChange={setEscolaSelecionada}
@@ -109,8 +112,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Curso</label>
+              <label htmlFor="cursoFK" className="form-label">Curso</label>
               <Select
+                id="cursoFK"
                 options={listaCursos}
                 value={cursoSelecionado}
                 onChange={setCursoSelecionado}
