@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
