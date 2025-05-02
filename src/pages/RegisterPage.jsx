@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { register } from "../api/api";
 
 export default function RegisterPage() {
+  const [nome, setNome] = useState("");
   const [escola, setEscola] = useState("");
   const [curso, setCurso] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +14,7 @@ export default function RegisterPage() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (!escola || !curso || !password || !password2) {
+    if (!nome || !escola || !curso || !password || !password2) {
       alert("Preencha todos os campos");
       return;
     }
@@ -23,7 +24,7 @@ export default function RegisterPage() {
       return;
     }
 
-    register(escola, curso, password, password2)
+    register(nome, escola, curso, password, password2)
       .then((res) => {
         console.log(res);
         navigate("/login");
@@ -48,10 +49,22 @@ export default function RegisterPage() {
             ></img>
             <h2 class="mb-4">Registo</h2>
             <form onSubmit={handleSubmit}>
+
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome: </label>
+                <input
+                  type="email"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  class="form-control"
+                  placeholder="Insira o seu nome de utilizador"
+                />
+              </div>
+
               <div class="mb-3">
                 <label for="email" class="form-label">Escola: </label>
                 <input
-                  type="email"
+                  type="escola"
                   value={escola}
                   onChange={(e) => setEscola(e.target.value)}
                   class="form-control"
@@ -60,7 +73,7 @@ export default function RegisterPage() {
               </div>
 
               <div class="mb-3">
-                <label for="email" class="form-label">Curso: </label>
+                <label for="curso" class="form-label">Curso: </label>
                 <input
                   type="email"
                   value={curso}
