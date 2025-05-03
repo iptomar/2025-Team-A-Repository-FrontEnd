@@ -323,7 +323,7 @@ export const login = async (email, password) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password }), 
     });
 
     if (!response.ok) {
@@ -333,22 +333,25 @@ export const login = async (email, password) => {
 
     const data = await response.json();
     console.log("Login bem-sucedido:", data);
-    return data;
+    //jwt token fica aqui
+    //podes manipular como quiseres
+    return data; 
   } catch (error) {
     console.error("Erro no login:", error);
     throw error;
   }
 };
 
+
 // Registo
-export const register = async (email, password) => {
+export const register = async (nome, email, escolaFK, cursoFK, password) => {
   try {
-    const response = await fetch(`${API_URL}register`, {
+    const response = await fetch(`${API_URL}api/API_Auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ nome, email, escolaFK, cursoFK, password }),
     });
 
     if (response.ok) {
