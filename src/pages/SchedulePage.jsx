@@ -12,8 +12,75 @@ import pt from "date-fns/locale/pt";
 import "../css/horario.css";
 import { getManchasHorarias, dragBloco } from "../api/api";
 import * as signalR from "@microsoft/signalr";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const SchedulePage = () => {
+
+  // printRef é uma referência para o elemento que queremos imprimir
+  // e será usada para gerar o PDF
+  const printRef = React.useRef(null);
+
+  // Tratamento de download do horário em formato de PDF
+  const handleDownloadPDF = async () => {
+    const element = printRef.current;
+    if (!element){
+      console.error("Elemento não encontrado para download do PDF.");
+      return;
+    }
+
+    // Abrir nova janela
+    const newWindow = window.open('', '_blank', 'width=1200,height=1600');
+
+    if (!newWindow) {
+      alert('Por favor, permite pop-ups no navegador para fazer o download!');
+      return;
+    }
+
+    // Copiar o conteúdo da grelha para a nova janela
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Download do Horário</title>
+          <link rel="stylesheet" href="/src/css/horario.css">
+        </head>
+        <body>${element.outerHTML}</body>
+      </html>
+    `);
+    newWindow.document.close();
+
+    // Esperar a nova janela carregar
+    newWindow.onload = async () => {
+      const newElement = newWindow.document.body.firstChild;
+
+      // Pequena pausa para garantir que tudo carregou
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const canvas = await html2canvas(newElement, {
+        scale: 2, // Aumenta a escala para melhorar a qualidade da imagem
+        backgroundColor: null, // Define o fundo como transparente
+      });
+
+      const data = canvas.toDataURL("image/png");
+    
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: "a4",
+      });
+
+      const imgProperties = pdf.getImageProperties(data);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+
+      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("horario.pdf");
+
+      // Fechar a nova janela
+      newWindow.close();
+    };
+  };
+
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
@@ -165,7 +232,7 @@ const SchedulePage = () => {
       </div>
 
       <div className="main-grid">
-        <div className="grelha">
+        <div ref={printRef} className="grelha"> 
           <div className="grelha-header">
             <div className="hora"></div>
             {diasDaSemana.map((dia) => (
@@ -302,6 +369,9 @@ const SchedulePage = () => {
           ))}
         </div>
       </div>
+      <button onClick={handleDownloadPDF} className="download-button flex item-center py-2 px-3">
+        Baixar Horário atual
+      </button>  
     </div>
   );
 };

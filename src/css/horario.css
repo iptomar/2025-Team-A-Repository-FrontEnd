@@ -49,8 +49,8 @@
     border-radius: 10px;
     position: relative;
     overflow-y: auto;
-    max-height: 600px; 
     max-width: 80%;
+    height: auto;
   }
   
   .grelha-header {
@@ -65,7 +65,7 @@
   
   .grelha-body {
     display: grid;
-    grid-template-rows: repeat(26, 40px);
+    grid-template-rows: repeat(33, 40px);
   }
   
   .linha {
