@@ -32,13 +32,17 @@ export default function Detalhes({ entidadeNome, campos, fetchFn, voltarPath }) 
           <hr />
           {dados ? (
             <div className="text-center mb-4">
-              {campos.map(({ label, key }) => (
-                <p key={key}>
-                  <strong>{label}:</strong> {key.includes('.') 
-                    ? key.split('.').reduce((acc, curr) => acc?.[curr], dados) 
-                    : dados[key] ?? '—'}
-                </p>
-              ))}
+              {campos.map(({ label, key, render }) => {
+                const valor = key.includes('.')
+                  ? key.split('.').reduce((acc, curr) => acc?.[curr], dados)
+                  : dados[key];
+
+                return (
+                  <p key={key}>
+                    <strong>{label}:</strong> {render ? render(valor) : (valor ?? '—')}
+                  </p>
+                );
+              })}
             </div>
           ) : (
             <p>{entidadeNome} não encontrada.</p>
