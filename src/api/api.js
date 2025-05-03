@@ -310,6 +310,40 @@ export const getDetalhesManchaHoraria= (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
 };
 
+// ////////////////////////////////////////////////////////////////////////////
+ // Utilizadores
+ 
+ export const getUtilizadores = async () => {
+  try {
+    return fetch(`${API_URL}api/API_Utilizadores`);
+  } catch (error) {
+    console.error("Erro ao ir buscar os utilizadores:", error);
+  }
+};
+
+// Apagar um utilizador
+export function eliminaUtilizador(id) {
+  return fetch(`${API_URL}api/API_Utilizadores/${id}`, {
+    method: "DELETE",
+  });
+}
+
+// Obter detalhes de um utilizador
+export const getDetalhesUtilizador= (id) => {
+  return fetch(`${API_URL}api/API_Utilizadores/${id}`);
+};
+
+// Atualizar um utilizador
+export const updateUtilizador = (id, esc) => {
+  return fetch(`${API_URL}api/API_Utilizadores/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(esc),
+  });
+};
+
 
 
 // ////////////////////////////////////////////////////////////////////////////
