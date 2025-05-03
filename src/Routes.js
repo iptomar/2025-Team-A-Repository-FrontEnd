@@ -31,4 +31,7 @@ export const ROUTES = {
     CRIAR_DOCENTE: "/criar-docente",
     DETALHES_DOCENTE: "/docentes/detalhes/:id",
     EDITAR_DOCENTE: "/docentes/editar/:id",
+    UTILIZADORES: "/utilizadores",
+    EDITAR_UTILIZADOR: "/utilizadores/editar/:id",
+    DETALHES_UTILIZADOR: "/utilizadores/detalhes/:id",
   };
