@@ -1,166 +1,28 @@
-import React, { useEffect, useState } from "react";
-import {
-  add,
-  startOfWeek,
-  format,
-  eachDayOfInterval,
-  startOfDay,
-  addMinutes,
-  // set,
-} from "date-fns";
+import React from "react";
+import { format, addMinutes } from "date-fns";
 import pt from "date-fns/locale/pt";
 import "../css/horario.css";
-import { getManchasHorarias, dragBloco } from "../api/api";
-import * as signalR from "@microsoft/signalr";
+import { dragBloco } from "../api/api";
 
-const SchedulePage = () => {
-  const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 })
-  );
-  const [aulas, setAulas] = useState([]);
-
-  const [blocos, setBlocos] = useState([]);
-  const diasDaSemana = eachDayOfInterval({
-    start: currentWeekStart,
-    end: add(currentWeekStart, { days: 5 }),
-  });
-
-  const horas = Array.from({ length: 33 }, (_, i) =>
-    addMinutes(startOfDay(new Date()), 480 + 30 * i)
-  );
-
-  const mudarSemana = (direcao) => {
-    const novaSemana = add(currentWeekStart, { weeks: direcao });
-    setCurrentWeekStart(novaSemana);
-  };
-
-  useEffect(() => {
-    const inic = async () => {
-      try {
-        const response = await getManchasHorarias();
-        const mH = await response.json();
-        const blocosFormatados = mH.map((bloco) => ({
-          id: bloco.id,
-          cadeira: bloco.uc.nome,
-          tipo: bloco.tipoDeAula,
-          horaInicio: bloco.horaInicio,
-          dia: bloco.dia,
-          professor: bloco.docente.nome,
-          sala: bloco.sala.nome,
-          duracao: bloco.numSlots * 30,
-        }));
-        const b = [];
-        const a = [];
-        blocosFormatados.forEach((element) => {
-          if (
-            element.horaInicio === "00:00:00" ||
-            element.dia === "0001-01-01"
-          ) {
-            b.push(element);
-          }
-          a.push({
-            ...element,
-            horaInicio: format(
-              new Date(`1970-01-01T${element.horaInicio}`),
-              "HH:mm"
-            ),
-            horaFim: format(
-              addMinutes(
-                new Date(`1970-01-01T${element.horaInicio}`),
-                element.duracao
-              ),
-              "HH:mm"
-            ),
-          });
-        });
-        setBlocos(b);
-        setAulas(a);
-      } catch (error) {
-        console.error("Erro ao obter os dados:", error);
-      }
-    };
-    inic();
-  }, []);
-
-  // Cria uma conexão SignalR
-  useEffect(() => {
-    const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:7008/horarioHub", {
-      withCredentials: true,
-      transport: signalR.HttpTransportType.WebSockets,
-    })
-    .withAutomaticReconnect()
-    .build();
-
-    connection.start().then(() => {
-      console.log("Ligado ao SignalR");
-
-      connection.on("AulaAtualizada", async (data) => {
-        console.log("Aula atualizada via socket:", data);
-
-        try {
-          const mH = await getManchasHorarias();
-          const blocosFormatados = mH.map((bloco) => ({
-            id: bloco.id,
-            cadeira: bloco.uc.nome,
-            tipo: bloco.tipoDeAula,
-            horaInicio: bloco.horaInicio,
-            dia: bloco.dia,
-            professor: bloco.docente.nome,
-            sala: bloco.sala.nome,
-            duracao: bloco.numSlots * 30,
-          }));
-          const b = [];
-          const a = [];
-          blocosFormatados.forEach((element) => {
-            if (
-              element.horaInicio === "00:00:00" ||
-              element.dia === "0001-01-01"
-            ) {
-              b.push(element);
-            }
-            a.push({
-              ...element,
-              horaInicio: format(
-                new Date(`1970-01-01T${element.horaInicio}`),
-                "HH:mm"
-              ),
-              horaFim: format(
-                addMinutes(
-                  new Date(`1970-01-01T${element.horaInicio}`),
-                  element.duracao
-                ),
-                "HH:mm"
-              ),
-            });
-          });
-          setBlocos(b);
-          setAulas(a);
-        } catch (error) {
-          console.error("Erro ao obter os dados:", error);
-        }
-      });
-    });
-
-    return () => {
-      connection.stop();
-    };
-  }, []);
-
+const GrelhaHorario = ({
+  diasDaSemana,
+  horas,
+  aulas,
+  blocos,
+  setAulas,
+  setBlocos,
+  mudarSemana,
+}) => {
   return (
-    <div className="horario-container">
-      <div className="header">
+    <div style={{ margin: "1rem" }}>
+      <div className="header" >
         <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
         <h2>
-          {`${format(currentWeekStart, "EEEE, dd 'de' MMMM", {
+          {`${format(diasDaSemana[0], "EEEE, dd 'de' MMMM", {
             locale: pt,
-          })} - ${format(
-            add(currentWeekStart, { days: 5 }),
-            "EEEE, dd 'de' MMMM",
-            {
-              locale: pt,
-            }
-          )}`}
+          })} - ${format(diasDaSemana[diasDaSemana.length - 1], "EEEE, dd 'de' MMMM", {
+            locale: pt,
+          })}`}
         </h2>
         <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
       </div>
@@ -213,15 +75,8 @@ const SchedulePage = () => {
                       }}
                     >
                       {aulasDoDia.map((aula, i) => {
-                        const [hStart, mStart] = aula.horaInicio
-                          .split(":")
-                          .map(Number);
-                        const [hEnd, mEnd] = aula.horaFim
-                          .split(":")
-                          .map(Number);
-                        const minutosInicio = hStart * 60 + mStart;
-                        const minutosFim = hEnd * 60 + mEnd;
-                        const altura = (minutosFim - minutosInicio) * (40 / 30);
+                        const altura =
+                          (aula.duracao * 40) / 30;
 
                         const removerAula = () => {
                           setAulas((prev) =>
@@ -279,6 +134,7 @@ const SchedulePage = () => {
             ))}
           </div>
         </div>
+
         <div className="sidebar">
           <h3>Blocos</h3>
           {blocos.map((bloco, i) => (
@@ -307,4 +163,4 @@ const SchedulePage = () => {
   );
 };
 
-export default SchedulePage;
+export default GrelhaHorario;

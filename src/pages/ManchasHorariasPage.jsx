@@ -38,7 +38,7 @@ const ManchasHorariasPage = () => {
 
   return (
     <>
-      <h2 className="text-center mt-5">Turmas</h2>
+      <h2 className="text-center mt-5">Manchas Horárias</h2>
       <div className="d-flex justify-content-center mt-4">
         <a href="#/criar-manchahoraria" className="btn btn-primary">
           Criar Mancha Horária

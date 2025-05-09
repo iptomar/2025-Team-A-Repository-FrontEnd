@@ -7,7 +7,7 @@ export default function DetalhesTurma() {
       entidadeNome="da Turma"
       campos={[
         { label: "Nome", key: "nome" },
-        { label: "Ano Letivo", key: "anoLetivo" },
+        { label: "Ano Curso", key: "anoCurso" },
         { label: "Curso", key: "curso.nome" },
       ]}
       fetchFn={Api.getDetalheTurma}
