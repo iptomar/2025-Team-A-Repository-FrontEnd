@@ -311,6 +311,7 @@ export const getDetalhesManchaHoraria= (id) => {
 };
 
 // ////////////////////////////////////////////////////////////////////////////
+
  // Utilizadores
  
  export const getUtilizadores = async () => {
@@ -343,6 +344,24 @@ export const updateUtilizador = (id, esc) => {
     body: JSON.stringify(esc),
   });
 };
+
+// Horarios
+
+// Obter todos os horarios
+export function getHorarios() {
+  return fetch(`${API_URL}api/API_Horarios`);
+}
+// Criar um novo horario
+export function criarHorario(d) {
+  return fetch(`${API_URL}api/API_Horarios`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(d),
+  });
+}
+
 
 
 

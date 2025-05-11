@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Api from "../../api/api";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import TextInput from "../../components/common/TextInput";
 import SubmitButton from "../../components/common/SubmitButton";
 import CursoSelect from "../../components/common/SelectCurso";
 import EditarPage from "./EditarPage";
 import ReturnButton from "../../components/common/ReturnButton";
+import { Select, MenuItem } from "@mui/material";
 
 export default function EditarTurma() {
   const [nome, setNome] = useState("");
-  const [anoLetivo, setAnoLetivo] = useState("");
+  const [anoCurso, setanoCurso] = useState("");
   const [cursoSelecionado, setCursoSelecionado] = useState(null);
   const [loading, setLoading] = useState(false);
   const [turma, setTurma] = useState(null);
@@ -29,19 +30,26 @@ export default function EditarTurma() {
 
         setTurma(turmaData);
         setNome(turmaData.nome);
-        setAnoLetivo(turmaData.anoLetivo);
+        setanoCurso(turmaData.anoCurso);
 
         // Buscar a lista de cursos
         const resCursos = await Api.getCursos();
         const cursosData = await resCursos.json();
-        setCursos(cursosData.map((curso) => ({ value: curso.codCurso, label: curso.nome })));
+        setCursos(
+          cursosData.map((curso) => ({
+            value: curso.codCurso,
+            label: curso.nome,
+          }))
+        );
 
         // Definir curso selecionado
-        const cursoEncontrado = cursosData.find((curso) => curso.codCurso === turmaData.cursoFK);
+        const cursoEncontrado = cursosData.find(
+          (curso) => curso.codCurso === turmaData.cursoFK
+        );
         if (cursoEncontrado) {
           setCursoSelecionado({
             value: cursoEncontrado.codCurso,
-            label: cursoEncontrado.nome
+            label: cursoEncontrado.nome,
           });
         }
       } catch (err) {
@@ -57,15 +65,15 @@ export default function EditarTurma() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!nome || !anoLetivo || !cursoSelecionado) {
+    if (!nome || !anoCurso || !cursoSelecionado) {
       toast.error("Por favor, preencha todos os campos e selecione um curso.");
       return;
     }
 
     const dataASubmeter = {
-      id:id,
+      id: id,
       nome: nome,
-      anoLetivo: anoLetivo,
+      anoCurso: anoCurso,
       cursoFK: cursoSelecionado.value,
     };
 
@@ -86,7 +94,7 @@ export default function EditarTurma() {
           toast.error(data.erro);
         } else {
           toast.success("Turma editada com sucesso!");
-          navigate('/turmas');
+          navigate("/turmas");
         }
       })
       .catch((error) => {
@@ -109,12 +117,19 @@ export default function EditarTurma() {
           value={nome}
           onChange={(e) => setNome(e.target.value)}
         />
-        <TextInput
-          id="anoLetivo"
-          label="Ano Letivo"
-          value={anoLetivo}
-          onChange={(e) => setAnoLetivo(e.target.value)}
-        />
+        <label className="form-label">Selecione o Ano do Curso</label>
+        <br></br>
+        <Select
+          style={{ width: "100%", height: "40px", marginBottom: "15px" }}
+          labelId="anoCurso-label"
+          id="anoCurso"
+          value={anoCurso}
+          onChange={(e) => setanoCurso(e.target.value)}
+        >
+          <MenuItem value="1º Ano">1º Ano</MenuItem>
+          <MenuItem value="2º Ano">2º Ano</MenuItem>
+          <MenuItem value="3º Ano">3º Ano</MenuItem>
+        </Select>
         <CursoSelect
           value={cursoSelecionado}
           onChange={setCursoSelecionado}

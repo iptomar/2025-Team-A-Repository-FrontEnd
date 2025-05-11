@@ -1,7 +1,7 @@
 import React from "react";
-import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import LogInPage from "./pages/LogInPage";
-import SchedulePage from "./pages/SchedulePage";
+import HorariosPage from "./pages/HorariosPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import DocentesPage from "./pages/DocentesPage";
@@ -60,7 +60,7 @@ import { ROUTES } from "./Routes";
 //         <Route path={ROUTES.LOG_IN} element={<LogInPage />} />
 //         <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
 //         <Route path={ROUTES.HOME} element={<HomePage />} />
-//         <Route path={ROUTES.SCHEDULE} element={<SchedulePage />} />
+//         <Route path={ROUTES.SCHEDULE} element={<HorariosPage />} />
 //         <Route path={ROUTES.DOCENTES} element={<DocentesPage />} />
 //         <Route path={ROUTES.ESCOLAS} element={<EscolasPage />} />
 //         <Route path={ROUTES.SALAS} element={<SalasPage />} />
@@ -115,7 +115,7 @@ const App = () => (
       <Route
         key={ROUTES.SCHEDULE}
         path={ROUTES.SCHEDULE}
-        element={<SchedulePage />}
+        element={<HorariosPage />}
       />
       <Route
         key={ROUTES.DOCENTES}
