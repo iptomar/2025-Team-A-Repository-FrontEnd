@@ -30,6 +30,9 @@ import DetalhesManchaHoraria from "./pages/DetalhesPage/DetalhesManchaHoraria";
 import CriarDocente from "./pages/CriarPage/CriarDocente";
 import EditarDocente from "./pages/EditarPage/EditarDocente";
 import DetalhesDocente from "./pages/DetalhesPage/DetalhesDocente";
+import EditarUtilizador from "./pages/EditarPage/EditarUtilizador";
+import DetalhesUtilizador from "./pages/DetalhesPage/DetalhesUtilizador";
+import UtilizadoresPage from "./pages/UtilizadoresPage";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -215,6 +218,10 @@ const App = () => (
       <Route path={ROUTES.CRIAR_SALA} element={<CriarSala />} />
       <Route path={ROUTES.EDITAR_SALA} element={<EditarSala />} />
       <Route path={ROUTES.DETALHES_SALA} element={<DetalhesSala />} />
+
+      <Route path={ROUTES.UTILIZADORES} element={<UtilizadoresPage />} />
+      <Route path={ROUTES.EDITAR_UTILIZADOR} element={<EditarUtilizador />} />
+      <Route path={ROUTES.DETALHES_UTILIZADOR} element={<DetalhesUtilizador />} />
     </Routes>
   </HashRouter>
 );
