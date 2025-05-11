@@ -8,7 +8,7 @@ export default function ListaUtilizadores() {
         <Lista
             endpoint={Api.getUtilizadores}
             colunas={["Nome", "Email", "Email Confirmado"]}
-            nomeEntidade="Utilizadores"
+            nomeEntidade="Utilizador"
             deleteFn={Api.eliminaUtilizador}
             renderItem={(utilizador, handleDelete) => (
                 <Item
