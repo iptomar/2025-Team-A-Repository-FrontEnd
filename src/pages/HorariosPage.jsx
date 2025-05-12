@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { mostrarToastBloqueado, mostrarToastDesbloqueado } from '../components/ToastHorarioBlocked.jsx'
+import { ToastContainer } from "react-toastify";
 import {
   add,
   startOfWeek,
@@ -198,6 +200,7 @@ const HorariosPage = () => {
 
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
       {/* Componente para gerenciar horários */}
       <GestaoHorarios
         horarioSelecionado={horarioSelecionado}
@@ -215,6 +218,7 @@ const HorariosPage = () => {
             <button
               onClick={async () => {
                 await desbloquearHorario(horarioSelecionado.id);
+                mostrarToastDesbloqueado();
                 setBloqueado(false);
               }}
             >
@@ -224,6 +228,7 @@ const HorariosPage = () => {
             <button
               onClick={async () => {
                 await bloquearHorario(horarioSelecionado.id);
+                mostrarToastBloqueado();
                 setBloqueado(true);
               }}
             >
