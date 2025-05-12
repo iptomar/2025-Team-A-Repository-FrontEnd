@@ -8,7 +8,7 @@ import {
   addMinutes,
 } from "date-fns";
 import "../css/horario.css";
-import { getManchasHorarias } from "../api/api";
+import { getManchasHorarias, getHorarioById, bloquearHorario, desbloquearHorario } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
 import GrelhaHorario from "../components/GrelhaHorarios";
@@ -31,6 +31,9 @@ const HorariosPage = () => {
   // Estado para controlar a visibilidade do formulário de criação de horário
   const [mostrarCriar, setMostrarCriar] = useState(false);
 
+  // Estado para bloquear ou desbloquear horários
+  const [bloqueado, setBloqueado] = useState(false);
+
   // Gera os dias da semana atual
   const diasDaSemana = eachDayOfInterval({
     start: currentWeekStart,
@@ -47,6 +50,22 @@ const HorariosPage = () => {
     const novaSemana = add(currentWeekStart, { weeks: direcao }); // Adiciona ou subtrai semanas
     setCurrentWeekStart(novaSemana); // Atualiza o estado com a nova semana
   };
+
+  // Função para bloquear ou desbloquear horários
+  useEffect(() => {
+  const obterEstadoBloqueado = async () => {
+    if (!horarioSelecionado) return;
+    // Obter o estado bloqueado do horário selecionado
+    try {
+      const response = await getHorarioById(horarioSelecionado.id);
+      const data = await response.json();
+      setBloqueado(data.bloqueado);
+    } catch (error) {
+      console.error("Erro ao obter estado bloqueado:", error);
+    }
+  };
+  obterEstadoBloqueado();
+}, [horarioSelecionado]);
 
   // Efeito para carregar as manchas horárias ao montar o componente
   useEffect(() => {
@@ -189,6 +208,29 @@ const HorariosPage = () => {
 
       {/* Exibe a grelha de horários se um horário estiver selecionado */}
       {horarioSelecionado && (
+        <>
+        <div style={{ margin: "1rem" }}>
+          {/* Botão para bloquear ou desbloquear o horário */}
+          {bloqueado ? (
+            <button
+              onClick={async () => {
+                await desbloquearHorario(horarioSelecionado.id);
+                setBloqueado(false);
+              }}
+            >
+              Desbloquear horário
+            </button>
+          ) : (
+            <button
+              onClick={async () => {
+                await bloquearHorario(horarioSelecionado.id);
+                setBloqueado(true);
+              }}
+            >
+              Bloquear horário
+            </button>
+          )}
+        </div>
         <GrelhaHorario
           diasDaSemana={diasDaSemana}
           horas={horas}
@@ -197,8 +239,9 @@ const HorariosPage = () => {
           setAulas={setAulas}
           setBlocos={setBlocos}
           mudarSemana={mudarSemana}
+          bloqueado={bloqueado}
         />
-      )}
+      </>)}
     </>
   );
 };

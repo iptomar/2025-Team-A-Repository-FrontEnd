@@ -351,6 +351,12 @@ export const updateUtilizador = (id, esc) => {
 export function getHorarios() {
   return fetch(`${API_URL}api/API_Horarios`);
 }
+
+// Obter um horario por ID
+export const getHorarioById = (id) => {
+  return fetch(`${API_URL}api/API_Horarios/${id}`);
+};
+
 // Criar um novo horario
 export function criarHorario(d) {
   return fetch(`${API_URL}api/API_Horarios`, {
@@ -362,7 +368,19 @@ export function criarHorario(d) {
   });
 }
 
+// Bloquear um horário
+export function bloquearHorario(id) {
+  return fetch(`${API_URL}api/API_Horarios/Bloquear/${id}`, {
+    method: "PUT",
+  });
+}
 
+// Desbloquear um horário
+export function desbloquearHorario(id) {
+  return fetch(`${API_URL}api/API_Horarios/Desbloquear/${id}`, {
+    method: "PUT",
+  });
+}
 
 
 // ////////////////////////////////////////////////////////////////////////////

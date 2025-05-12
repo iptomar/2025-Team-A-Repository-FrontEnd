@@ -12,6 +12,7 @@ const GrelhaHorario = ({
   setAulas,
   setBlocos,
   mudarSemana,
+  bloqueado,
 }) => {
   return (
     <div style={{ margin: "1rem" }}>
@@ -49,36 +50,53 @@ const GrelhaHorario = ({
                   );
 
                   return (
-                    <div
-                      key={`${dia}-${hora}`}
-                      className="slot"
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const data = JSON.parse(
-                          e.dataTransfer.getData("application/json")
-                        );
-                        const novaAula = {
-                          ...data,
-                          dia: format(dia, "yyyy-MM-dd"),
-                          horaInicio: format(hora, "HH:mm"),
-                          horaFim: format(
-                            addMinutes(hora, data.duracao),
-                            "HH:mm"
-                          ),
-                        };
-                        dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
-                        setAulas((prev) => [...prev, novaAula]);
-                        setBlocos((prev) =>
-                          prev.filter((bloco) => bloco.id !== data.id)
-                        );
-                      }}
-                    >
+                      <div
+                        key={`${dia}-${hora}`}
+                        className="slot"
+                        style={{
+                          cursor: bloqueado ? "not-allowed" : "pointer",
+                        }}
+                        onDragOver={(e) => {
+                          if (!bloqueado) e.preventDefault();
+                        }}
+                        onDrop={(e) => {
+                          if (bloqueado) return;
+                          e.preventDefault();
+                          const data = JSON.parse(e.dataTransfer.getData("application/json"));
+                          const novaAula = {
+                            ...data,
+                            dia: format(dia, "yyyy-MM-dd"),
+                            horaInicio: format(hora, "HH:mm"),
+                            horaFim: format(addMinutes(hora, data.duracao), "HH:mm"),
+                          };
+                          dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
+                          setAulas((prev) => [...prev, novaAula]);
+                          setBlocos((prev) => prev.filter((bloco) => bloco.id !== data.id));
+                        }}
+                      >
                       {aulasDoDia.map((aula, i) => {
                         const altura =
                           (aula.duracao * 40) / 30;
-
-                        const removerAula = () => {
+                        
+                        if (bloqueado) {
+                          return (
+                            <div
+                              key={`${dia}-${hora}-${i}`}
+                              className="aula"
+                              style={{
+                                height: `${altura}px`,
+                                top: 0,
+                                position: "relative",
+                              }}
+                            >
+                              <strong>{aula.cadeira}</strong>
+                              <em>{aula.tipo}</em>
+                              <div>{aula.professor}</div>
+                              <div>{aula.sala}</div>
+                            </div>
+                          );
+                        } 
+                         const removerAula = () => {
                           setAulas((prev) =>
                             prev.filter(
                               (a) =>
@@ -141,7 +159,28 @@ const GrelhaHorario = ({
             <div
               key={i}
               className="bloco-default"
-              draggable
+              draggable={!bloqueado}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const data = JSON.parse(
+                  e.dataTransfer.getData("application/json")
+                );
+                const novaAula = {
+                  ...data,
+                  dia: format(bloco.dia, "yyyy-MM-dd"),
+                  horaInicio: format(bloco.horaInicio, "HH:mm"),
+                  horaFim: format(
+                    addMinutes(bloco.horaInicio, bloco.duracao),
+                    "HH:mm"
+                  ),
+                };
+                dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
+                setAulas((prev) => [...prev, novaAula]);
+                setBlocos((prev) =>
+                  prev.filter((b) => b.id !== data.id)
+                );
+              }}
               onDragStart={(e) => {
                 e.dataTransfer.setData(
                   "application/json",
