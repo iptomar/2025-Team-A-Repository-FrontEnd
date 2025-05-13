@@ -38,7 +38,6 @@ export default function CriarManchaHoraria() {
     horariosSelecionados.forEach(element => {
       listaHorariosIds.push(element.value);
     });
-    console.log(listaHorariosIds);
     // Dados a serem enviados no formato esperado pela API
     const dataASubmeter = {
       salaFK: sala.value,

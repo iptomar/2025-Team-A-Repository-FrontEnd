@@ -313,6 +313,16 @@ export async function dragBloco(id, horaInicio, dia) {
     );
   }
 }
+//editar a mancha horária
+export async function updateManchaHoraria(id, dataASubmeter) {
+  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dataASubmeter),
+  });
+}
 
 // Obter detalhes de uma mancha horaria
 export const getDetalhesManchaHoraria = (id) => {
