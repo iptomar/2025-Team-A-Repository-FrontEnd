@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Api from "../../api/api";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,8 @@ import DocentesSelect from "../../components/common/SelectDocente";
 import SalasSelect from "../../components/common/SelectSala";
 import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
-import { Select, MenuItem} from "@mui/material";
+import Select from "react-select";
+import { Select as MUISelect, MenuItem } from "@mui/material";
 
 export default function CriarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -17,6 +18,8 @@ export default function CriarManchaHoraria() {
   const [numSlots, setNumSlots] = useState(0);
   const [docente, setDocente] = useState(null);
   const [sala, setSala] = useState(null);
+  const [listaHorarios, setListaHorarios] = useState([]); // Lista de horarios disponíveis
+  const [horariosSelecionados, setHorariosSelecionados] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -29,6 +32,13 @@ export default function CriarManchaHoraria() {
       return;
     }
 
+    console.log(horariosSelecionados);
+
+    let listaHorariosIds = [];
+    horariosSelecionados.forEach(element => {
+      listaHorariosIds.push(element.value);
+    });
+    console.log(listaHorariosIds);
     // Dados a serem enviados no formato esperado pela API
     const dataASubmeter = {
       salaFK: sala.value,
@@ -36,8 +46,10 @@ export default function CriarManchaHoraria() {
       tipoAula: tipoAula,
       numSlots: numSlots,
       ucFK: uc.value,
+      horariosList: listaHorariosIds,
     };
 
+    
     console.log("Dados a enviar para a API:", dataASubmeter);
 
     setLoading(true);
@@ -45,7 +57,7 @@ export default function CriarManchaHoraria() {
     try {
       const response = await Api.criarManchaHoraria(dataASubmeter);
       console.log("Resposta da API:", response);
-  
+
       if (response.data.erro) {
         toast.error(response.data.erro);
       } else {
@@ -59,6 +71,38 @@ export default function CriarManchaHoraria() {
       setLoading(false);
     }
   };
+  // Função para lidar com a seleção dos cursos
+  const handleSelectChange = (selectedOptions) => {
+    setHorariosSelecionados(selectedOptions || []);
+  };
+  // Carregar lista de horários
+
+  useEffect(() => {
+    const inic = async () => {
+      try {
+        const response = await Api.getHorarios();
+        const h = await response.json();
+        const horariosFormatados = h.map((bloco) => ({
+          value: bloco.id,
+          label:
+            bloco.anoLetivo +
+            " " +
+            bloco.turmaCurso +
+            " " +
+            bloco.semestre +
+             " " +
+            bloco.anoCurso+
+            " " +
+            bloco.nomeTurma,
+        }));
+
+        setListaHorarios(horariosFormatados);
+      } catch (error) {
+        console.error("Erro ao obter os dados:", error);
+      }
+    };
+    inic();
+  }); // Recarrega os horários quando um novo horário é criado
 
   return (
     <CriarPage titulo="Criar Mancha Horária">
@@ -77,16 +121,16 @@ export default function CriarManchaHoraria() {
           onChange={setDocente}
         />
         <label className="form-label">Selecione o Tipo de Aula</label>
-          <Select
-          style={{marginLeft:'15px', width:'200px'}}
-            labelId="tipoAula-label"
-            id="tipoAula"
-            value={tipoAula}
-            onChange={(e) => setTipoAula(e.target.value)}
-          >
-            <MenuItem value="TP">TP</MenuItem>
-            <MenuItem value="PL">PL</MenuItem>
-          </Select>
+        <MUISelect
+          style={{ marginLeft: "15px", width: "200px" }}
+          labelId="tipoAula-label"
+          id="tipoAula"
+          value={tipoAula}
+          onChange={(e) => setTipoAula(e.target.value)}
+        >
+          <MenuItem value="TP">TP</MenuItem>
+          <MenuItem value="PL">PL</MenuItem>
+        </MUISelect>
 
         <SalasSelect id="sala" label="Sala" value={sala} onChange={setSala} />
 
@@ -97,7 +141,19 @@ export default function CriarManchaHoraria() {
           value={numSlots}
           onChange={(e) => setNumSlots(e.target.value)}
         />
-
+        <div className="mb-3">
+          <label htmlFor="horarios" className="form-label">
+            Selecione o(s) Horario(s)
+          </label>
+          <br></br>
+          <Select
+            required
+            onChange={handleSelectChange} // Atualiza o estado dos horarios selecionados
+            isMulti={true}
+            options={listaHorarios} // Passa os horarios disponíveis
+            value={horariosSelecionados} // Passa os horarios selecionados para o valor da dropdown
+          />
+        </div>
         <div className="d-flex justify-content-between mt-4">
           <SubmitButton loading={loading} text="Criar" />
           <ReturnButton text="Voltar" endpoint="/manchas_horarias" />

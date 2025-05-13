@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ModalFooter } from "react-bootstrap";
 const API_URL = "http://localhost:5251/";
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ export function criarSala(sala) {
   return fetch(`${API_URL}api/API_Salas`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(sala)
+    body: JSON.stringify(sala),
   });
 }
 
@@ -66,7 +67,7 @@ export function updateSala(id, sala) {
   return fetch(`${API_URL}api/API_Salas/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(sala)
+    body: JSON.stringify(sala),
   });
 }
 
@@ -230,7 +231,7 @@ export function criarDocente(d) {
 }
 
 // Obter detalhes de um docente
-export const getDetalhesDocente= (id) => {
+export const getDetalhesDocente = (id) => {
   return fetch(`${API_URL}api/API_Docentes/${id}`);
 };
 
@@ -264,18 +265,23 @@ export const deleteManchaHoraria = async (id) => {
 // Criar mancha horária
 export const criarManchaHoraria = async (mh) => {
   try {
-    const formData = new FormData();
-    formData.append("tipoAula", mh.tipoAula);
-    formData.append("numSlots", mh.numSlots);
-    formData.append("docenteFK", mh.docenteFK);
-    formData.append("salaFK", mh.salaFK);
-    formData.append("ucFK", mh.ucFK);
+    const response = await axios.post(
+      `${API_URL}api/API_ManchasHorarias`,
+      {
+        tipoDeAula: mh.tipoAula,
+        numSlots: mh.numSlots,
+        docenteFK: mh.docenteFK,
+        salaFK: mh.salaFK,
+        ucFK: mh.ucFK,
 
-    const response = await axios.post(`${API_URL}api/API_ManchasHorarias`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+        horariosIds: mh.horariosList,
       },
-    });
+      {
+        headers: {
+           "Content-Type": "application/json",
+        },
+      }
+    );
 
     return response;
   } catch (error) {
@@ -301,12 +307,15 @@ export async function dragBloco(id, horaInicio, dia) {
 
     console.log("Mancha atualizada com sucesso:", response.data);
   } catch (error) {
-    console.error("Erro ao atualizar mancha:", error.response?.data || error.message);
+    console.error(
+      "Erro ao atualizar mancha:",
+      error.response?.data || error.message
+    );
   }
 }
 
 // Obter detalhes de uma mancha horaria
-export const getDetalhesManchaHoraria= (id) => {
+export const getDetalhesManchaHoraria = (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
 };
 
@@ -328,8 +337,6 @@ export function criarHorario(d) {
   });
 }
 
-
-
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
 
@@ -341,7 +348,7 @@ export const login = async (email, password) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }), 
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
@@ -353,13 +360,12 @@ export const login = async (email, password) => {
     console.log("Login bem-sucedido:", data);
     //jwt token fica aqui
     //podes manipular como quiseres
-    return data; 
+    return data;
   } catch (error) {
     console.error("Erro no login:", error);
     throw error;
   }
 };
-
 
 // Registo
 export const register = async (nome, email, escolaFK, cursoFK, password) => {

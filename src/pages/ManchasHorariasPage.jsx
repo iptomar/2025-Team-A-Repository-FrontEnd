@@ -13,16 +13,48 @@ const ManchasHorariasPage = () => {
       try {
         const response = await getManchasHorarias();
         const mH = await response.json();
-        const blocosFormatados = mH.map((bloco) => ({
-          id: bloco.id,
-          cadeira: bloco.uc.nome,
-          tipo: bloco.tipoDeAula,
-          horaInicio: bloco.horaInicio,
-          dia: bloco.dia,
-          professor: bloco.docente.nome,
-          sala: bloco.sala.nome,
-          numSlots: bloco.numSlots,
-        }));
+        console.log(mH);
+        // const blocosFormatados = mH.map((bloco) => ({
+        //   id: bloco.id,
+        //   cadeira: bloco.uc.nome,
+        //   tipo: bloco.tipoDeAula,
+        //   horaInicio: bloco.horaInicio,
+        //   dia: bloco.dia,
+        //   professor: bloco.docente.nome,
+        //   sala: bloco.sala.nome,
+        //   numSlots: bloco.numSlots,
+        // }));
+        const blocosFormatados = mH.map((bloco) => {
+          const horariosFormatados = bloco.listaHorarios.map((horario) => ({
+            id: horario.id,
+            nome:
+              horario.anoLetivo +
+              " " +
+              horario.turma.curso.nome +
+              " " +
+              horario.semestre +
+              " " +
+              (horario.turma.anoCurso || "") + // previne null
+              " " +
+              horario.turma.nome,
+          }));
+
+          const horariosNomes = horariosFormatados.map((h)=>
+            h.nome
+          );
+          return {
+            id: bloco.id,
+            cadeira: bloco.uc.nome,
+            tipo: bloco.tipoDeAula,
+            horaInicio: bloco.horaInicio,
+            dia: bloco.dia,
+            professor: bloco.docente.nome,
+            sala: bloco.sala.nome,
+            numSlots: bloco.numSlots,
+            horarios: horariosFormatados,
+            horariosNomes: horariosNomes.join('\n')
+          };
+        });
         setManchasHorarias(blocosFormatados);
       } catch (error) {
         console.error("Erro ao obter os dados:", error);
@@ -46,9 +78,10 @@ const ManchasHorariasPage = () => {
       </div>
 
       <div className="pt-4">
+        {console.log(manchasHorarias)}
         <ListaManchasHorarias
           manchasHorarias={manchasHorarias}
-          setManchasHorarias={setManchasHorarias}
+          // setManchasHorarias={setManchasHorarias}
         />
       </div>
     </>
