@@ -53,21 +53,48 @@ const HorariosPage = () => {
     setCurrentWeekStart(novaSemana); // Atualiza o estado com a nova semana
   };
 
+  // Efeito para obter o estado de bloqueio do horário selecionado
+  useEffect(() => {
+    const obterEstadoBloqueado = async () => {
+      if (!horarioSelecionado) return;
+      try {
+        const response = await getHorarioById(horarioSelecionado.id);
+        const data = await response.json();
+        setBloqueado(data.bloqueado);
+      } catch (error) {
+        console.error("Erro ao obter estado bloqueado:", error);
+      }
+    };
+    obterEstadoBloqueado();
+  }, [horarioSelecionado]);
+
   // Função para bloquear ou desbloquear horários
   useEffect(() => {
-  const obterEstadoBloqueado = async () => {
-    if (!horarioSelecionado) return;
-    // Obter o estado bloqueado do horário selecionado
-    try {
-      const response = await getHorarioById(horarioSelecionado.id);
-      const data = await response.json();
-      setBloqueado(data.bloqueado);
-    } catch (error) {
-      console.error("Erro ao obter estado bloqueado:", error);
-    }
-  };
-  obterEstadoBloqueado();
-}, [horarioSelecionado]);
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5251/horarioHub", {
+        withCredentials: true,
+        transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
+      })
+      .withAutomaticReconnect() // Reconecta automaticamente em caso de desconexão
+      .build();
+
+    // Inicia a conexão
+    connection.start().then(() => {
+      console.log("Ligado ao SignalR");
+
+      // Define o evento para receber atualizações de bloqueio/desbloqueio
+      connection.on("HorarioBloqueado", (data) => {
+        console.log("Evento HorarioBloqueado recebido:", data);
+        if (data.id === horarioSelecionado?.id) {
+          setBloqueado(data.bloqueado); // Atualiza o estado de bloqueio
+        }
+      });
+    });
+    // Limpa a conexão ao desmontar o componente
+    return () => {
+      connection.stop();
+    };
+  }, [horarioSelecionado]);
 
   // Efeito para carregar as manchas horárias ao montar o componente
   useEffect(() => {
@@ -128,7 +155,7 @@ const HorariosPage = () => {
   // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:7008/horarioHub", {
+      .withUrl("http://localhost:5251/horarioHub", {
         withCredentials: true,
         transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
       })
@@ -212,30 +239,38 @@ const HorariosPage = () => {
       {/* Exibe a grelha de horários se um horário estiver selecionado */}
       {horarioSelecionado && (
         <>
-        <div style={{ margin: "1rem" }}>
-          {/* Botão para bloquear ou desbloquear o horário */}
-          {bloqueado ? (
-            <button
-              onClick={async () => {
-                await desbloquearHorario(horarioSelecionado.id);
-                mostrarToastDesbloqueado();
-                setBloqueado(false);
-              }}
-            >
-              Desbloquear horário
-            </button>
-          ) : (
-            <button
-              onClick={async () => {
-                await bloquearHorario(horarioSelecionado.id);
-                mostrarToastBloqueado();
-                setBloqueado(true);
-              }}
-            >
-              Bloquear horário
-            </button>
-          )}
-        </div>
+<div style={{ margin: "1rem" }}>
+  {/* Botão para bloquear/desbloquear o horário */}
+  {bloqueado ? (
+    <button
+      onClick={async () => {
+        try {
+          await desbloquearHorario(horarioSelecionado.id);
+          setBloqueado(false);
+          mostrarToastDesbloqueado();
+        } catch (error) {
+          console.error("Erro ao desbloquear o horário:", error);
+        }
+      }}
+    >
+      Desbloquear horário
+    </button>
+  ) : (
+    <button
+      onClick={async () => {
+        try {
+          await bloquearHorario(horarioSelecionado.id);
+          setBloqueado(true);
+          mostrarToastBloqueado();
+        } catch (error) {
+          console.error("Erro ao bloquear o horário:", error);
+        }
+      }}
+    >
+      Bloquear horário
+    </button>
+  )}
+</div>
         <GrelhaHorario
           diasDaSemana={diasDaSemana}
           horas={horas}

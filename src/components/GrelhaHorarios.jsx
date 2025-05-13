@@ -158,7 +158,7 @@ const GrelhaHorario = ({
           {blocos.map((bloco, i) => (
             <div
               key={i}
-              className="bloco-default"
+              className={`bloco-default ${bloqueado ? "bloco-bloqueado" : ""}`}
               draggable={!bloqueado}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {

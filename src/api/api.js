@@ -368,18 +368,34 @@ export function criarHorario(d) {
   });
 }
 
-// Bloquear um horário
-export function bloquearHorario(id) {
-  return fetch(`${API_URL}api/API_Horarios/Bloquear/${id}`, {
+// Bloquear um horario
+export async function bloquearHorario(id) {
+  const response = await fetch(`http://localhost:5251/api/API_Horarios/Bloquear/${id}`, {
     method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ Bloqueado: true }),
   });
+  if (!response.ok) {
+    throw new Error("Erro ao bloquear o horário");
+  }
+  return response.json();
 }
 
-// Desbloquear um horário
-export function desbloquearHorario(id) {
-  return fetch(`${API_URL}api/API_Horarios/Desbloquear/${id}`, {
+// Desbloquear um horario
+export async function desbloquearHorario(id) {
+  const response = await fetch(`http://localhost:5251/api/API_Horarios/Desbloquear/${id}`, {
     method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ Bloqueado: false }),
   });
+  if (!response.ok) {
+    throw new Error("Erro ao desbloquear o horário");
+  }
+  return response.json();
 }
 
 

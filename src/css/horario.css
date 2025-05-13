@@ -183,6 +183,15 @@
     margin-bottom: 1rem;
     cursor: grab;
   }
+
+  .bloco-bloqueado {
+    background-color: #e3342f;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    cursor: not-allowed;
+  }
   
 
   .main-grid {
