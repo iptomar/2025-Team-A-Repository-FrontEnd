@@ -9,8 +9,9 @@ import ReturnButton from "../../components/common/ReturnButton";
 import UCSSelect from "../../components/common/SelectUC";
 import DocentesSelect from "../../components/common/SelectDocente";
 import SalasSelect from "../../components/common/SelectSala";
-import { Select, MenuItem } from "@mui/material";
-import { ROUTES } from '../../Routes';
+import Select from "react-select";
+import { Select as MUISelect, MenuItem } from "@mui/material";
+import { ROUTES } from "../../Routes";
 
 export default function EditarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -21,63 +22,101 @@ export default function EditarManchaHoraria() {
   const [listaDocentes, setListaDocentes] = useState([]);
   const [listaUCs, setListaUCs] = useState([]);
   const [listaSalas, setListaSalas] = useState([]);
+  const [listaHorarios, setListaHorarios] = useState([]);
+  const [horariosSelecionados, setHorariosSelecionados] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Carregar dados da turma e cursos disponíveis
+  // Quando o utilizador muda os horarios selecionados
+  const handleSelectChange = (selected) => {
+    setHorariosSelecionados(selected || []);
+  };
+
+  // Carregar dados da turma e horarios disponíveis
   useEffect(() => {
-   
     const fetchData = async () => {
       try {
         // Buscar dados da mancha horária
         const resManchaHoraria = await Api.getDetalhesManchaHoraria(id);
         const mhData = await resManchaHoraria.json();
+
+        // Obter os horários
+        const response = await Api.getHorarios();
+        const h = await response.json();
+        const horariosFormatados = h.map((bloco) => ({
+          value: bloco.id,
+          label:
+            bloco.anoLetivo +
+            " " +
+            bloco.turmaCurso +
+            " " +
+            bloco.semestre +
+            " " +
+            bloco.anoCurso +
+            " " +
+            bloco.nomeTurma,
+        }));
+        setListaHorarios(horariosFormatados);
+
+        // Pré-selecionar os horários
+        const horariosSelecionadosMapeados = (mhData.listaHorarios || []).map(
+          (hor) => {
+            const horarioEncontrado = horariosFormatados.find(
+              (h) => h.value === hor.id
+            );
+            return {
+              value: hor.id,
+              label: horarioEncontrado?.label || "Horário desconhecido",
+            };
+          }
+        );
+
+        setHorariosSelecionados(horariosSelecionadosMapeados);
+
         // Obter a lista de UCs
         const resUCs = await Api.getUCs();
         const ucsData = await resUCs.json();
-        setListaUCs(ucsData.map((uc) => ({ value: uc.id, label: uc.nome })));
+        const ucsOptions = ucsData.map((uc) => ({
+          value: uc.id,
+          label: uc.nome,
+        }));
+        setListaUCs(ucsOptions);
 
         // Definir a UC selecionada
-        const ucEncontrada = ucsData.find((uc) => uc.id === mhData.ucfk);
-        if (ucEncontrada) {
-          setUc({
-            value: ucEncontrada.id,
-            label: ucEncontrada.nome,
-          });
-        }
+        const ucEncontrada = ucsOptions.find((uc) => uc.value === mhData.uc.id);
+        if (ucEncontrada) setUc(ucEncontrada);
+
         // Obter a lista de docentes
         const resDocentes = await Api.getDocentes();
         const docentesData = await resDocentes.json();
-        setListaDocentes(
-          docentesData.map((d) => ({ value: d.id, label: d.nome }))
-        );
+        const docentesOptions = docentesData.map((d) => ({
+          value: d.id,
+          label: d.nome,
+        }));
+        setListaDocentes(docentesOptions);
 
         // Definir o docente selecionado
-        const docenteEncontrado = docentesData.find(
-          (d) => d.id === mhData.docenteFK
+        const docenteEncontrado = docentesOptions.find(
+          (d) => d.value === mhData.docente.id
         );
-        if (docenteEncontrado) {
-          setDocente({
-            value: docenteEncontrado.id,
-            label: docenteEncontrado.nome,
-          });
-        }
+        if (docenteEncontrado) setDocente(docenteEncontrado);
 
         // Obter a lista de salas
         const resSalas = await Api.getSalas();
         const salasData = await resSalas.json();
-        setListaSalas(salasData.map((s) => ({ value: s.id, label: s.nome })));
+        const salasOptions = salasData.map((s) => ({
+          value: s.id,
+          label: s.nome,
+        }));
+        setListaSalas(salasOptions);
 
         // Definir a sala selecionada
-        const salaEncontrada = salasData.find((s) => s.id === mhData.salaFK);
-        if (salaEncontrada) {
-          setSala({
-            value: salaEncontrada.id,
-            label: salaEncontrada.nome,
-          });
-        }
+        const salaEncontrada = salasOptions.find(
+          (s) => s.value === mhData.sala.id
+        );
+        if (salaEncontrada) setSala(salaEncontrada);
 
         // Configurar outros valores
         setTipoAula(mhData.tipoDeAula);
@@ -95,11 +134,23 @@ export default function EditarManchaHoraria() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!uc || !tipoAula || !numSlots || !docente || !sala) {
+    if (
+      !uc ||
+      !tipoAula ||
+      !numSlots ||
+      !docente ||
+      !sala ||
+      !horariosSelecionados
+    ) {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
 
+    let listaHorariosIds = [];
+    horariosSelecionados.forEach((element) => {
+      console.log(element.value);
+      listaHorariosIds.push(element.value);
+    });
     // Dados a serem enviados no formato esperado pela API
     const dataASubmeter = {
       SalaFK: sala.value,
@@ -107,6 +158,7 @@ export default function EditarManchaHoraria() {
       TipoDeAula: tipoAula,
       NumSlots: numSlots,
       UCFK: uc.value,
+      HorariosIds: listaHorariosIds,
     };
 
     console.log("Dados a enviar para a API:", dataASubmeter);
@@ -123,12 +175,11 @@ export default function EditarManchaHoraria() {
         toast.success("Mancha Horária editada com sucesso!");
         navigate(ROUTES.MANCHAS_HORARIAS);
       } else {
-        toast.error(result.erro || "Erro ao editar a mancha.");
+        toast.error(result.erro || "Erro ao editar a Mancha Horária.");
       }
-      
     } catch (error) {
       setLoading(false);
-      toast.error("Erro ao editar a UC.");
+      toast.error("Erro ao editar a Mancha Horária.");
       console.error(error);
     }
   };
@@ -153,7 +204,7 @@ export default function EditarManchaHoraria() {
         />
 
         <label className="form-label">Selecione o Tipo de Aula</label>
-        <Select
+        <MUISelect
           style={{ marginLeft: "15px", width: "200px" }}
           labelId="tipoAula-label"
           id="tipoAula"
@@ -162,7 +213,7 @@ export default function EditarManchaHoraria() {
         >
           <MenuItem value="TP">TP</MenuItem>
           <MenuItem value="PL">PL</MenuItem>
-        </Select>
+        </MUISelect>
 
         <SalasSelect value={sala} onChange={setSala} options={listaSalas} />
 
@@ -173,6 +224,17 @@ export default function EditarManchaHoraria() {
           value={numSlots}
           onChange={(e) => setNumSlots(e.target.value)}
         />
+        <div className="mb-3">
+          <label htmlFor="cursos" className="form-label">
+            Horários associados
+          </label>
+          <Select
+            isMulti={true}
+            options={listaHorarios}
+            value={horariosSelecionados}
+            onChange={handleSelectChange}
+          />
+        </div>
         <div className="d-flex justify-content-between mt-4">
           <SubmitButton loading={loading} text="Editar Mancha Horária" />
           <ReturnButton text="Voltar" endpoint="/manchas_horarias" />
