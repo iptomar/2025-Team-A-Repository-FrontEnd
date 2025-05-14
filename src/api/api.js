@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -256,6 +256,21 @@ export const getManchasHorarias = async () => {
     console.error("Erro ao ir buscar as machas horarias:", error);
   }
 };
+
+// Obter detalhes de uma mancha horaria
+export const getDetalhesManchaHoraria = (id) => {
+  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
+};
+
+// Obter as manchas horárias por horário
+export const getManchasPorHorario = async (id) => {
+  try {
+    return fetch(`${API_URL}api/API_ManchasHorarias/manchas-por-horario/${id}`);
+  } catch (error) {
+    console.error("Erro ao ir buscar as machas horarias:", error);
+  }
+};
+
 //Eliminar uma Mancha Horária
 export const deleteManchaHoraria = async (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
@@ -324,10 +339,6 @@ export async function updateManchaHoraria(id, dataASubmeter) {
   });
 }
 
-// Obter detalhes de uma mancha horaria
-export const getDetalhesManchaHoraria = (id) => {
-  return fetch(`${API_URL}api/API_ManchasHorarias/${id}`);
-};
 
 // ////////////////////////////////////////////////////////////////////////////
 

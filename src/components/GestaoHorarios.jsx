@@ -205,7 +205,7 @@ const GestaoHorarios = ({
         {/* Exibe o nome do horário selecionado */}
         {horarioSelecionado && (
           <p className="text-muted mt-2">
-            A visualizar: <strong>{horarioSelecionado.nome}</strong>
+            A visualizar: <strong>{horarioSelecionado.nomeHorario}</strong>
           </p>
         )}
       </div>

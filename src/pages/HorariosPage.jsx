@@ -8,7 +8,7 @@ import {
   addMinutes,
 } from "date-fns";
 import "../css/horario.css";
-import { getManchasHorarias } from "../api/api";
+import { getManchasPorHorario } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
 import GrelhaHorario from "../components/GrelhaHorarios";
@@ -53,7 +53,7 @@ const HorariosPage = () => {
     const inic = async () => {
       try {
         // Obtém as manchas horárias da API
-        const response = await getManchasHorarias();
+        const response = await getManchasPorHorario(horarioSelecionado.id);
         const mH = await response.json();
 
         // Formata os blocos de horários recebidos
@@ -102,7 +102,7 @@ const HorariosPage = () => {
       }
     };
     inic(); // Chama a função de inicialização
-  }, []);
+  }, [horarioSelecionado]);
 
   // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
@@ -124,7 +124,7 @@ const HorariosPage = () => {
 
         try {
           // Atualiza as manchas horárias ao receber uma atualização
-          const response = await getManchasHorarias();
+          const response = await getManchasPorHorario(horarioSelecionado.id);
           const mH = await response.json();
           const blocosFormatados = mH.map((bloco) => ({
             id: bloco.id,
@@ -175,7 +175,7 @@ const HorariosPage = () => {
     return () => {
       connection.stop();
     };
-  }, []);
+  }, [horarioSelecionado]);
 
   return (
     <>
