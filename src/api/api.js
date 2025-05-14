@@ -293,7 +293,7 @@ export const criarManchaHoraria = async (mh) => {
       },
       {
         headers: {
-           "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -309,42 +309,35 @@ export async function dragBloco(id, horaInicio, dia) {
   try {
     const response = await axios.put(
       `${API_URL}api/API_ManchasHorarias/drag-bloco/${id}`,
-      {
-        horaInicio,
-        dia,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { horaInicio, dia },
+      { headers: { "Content-Type": "application/json" } }
     );
 
-    console.log("Mancha atualizada com sucesso:", response.data);
+    return response.data;
   } catch (error) {
-    console.error(
-      "Erro ao atualizar mancha:",
-      error.response?.data || error.message
-    );
+    const errorMessage =
+      error.response?.data || "Erro ao atualizar a mancha horária.";
+    throw new Error(errorMessage);
   }
 }
+
+
 //editar a mancha horária
 export async function updateManchaHoraria(id, dataASubmeter) {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(dataASubmeter),
   });
 }
 
-
 // ////////////////////////////////////////////////////////////////////////////
 
- // Utilizadores
- 
- export const getUtilizadores = async () => {
+// Utilizadores
+
+export const getUtilizadores = async () => {
   try {
     return fetch(`${API_URL}api/API_Utilizadores`);
   } catch (error) {
@@ -360,7 +353,7 @@ export function eliminaUtilizador(id) {
 }
 
 // Obter detalhes de um utilizador
-export const getDetalhesUtilizador= (id) => {
+export const getDetalhesUtilizador = (id) => {
   return fetch(`${API_URL}api/API_Utilizadores/${id}`);
 };
 
@@ -391,7 +384,6 @@ export function criarHorario(d) {
     body: JSON.stringify(d),
   });
 }
-
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação

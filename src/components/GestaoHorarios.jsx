@@ -139,7 +139,7 @@ const GestaoHorarios = ({
                 <h3>Criar Horário</h3>
 
                 {/* Campo para selecionar o ano letivo */}
-                <label className="form-label">Selecione o AnoLetivo</label>
+                <label className="form-label">Selecione o Ano Letivo</label>
                 <br></br>
                 <Select
                   style={{
@@ -158,7 +158,7 @@ const GestaoHorarios = ({
                 </Select>
 
                 {/* Campo para selecionar o semestre */}
-                <label className="form-label">Selecione o AnoLetivo</label>
+                <label className="form-label">Selecione o Semestre</label>
                 <br></br>
                 <Select
                   style={{

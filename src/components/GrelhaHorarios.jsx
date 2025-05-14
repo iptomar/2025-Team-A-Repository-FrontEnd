@@ -3,6 +3,7 @@ import { format, addMinutes } from "date-fns";
 import pt from "date-fns/locale/pt";
 import "../css/horario.css";
 import { dragBloco } from "../api/api";
+import { toast } from "react-toastify";
 
 const GrelhaHorario = ({
   diasDaSemana,
@@ -15,14 +16,18 @@ const GrelhaHorario = ({
 }) => {
   return (
     <div style={{ margin: "1rem" }}>
-      <div className="header" >
+      <div className="header">
         <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
         <h2>
           {`${format(diasDaSemana[0], "EEEE, dd 'de' MMMM", {
             locale: pt,
-          })} - ${format(diasDaSemana[diasDaSemana.length - 1], "EEEE, dd 'de' MMMM", {
-            locale: pt,
-          })}`}
+          })} - ${format(
+            diasDaSemana[diasDaSemana.length - 1],
+            "EEEE, dd 'de' MMMM",
+            {
+              locale: pt,
+            }
+          )}`}
         </h2>
         <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
       </div>
@@ -53,7 +58,7 @@ const GrelhaHorario = ({
                       key={`${dia}-${hora}`}
                       className="slot"
                       onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
+                      onDrop={async (e) => {
                         e.preventDefault();
                         const data = JSON.parse(
                           e.dataTransfer.getData("application/json")
@@ -67,16 +72,23 @@ const GrelhaHorario = ({
                             "HH:mm"
                           ),
                         };
-                        dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
-                        setAulas((prev) => [...prev, novaAula]);
-                        setBlocos((prev) =>
-                          prev.filter((bloco) => bloco.id !== data.id)
-                        );
+                        try {
+                          await dragBloco(
+                            data.id,
+                            novaAula.horaInicio,
+                            novaAula.dia
+                          );
+                          setAulas((prev) => [...prev, novaAula]);
+                          setBlocos((prev) =>
+                            prev.filter((bloco) => bloco.id !== data.id)
+                          );
+                        } catch (error) {
+                          toast.error(error.message);
+                        }
                       }}
                     >
                       {aulasDoDia.map((aula, i) => {
-                        const altura =
-                          (aula.duracao * 40) / 30;
+                        const altura = (aula.duracao * 40) / 30;
 
                         const removerAula = () => {
                           setAulas((prev) =>
