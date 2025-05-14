@@ -60,7 +60,7 @@ const Navbar = () => {
                             <li className="nav-item">
                                  <button className="nav-link btn btn-link " onClick={() => {navigate(ROUTES.UTILIZADORES)}}><strong>Utilizadores</strong></button>
  
-                             </li> 
+                            </li> 
 
 
                     </ul>
@@ -74,6 +74,11 @@ const Navbar = () => {
 
                             </li>
                         </ul> */}
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.IMPORTAR)}}><strong>Importar Dados</strong></button>
+                            </li>
+                        </ul>
                         <ul className="navbar-nav">
                             <li className="nav-item">
                                 <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.LOG_IN)}}><strong>Logout</strong></button>
