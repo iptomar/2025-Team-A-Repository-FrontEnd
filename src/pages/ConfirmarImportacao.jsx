@@ -39,10 +39,22 @@ export default function ConfirmarImportacao() {
         setData(updatedData);
     };
 
+    const handleRemoveRow = (rowIndex) => {
+        const updatedData = [...data];
+        updatedData.splice(rowIndex, 1);
+        setData(updatedData);
+    };
+
+    const handleRemoveColumn = (colIndex) => {
+        const updatedData = data.map(row => {
+            const newRow = [...row];
+            newRow.splice(colIndex, 1);
+            return newRow;
+        });
+        setData(updatedData);
+    };
+
     const handlePublish = () => {
-        // Aqui será chamada a API quando o botão 'Publicar' for clicado
-        // Exemplo de chamada API (deixado em branco por agora):
-        // apiCall(data);
         console.log('Publicar:', data);
     };
 
@@ -52,7 +64,7 @@ export default function ConfirmarImportacao() {
                 <div className="col-12">
                     <h2 className="mb-4">Confirmação de Importação</h2>
                     <div>
-                        {/* folhas do excel */}
+                        
                         <div className="btn-group mb-4">
                             {sheets.map((sheet, index) => (
                                 <button
@@ -65,13 +77,28 @@ export default function ConfirmarImportacao() {
                             ))}
                         </div>
 
-                        {/* dados da folha */}
+                       
                         <div className="table-responsive" style={{ maxHeight: '500px', overflowY: 'auto' }}>
                             <table className="table table-bordered">
-                                <thead style={{ backgroundColor: '#f8f9fa', fontWeight: 'bold' }}> 
+                                <thead>
+                                    
                                     <tr>
+                                        {data[0]?.map((_, colIndex) => (
+                                            <th key={`remove-${colIndex}`} style={{ minWidth: '150px', maxWidth: '250px' }}>
+                                                <button
+                                                    className="btn btn-sm btn-danger w-100"
+                                                    onClick={() => handleRemoveColumn(colIndex)}
+                                                >
+                                                    Remover Coluna
+                                                </button>
+                                            </th>
+                                        ))}
+                                        <th></th>
+                                    </tr>
+                                   
+                                    <tr style={{ backgroundColor: '#f8f9fa', fontWeight: 'bold' }}>
                                         {data[0]?.map((colTitle, index) => (
-                                            <th key={index} style={{ minWidth: '150px', maxWidth: '250px' }}>
+                                            <th key={`header-${index}`} style={{ minWidth: '150px', maxWidth: '250px' }}>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -81,11 +108,16 @@ export default function ConfirmarImportacao() {
                                                 />
                                             </th>
                                         ))}
+                                        <th>
+                                            <button className="btn btn-sm btn-danger" onClick={() => handleRemoveRow(0)}>
+                                                Remover Títulos
+                                            </button>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {data.slice(1).map((row, rowIndex) => (
-                                        <tr key={rowIndex}>
+                                        <tr key={rowIndex + 1}>
                                             {row.map((cell, colIndex) => (
                                                 <td key={colIndex} style={{ minWidth: '150px', maxWidth: '250px' }}>
                                                     <input
@@ -96,6 +128,14 @@ export default function ConfirmarImportacao() {
                                                     />
                                                 </td>
                                             ))}
+                                            <td>
+                                                <button
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={() => handleRemoveRow(rowIndex + 1)}
+                                                >
+                                                    Remover Linha
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
