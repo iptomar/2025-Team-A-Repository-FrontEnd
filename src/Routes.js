@@ -35,4 +35,5 @@ export const ROUTES = {
     EDITAR_UTILIZADOR: "/utilizadores/editar/:id",
     DETALHES_UTILIZADOR: "/utilizadores/detalhes/:id",
     IMPORTAR: "/importar",
+    CONFIRMAR: "/confirmar",
   };

@@ -35,6 +35,7 @@ import DetalhesUtilizador from "./pages/DetalhesPage/DetalhesUtilizador";
 import UtilizadoresPage from "./pages/UtilizadoresPage";
 
 import ImportarDados from "./pages/ImportarDados";
+import ConfirmarDados from "./pages/ConfirmarImportacao";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -212,7 +213,8 @@ const App = () => (
         element={<EditarManchaHoraria />}
       />
       <Route key={ROUTES.IMPORTAR} path={ROUTES.IMPORTAR} element={<ImportarDados />}/>
-      
+      <Route key={ROUTES.CONFIRMAR} path={ROUTES.CONFIRMAR} element={<ConfirmarDados />}/>
+
       <Route path={ROUTES.CRIAR_CURSO} element={<CriarCurso />} />
       <Route path={ROUTES.DETALHES_CURSO} element={<DetalhesCurso />} />
       <Route path={ROUTES.EDITAR_CURSO} element={<EditarCurso />} />
