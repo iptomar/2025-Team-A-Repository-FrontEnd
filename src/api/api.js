@@ -374,6 +374,12 @@ export const updateUtilizador = (id, esc) => {
 export function getHorarios() {
   return fetch(`${API_URL}api/API_Horarios`);
 }
+
+// Obter um horario por ID
+export const getHorarioById = (id) => {
+  return fetch(`${API_URL}api/API_Horarios/${id}`);
+};
+
 // Criar um novo horario
 export function criarHorario(d) {
   return fetch(`${API_URL}api/API_Horarios`, {
@@ -384,6 +390,37 @@ export function criarHorario(d) {
     body: JSON.stringify(d),
   });
 }
+
+// Bloquear um horario
+export async function bloquearHorario(id) {
+  const response = await fetch(`http://localhost:5251/api/API_Horarios/Bloquear/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ Bloqueado: true }),
+  });
+  if (!response.ok) {
+    throw new Error("Erro ao bloquear o horário");
+  }
+  return response.json();
+}
+
+// Desbloquear um horario
+export async function desbloquearHorario(id) {
+  const response = await fetch(`http://localhost:5251/api/API_Horarios/Desbloquear/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ Bloqueado: false }),
+  });
+  if (!response.ok) {
+    throw new Error("Erro ao desbloquear o horário");
+  }
+  return response.json();
+}
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
