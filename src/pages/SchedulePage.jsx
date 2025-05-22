@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // Importa React e hooks
 import {
   add,
   startOfWeek,
@@ -6,102 +6,80 @@ import {
   eachDayOfInterval,
   startOfDay,
   addMinutes,
-  // set,
-} from "date-fns";
-import pt from "date-fns/locale/pt";
-import "../css/horario.css";
-import { getManchasHorarias, dragBloco } from "../api/api";
-import * as signalR from "@microsoft/signalr";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+} from "date-fns"; // Importa funções do date-fns
+import pt from "date-fns/locale/pt"; // Importa locale em português
+import "../css/horario.css"; // Importa CSS
+import { getManchasHorarias, dragBloco } from "../api/api"; // Importa funções da API
+import * as signalR from "@microsoft/signalr"; // Importa SignalR
+import html2pdf from "html2pdf.js"; // Importa html2pdf
 
+// Componente SchedulePage
+// Este componente é responsável por exibir o horário de aulas
 const SchedulePage = () => {
 
-  // printRef é uma referência para o elemento que queremos imprimir
-  // e será usada para gerar o PDF
-  const printRef = React.useRef(null);
+// Tratamento de download do horário em formato de PDF
+const handleDownloadPDF = async () => {
+  const element = document.getElementById("grelha-pdf"); // <div id="grelha-pdf">
 
-  // Tratamento de download do horário em formato de PDF
-  const handleDownloadPDF = async () => {
-    const element = printRef.current;
-    if (!element){
-      console.error("Elemento não encontrado para download do PDF.");
-      return;
-    }
+  if (!element) { // Verifica se o elemento existe
+    // Se não existir, exibe uma mensagem de erro
+    console.error("Elemento da grelha não encontrado!");
+    return;
+  }  
 
-    // Abrir nova janela
-    const newWindow = window.open('', '_blank', 'width=1200,height=1600');
-
-    if (!newWindow) {
-      alert('Por favor, permite pop-ups no navegador para fazer o download!');
-      return;
-    }
-
-    // Copiar o conteúdo da grelha para a nova janela
-    newWindow.document.write(`
-      <html>
-        <head>
-          <title>Download do Horário</title>
-          <link rel="stylesheet" href="/src/css/horario.css">
-        </head>
-        <body>${element.outerHTML}</body>
-      </html>
-    `);
-    newWindow.document.close();
-
-    // Esperar a nova janela carregar
-    newWindow.onload = async () => {
-      const newElement = newWindow.document.body.firstChild;
-
-      // Pequena pausa para garantir que tudo carregou
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const canvas = await html2canvas(newElement, {
-        scale: 2, // Aumenta a escala para melhorar a qualidade da imagem
-        backgroundColor: null, // Define o fundo como transparente
-      });
-
-      const data = canvas.toDataURL("image/png");
+  // Define as opções para o html2pdf
+  // Estas opções controlam como o PDF será gerado
+  const opt = {
+    filename: "horario.pdf",  // Nome do arquivo
     
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: "a4",
-      });
-
-      const imgProperties = pdf.getImageProperties(data);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-
-      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("horario.pdf");
-
-      // Fechar a nova janela
-      newWindow.close();
-    };
+    // Opções para o html2canvas
+    html2canvas: {            
+      scale: 3                // Escala da imagem
+    },
+    
+    // Opções para o jsPDF
+    jsPDF: {
+      unit: "px",             // Unidade de medida
+      format: [1200, 1400],   // Formato do PDF
+    },
   };
+  await html2pdf().set(opt).from(element).save(); // Gera o PDF e faz o download
+};
 
+  // Estado para armazenar o início da semana atual
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
+
+  // Estado para armazenar as aulas e blocos
   const [aulas, setAulas] = useState([]);
 
+  // Estado para armazenar os blocos
   const [blocos, setBlocos] = useState([]);
+
+  // Gera uma lista de dias da semana a partir do início da semana atual
+  // e adiciona 5 dias a partir do início da semana
   const diasDaSemana = eachDayOfInterval({
     start: currentWeekStart,
     end: add(currentWeekStart, { days: 5 }),
   });
 
+  // Gera uma lista de horas, começando às 08:00 e terminando às 00:00
   const horas = Array.from({ length: 33 }, (_, i) =>
     addMinutes(startOfDay(new Date()), 480 + 30 * i)
   );
 
+  // Função para mudar a semana atual, adicionando ou subtraindo semanas
+  // com base na direção (1 para próxima semana, -1 para semana anterior)
   const mudarSemana = (direcao) => {
     const novaSemana = add(currentWeekStart, { weeks: direcao });
     setCurrentWeekStart(novaSemana);
   };
 
+  // Função para obter as manchas horárias e formatar os dados
   useEffect(() => {
+    // Função assíncrona para buscar as manchas horárias
+    // e formatar os dados para exibição
     const inic = async () => {
       try {
         const mH = await getManchasHorarias();
@@ -115,8 +93,12 @@ const SchedulePage = () => {
           sala: bloco.sala.nome,
           duracao: bloco.numSlots * 30,
         }));
+        // Filtra os blocos para separar os que têm hora de início e dia
+        // e formata os horários de início e fim
         const b = [];
         const a = [];
+        // Itera sobre os blocos formatados
+        // e adiciona os blocos sem hora de início ou dia a um array separado
         blocosFormatados.forEach((element) => {
           if (
             element.horaInicio === "00:00:00" ||
@@ -139,31 +121,38 @@ const SchedulePage = () => {
             ),
           });
         });
+        // Atualiza os estados com os blocos e aulas formatados
         setBlocos(b);
+        // Atualiza o estado com os blocos
         setAulas(a);
       } catch (error) {
         console.error("Erro ao obter os dados:", error);
       }
     };
+    // Chama a função para buscar as manchas horárias
+    // e formata os dados
     inic();
   }, []);
 
   // Cria uma conexão SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:7008/horarioHub", {
+    .withUrl("http://localhost:5251/horarioHub", {
       withCredentials: true,
       transport: signalR.HttpTransportType.WebSockets,
     })
     .withAutomaticReconnect()
     .build();
 
+    // Inicia a conexão
     connection.start().then(() => {
       console.log("Ligado ao SignalR");
 
+      // Escuta o evento "AulaAtualizada" do SignalR
       connection.on("AulaAtualizada", async (data) => {
         console.log("Aula atualizada via socket:", data);
 
+        // Atualiza o estado com os dados recebidos
         try {
           const mH = await getManchasHorarias();
           const blocosFormatados = mH.map((bloco) => ({
@@ -176,8 +165,11 @@ const SchedulePage = () => {
             sala: bloco.sala.nome,
             duracao: bloco.numSlots * 30,
           }));
+          // Filtra os blocos para separar os que têm hora de início e dia
           const b = [];
           const a = [];
+
+          // Itera sobre os blocos formatados	
           blocosFormatados.forEach((element) => {
             if (
               element.horaInicio === "00:00:00" ||
@@ -200,7 +192,10 @@ const SchedulePage = () => {
               ),
             });
           });
+          // Atualiza os estados com os blocos e aulas formatados
           setBlocos(b);
+
+          // Atualiza o estado com os blocos
           setAulas(a);
         } catch (error) {
           console.error("Erro ao obter os dados:", error);
@@ -208,12 +203,16 @@ const SchedulePage = () => {
       });
     });
 
+    // Para a conexão quando o componente é desmontado
     return () => {
       connection.stop();
     };
   }, []);
 
+  // Renderiza o componente
   return (
+    // Renderiza o componente SchedulePage
+    // e exibe o horário de aulas
     <div className="horario-container">
       <div className="header">
         <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
@@ -232,7 +231,7 @@ const SchedulePage = () => {
       </div>
 
       <div className="main-grid">
-        <div ref={printRef} className="grelha"> 
+        <div id="grelha-pdf" className="grelha"> 
           <div className="grelha-header">
             <div className="hora"></div>
             {diasDaSemana.map((dia) => (
@@ -252,6 +251,7 @@ const SchedulePage = () => {
                       a.horaInicio === format(hora, "HH:mm")
                   );
 
+                  // Verifica se há aulas para o dia e hora atuais
                   return (
                     <div
                       key={`${dia}-${hora}`}
@@ -285,10 +285,13 @@ const SchedulePage = () => {
                         const [hEnd, mEnd] = aula.horaFim
                           .split(":")
                           .map(Number);
+                        // Calcula a altura do bloco com base na duração da aula
+                        // e na altura de cada slot (40px para 30 minutos)
                         const minutosInicio = hStart * 60 + mStart;
                         const minutosFim = hEnd * 60 + mEnd;
                         const altura = (minutosFim - minutosInicio) * (40 / 30);
 
+                        // Função para remover a aula 
                         const removerAula = () => {
                           setAulas((prev) =>
                             prev.filter(
@@ -301,10 +304,15 @@ const SchedulePage = () => {
                                 )
                             )
                           );
+                          // Remove a aula do estado
                           setBlocos((prev) => [...prev, aula]);
+                          // Adiciona a aula de volta aos blocos
+                          // e remove do estado de aulas
                           dragBloco(aula.id, "00:00:00", "0001-01-01");
                         };
 
+                        // Renderiza o bloco da aula
+                        // e adiciona um botão para remover a aula
                         return (
                           <div
                             key={`${dia}-${hora}-${i}`}
@@ -376,4 +384,5 @@ const SchedulePage = () => {
   );
 };
 
+// Exporta o componente SchedulePage como padrão
 export default SchedulePage;

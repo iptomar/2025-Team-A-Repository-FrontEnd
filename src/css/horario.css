@@ -53,6 +53,12 @@
     height: auto;
   }
   
+  #grelha-pdf {
+  width: 100%;
+  max-width: none;
+  }
+
+
   .grelha-header {
     display: grid;
     grid-template-columns: 80px repeat(6, 1fr);
