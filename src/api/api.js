@@ -1,6 +1,5 @@
 import axios from "axios";
-import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:7008/";
+const API_URL = "http://localhost:5251/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -391,7 +390,7 @@ export function criarHorario(d) {
 // Login
 export const login = async (email, password) => {
   try {
-    const response = await fetch(`${API_URL}login`, {
+    const response = await fetch(`${API_URL}api/API_Auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -408,6 +407,11 @@ export const login = async (email, password) => {
     console.log("Login bem-sucedido:", data);
     //jwt token fica aqui
     //podes manipular como quiseres
+
+    // Guarda o token
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("tokenType", data.tokenType || "Bearer");
+
     return data;
   } catch (error) {
     console.error("Erro no login:", error);
@@ -435,6 +439,34 @@ export const register = async (nome, email, escolaFK, cursoFK, password) => {
     throw new Error(errorData.message || "Erro no registo");
   } catch (error) {
     console.error("Erro no registo:", error);
+    throw error;
+  }
+};
+
+
+// endpoint para obter os dados do utilizador logado
+export const getMe = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const tokenType = localStorage.getItem("tokenType") || "Bearer";
+
+    const response = await fetch(`${API_URL}api/API_Auth/me`, {
+      headers: {
+        Authorization: `${tokenType} ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Erro ao obter dados do utilizador");
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error("Erro na função getMe:", error);
     throw error;
   }
 };
