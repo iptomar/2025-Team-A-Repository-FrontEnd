@@ -4,7 +4,8 @@ import { Select, MenuItem } from "@mui/material";
 import TurmasSelect from "./common/SelectTurma";
 import { toast } from "react-toastify";
 import { set } from "date-fns";
-import customDarkStyles from "../css/darkmode";
+import customDarkStyles from "./DarkModeFiles/darkmode"; // Importa os estilos personalizados para o modo escuro
+import useDarkMode from "./DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 // Componente funcional para a gestão de horários
 const GestaoHorarios = ({
@@ -18,18 +19,8 @@ const GestaoHorarios = ({
   const [semestre, setSemestre] = useState("");
   const [turma, setTurma] = useState(null);
   const [horarioCriado, setHorarioCriado] = useState(false); 
-  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
   
-    // Hook de efeito para verificar o modo escuro
-    useEffect(() => {
-    const observer = new MutationObserver(() => { // Observa mudanças na classe do body
-      setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
-    });
-    // Inicia a observação do body para mudanças de classe
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    // Limpa o observer quando o componente é desmontado
-    return () => observer.disconnect();
-  }, []); 
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   // Carregar lista de horários
 

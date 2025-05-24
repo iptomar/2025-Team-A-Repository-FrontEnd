@@ -2,23 +2,13 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import * as Api from "../../api/api";
-import customDarkStyles from "../../css/darkmode";
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function TurmasSelect({ value, onChange, isMulti = false, endpoint = "getTurmas" }) {
   const [options, setOptions] = useState([]);
-  const [isDarkMode, setIsDarkMode] = useState(() => document.body.classList.contains("dark-mode"));
   
-  useEffect(() => {
-    Api.getTurmas()
-      .then((res) => res.json())
-      .then((data) => {
-        setOptions(data.map((d) => ({ value: d.id, label:  d.curso?.nome + " " + d.nome + " "  + d.anoCurso })));
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar as turmas:", err);
-        toast.error("Erro ao carregar as turmas.");
-      });
-  }, [endpoint]);
+  const isDarkMode = useDarkMode(); // Hook personalizado para verificar o modo escuro
 
   // Atualiza quando o modo escuro muda
   useEffect(() => {

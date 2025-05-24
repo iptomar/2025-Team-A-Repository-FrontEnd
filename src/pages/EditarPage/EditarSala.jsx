@@ -6,7 +6,8 @@ import Select from "react-select";
 import SubmitButton from "../../components/common/SubmitButton"; 
 import ReturnButton from "../../components/common/ReturnButton"; 
 import { toast } from "react-toastify"; 
-import customDarkStyles from "../../css/darkmode"; // Estilos personalizados para o modo escuro
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 function EditarSala() {
   const { id } = useParams(); // id da sala a editar
@@ -16,18 +17,7 @@ function EditarSala() {
   const [loading, setLoading] = useState(false); // estado loading
   const navigate = useNavigate(); // hook para navegação
 
-  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
-  
-    // Hook de efeito para verificar o modo escuro
-    useEffect(() => {
-      const observer = new MutationObserver(() => { // Observa mudanças na classe do body
-        setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
-      });
-      // Inicia a observação do body para mudanças de classe
-      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-      // Limpa o observer quando o componente é desmontado
-      return () => observer.disconnect();
-    }, []); 
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   useEffect(() => {
     getDetalheSala(id)

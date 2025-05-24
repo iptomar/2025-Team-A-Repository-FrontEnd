@@ -1,3 +1,4 @@
+// Este código define estilos personalizados para un componente de selección (select) en modo oscuro utilizando React Select.
 const customDarkStyles = {
   control: (base) => ({
     ...base,
