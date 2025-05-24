@@ -1,6 +1,6 @@
-import React from "react";
-import { HashRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
+import { HashRouter, Route, Routes, useLocation, useNavigate, Navigate } from "react-router-dom";
+
 import LogInPage from "./pages/LogInPage";
 import HorariosPage from "./pages/HorariosPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -43,12 +43,17 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { ROUTES } from "./Routes";
 
+import { UserContext } from "./UserContext"; // importa o contexto do utilizador
+
 const AppContent = () => {
+  const { user } = useContext(UserContext);
+
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
 
   const isAuthenticated = () => !!localStorage.getItem("token");
+
   const publicRoutes = [ROUTES.LOG_IN, ROUTES.REGISTER];
   const showNavbar = !publicRoutes.includes(pathname);
 
@@ -57,58 +62,95 @@ const AppContent = () => {
     if (!isAuthenticated() && !publicRoutes.includes(pathname)) {
       navigate(ROUTES.LOG_IN);
     }
-
-    // Se estiver autenticado e tentar rota pública
-    if (isAuthenticated() && publicRoutes.includes(pathname)) {
-      navigate(ROUTES.HOME); // "/" → irá renderizar com Navbar normalmente
+    if (isAuthenticated() && publicRoutes.includes(pathname)) {      
+      navigate(ROUTES.HOME);
     }
-  }, [pathname]);
+  }, [pathname, isAuthenticated, navigate]);
+
+  // Função para checar se o user tem pelo menos uma das roles necessárias
+  const hasRole = (requiredRoles = []) => {
+    if (!user || !user.role) {
+      return false;
+    }
+    if (requiredRoles.length === 0) {
+      return user.role.length > 0;
+    }
+    const hasRequired = requiredRoles.some((role) => user.role.includes(role));
+    return hasRequired;
+  };
+
+  if (!isAuthenticated()) {
+    // Se não autenticado, só permite rotas públicas
+    return (
+      <>
+        <Routes>
+          <Route path={ROUTES.LOG_IN} element={<LogInPage />} />
+          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+          <Route path="*" element={<Navigate to={ROUTES.LOG_IN} replace />} />
+        </Routes>
+      </>
+    );
+  }
 
   return (
     <>
       {showNavbar && <Navbar />}
       <ToastContainer closeButton={false} />
       <Routes>
+        {/* Rotas acessíveis a qualquer user autenticado com role */}
         <Route path="/" element={<HomePage />} />
         <Route key={ROUTES.HOME} path={ROUTES.HOME} element={<HomePage />} />
-        <Route key={ROUTES.LOG_IN} path={ROUTES.LOG_IN} element={<LogInPage />} />
-        <Route key={ROUTES.REGISTER} path={ROUTES.REGISTER} element={<RegisterPage />} />
-        <Route key={ROUTES.SCHEDULE} path={ROUTES.SCHEDULE} element={<HorariosPage />} />
-        <Route key={ROUTES.DOCENTES} path={ROUTES.DOCENTES} element={<DocentesPage />} />
-        <Route key={ROUTES.ESCOLAS} path={ROUTES.ESCOLAS} element={<EscolasPage />} />
-        <Route key={ROUTES.SALAS} path={ROUTES.SALAS} element={<SalasPage />} />
-        <Route key={ROUTES.CURSOS} path={ROUTES.CURSOS} element={<CursosPage />} />
-        <Route key={ROUTES.MANCHAS_HORARIAS} path={ROUTES.MANCHAS_HORARIAS} element={<ManchasHorariasPage />} />
-        <Route key={ROUTES.UNIDADES_CURRICULARES} path={ROUTES.UNIDADES_CURRICULARES} element={<UnidadesCurricularesPage />} />
-        <Route key={ROUTES.CRIAR_UC} path={ROUTES.CRIAR_UC} element={<CriarUC />} />
-        <Route key={ROUTES.EDITAR_UC} path={ROUTES.EDITAR_UC} element={<EditarUC />} />
-        <Route key={ROUTES.DETALHE_UC} path={ROUTES.DETALHE_UC} element={<DetalheUC />} />
-        <Route key={ROUTES.TURMAS} path={ROUTES.TURMAS} element={<TurmasPage />} />
-        <Route key={ROUTES.DETALHES_TURMA} path={ROUTES.DETALHES_TURMA} element={<DetalhesTurma />} />
-        <Route key={ROUTES.CRIAR_TURMA} path={ROUTES.CRIAR_TURMA} element={<CriarTurma />} />
-        <Route key={ROUTES.EDITAR_TURMA} path={ROUTES.EDITAR_TURMA} element={<EditarTurma />} />
-        <Route key={ROUTES.DETALHES_ESCOLA} path={ROUTES.DETALHES_ESCOLA} element={<DetalhesEscola />} />
-        <Route key={ROUTES.CRIAR_ESCOLA} path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
-        <Route key={ROUTES.EDITAR_ESCOLA} path={ROUTES.EDITAR_ESCOLA} element={<EditarEscola />} />
-        <Route key={ROUTES.DETALHES_MANCHAHORARIA} path={ROUTES.DETALHES_MANCHAHORARIA} element={<DetalhesManchaHoraria />} />
-        <Route key={ROUTES.CRIAR_MANCHAHORARIA} path={ROUTES.CRIAR_MANCHAHORARIA} element={<CriarManchaHoraria />} />
-        <Route key={ROUTES.EDITAR_MANCHAHORARIA} path={ROUTES.EDITAR_MANCHAHORARIA} element={<EditarManchaHoraria />} />
-        <Route path={ROUTES.CRIAR_CURSO} element={<CriarCurso />} />
-        <Route path={ROUTES.DETALHES_CURSO} element={<DetalhesCurso />} />
-        <Route path={ROUTES.EDITAR_CURSO} element={<EditarCurso />} />
-        <Route path={ROUTES.CRIAR_DOCENTE} element={<CriarDocente />} />
-        <Route path={ROUTES.DETALHES_DOCENTE} element={<DetalhesDocente />} />
-        <Route path={ROUTES.EDITAR_DOCENTE} element={<EditarDocente />} />
-        <Route path={ROUTES.CRIAR_SALA} element={<CriarSala />} />
-        <Route path={ROUTES.EDITAR_SALA} element={<EditarSala />} />
-        <Route path={ROUTES.DETALHES_SALA} element={<DetalhesSala />} />
-        <Route path={ROUTES.UTILIZADORES} element={<UtilizadoresPage />} />
-        <Route path={ROUTES.EDITAR_UTILIZADOR} element={<EditarUtilizador />} />
-        <Route path={ROUTES.DETALHES_UTILIZADOR} element={<DetalhesUtilizador />} />
+
+        {hasRole() && (
+          <>
+            <Route key={ROUTES.SCHEDULE} path={ROUTES.SCHEDULE} element={<HorariosPage />} />
+            <Route key={ROUTES.DOCENTES} path={ROUTES.DOCENTES} element={<DocentesPage />} />
+            <Route key={ROUTES.ESCOLAS} path={ROUTES.ESCOLAS} element={<EscolasPage />} />
+            <Route key={ROUTES.SALAS} path={ROUTES.SALAS} element={<SalasPage />} />
+            <Route key={ROUTES.CURSOS} path={ROUTES.CURSOS} element={<CursosPage />} />
+            <Route key={ROUTES.MANCHAS_HORARIAS} path={ROUTES.MANCHAS_HORARIAS} element={<ManchasHorariasPage />} />
+            <Route key={ROUTES.UNIDADES_CURRICULARES} path={ROUTES.UNIDADES_CURRICULARES} element={<UnidadesCurricularesPage />} />
+            <Route key={ROUTES.CRIAR_UC} path={ROUTES.CRIAR_UC} element={<CriarUC />} />
+            <Route key={ROUTES.EDITAR_UC} path={ROUTES.EDITAR_UC} element={<EditarUC />} />
+            <Route key={ROUTES.DETALHE_UC} path={ROUTES.DETALHE_UC} element={<DetalheUC />} />
+            <Route key={ROUTES.TURMAS} path={ROUTES.TURMAS} element={<TurmasPage />} />
+            <Route key={ROUTES.DETALHES_TURMA} path={ROUTES.DETALHES_TURMA} element={<DetalhesTurma />} />
+            <Route key={ROUTES.CRIAR_TURMA} path={ROUTES.CRIAR_TURMA} element={<CriarTurma />} />
+            <Route key={ROUTES.EDITAR_TURMA} path={ROUTES.EDITAR_TURMA} element={<EditarTurma />} />
+            <Route key={ROUTES.DETALHES_ESCOLA} path={ROUTES.DETALHES_ESCOLA} element={<DetalhesEscola />} />
+            <Route key={ROUTES.CRIAR_ESCOLA} path={ROUTES.CRIAR_ESCOLA} element={<CriarEscola />} />
+            <Route key={ROUTES.EDITAR_ESCOLA} path={ROUTES.EDITAR_ESCOLA} element={<EditarEscola />} />
+            <Route key={ROUTES.DETALHES_MANCHAHORARIA} path={ROUTES.DETALHES_MANCHAHORARIA} element={<DetalhesManchaHoraria />} />
+            <Route key={ROUTES.CRIAR_MANCHAHORARIA} path={ROUTES.CRIAR_MANCHAHORARIA} element={<CriarManchaHoraria />} />
+            <Route key={ROUTES.EDITAR_MANCHAHORARIA} path={ROUTES.EDITAR_MANCHAHORARIA} element={<EditarManchaHoraria />} />
+            <Route path={ROUTES.CRIAR_CURSO} element={<CriarCurso />} />
+            <Route path={ROUTES.DETALHES_CURSO} element={<DetalhesCurso />} />
+            <Route path={ROUTES.EDITAR_CURSO} element={<EditarCurso />} />
+            <Route path={ROUTES.CRIAR_DOCENTE} element={<CriarDocente />} />
+            <Route path={ROUTES.DETALHES_DOCENTE} element={<DetalhesDocente />} />
+            <Route path={ROUTES.EDITAR_DOCENTE} element={<EditarDocente />} />
+            <Route path={ROUTES.CRIAR_SALA} element={<CriarSala />} />
+            <Route path={ROUTES.EDITAR_SALA} element={<EditarSala />} />
+            <Route path={ROUTES.DETALHES_SALA} element={<DetalhesSala />} />
+          </>
+        )}
+
+        {/* Rotas apenas para Administrador */}
+        {hasRole(["Administrador"]) && (
+          <>
+            <Route path={ROUTES.UTILIZADORES} element={<UtilizadoresPage />} />
+            <Route path={ROUTES.EDITAR_UTILIZADOR} element={<EditarUtilizador />} />
+            <Route path={ROUTES.DETALHES_UTILIZADOR} element={<DetalhesUtilizador />} />
+          </>
+        )}
+
+        {/* Caso user não tenha acesso a alguma rota (catch-all) */}
+        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
     </>
   );
 };
+
 
 const App = () => (
   <HashRouter>
