@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import SubmitButton from "../../components/common/SubmitButton";
+import customDarkStyles from "../../css/darkmode";
 
 export default function CriarCurso() {
   const [nome, setNome] = useState("");
@@ -14,6 +15,20 @@ export default function CriarCurso() {
   const [rawEscolas, setRawEscolas] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+  
+    // Hook de efeito para verificar o modo escuro
+    useEffect(() => {
+      const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+        setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+      });
+      // Inicia a observação do body para mudanças de classe
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      // Limpa o observer quando o componente é desmontado
+      return () => observer.disconnect();
+    }, []); 
+  
 
   useEffect(() => {
     // Carrega escolas
@@ -84,6 +99,7 @@ export default function CriarCurso() {
             value={escolaSelecionada}
             onChange={(selected) => setEscolaSelecionada(selected)}
             required
+            styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
           />
         </div>
 

@@ -12,6 +12,7 @@ import SalasSelect from "../../components/common/SelectSala";
 import Select from "react-select";
 import { Select as MUISelect, MenuItem } from "@mui/material";
 import { ROUTES } from "../../Routes";
+import customDarkStyles from "../../css/darkmode";
 
 export default function EditarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -25,6 +26,19 @@ export default function EditarManchaHoraria() {
   const [listaHorarios, setListaHorarios] = useState([]);
   const [horariosSelecionados, setHorariosSelecionados] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+        
+          // Hook de efeito para verificar o modo escuro
+          useEffect(() => {
+            const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+              setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+            });
+            // Inicia a observação do body para mudanças de classe
+            observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+            // Limpa o observer quando o componente é desmontado
+            return () => observer.disconnect();
+          }, []); 
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -233,6 +247,7 @@ export default function EditarManchaHoraria() {
             options={listaHorarios}
             value={horariosSelecionados}
             onChange={handleSelectChange}
+            styles={isDarkMode ? customDarkStyles : {}}
           />
         </div>
         <div className="d-flex justify-content-between mt-4">

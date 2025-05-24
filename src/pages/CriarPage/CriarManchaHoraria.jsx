@@ -11,6 +11,7 @@ import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import Select from "react-select";
 import { Select as MUISelect, MenuItem } from "@mui/material";
+import customDarkStyles from "../../css/darkmode";
 
 export default function CriarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -23,6 +24,19 @@ export default function CriarManchaHoraria() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+        
+          // Hook de efeito para verificar o modo escuro
+          useEffect(() => {
+            const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+              setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+            });
+            // Inicia a observação do body para mudanças de classe
+            observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+            // Limpa o observer quando o componente é desmontado
+            return () => observer.disconnect();
+          }, []); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -151,6 +165,7 @@ export default function CriarManchaHoraria() {
             isMulti={true}
             options={listaHorarios} // Passa os horarios disponíveis
             value={horariosSelecionados} // Passa os horarios selecionados para o valor da dropdown
+            styles={isDarkMode ? customDarkStyles : {}}
           />
         </div>
         <div className="d-flex justify-content-between mt-4">

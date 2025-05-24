@@ -4,6 +4,8 @@ import { Select, MenuItem } from "@mui/material";
 import TurmasSelect from "./common/SelectTurma";
 import { toast } from "react-toastify";
 import { set } from "date-fns";
+import customDarkStyles from "../css/darkmode";
+
 // Componente funcional para a gestão de horários
 const GestaoHorarios = ({
   horarioSelecionado, // Horário atualmente selecionado
@@ -16,6 +18,18 @@ const GestaoHorarios = ({
   const [semestre, setSemestre] = useState("");
   const [turma, setTurma] = useState(null);
   const [horarioCriado, setHorarioCriado] = useState(false); 
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+  
+    // Hook de efeito para verificar o modo escuro
+    useEffect(() => {
+    const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+      setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+    });
+    // Inicia a observação do body para mudanças de classe
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    // Limpa o observer quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []); 
 
   // Carregar lista de horários
 
@@ -170,6 +184,7 @@ const GestaoHorarios = ({
                   id="semestre"
                   value={semestre}
                   onChange={(e) => setSemestre(e.target.value)}
+                  styles={customDarkStyles} // Aplica estilos personalizados
                 >
                   <MenuItem value="1ºSemestre">1º Semestre</MenuItem>
                   <MenuItem value="2ºSemestre">2º Semestre</MenuItem>
@@ -180,6 +195,7 @@ const GestaoHorarios = ({
                   label="Turma"
                   value={turma}
                   onChange={setTurma} // Atualiza o estado com a turma selecionada
+                  styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
                 />
                 <div className="d-flex gap-2">
                   {/* Botão para submeter o formulário */}

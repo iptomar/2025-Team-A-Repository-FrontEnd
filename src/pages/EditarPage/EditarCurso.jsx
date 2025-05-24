@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import EditarPage from "./EditarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import SubmitButton from "../../components/common/SubmitButton";
+import customDarkStyles from "../../css/darkmode";
 
 export default function EditarCurso() {
   const [nome, setNome] = useState("");
@@ -17,6 +18,20 @@ export default function EditarCurso() {
   
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+  
+    // Hook de efeito para verificar o modo escuro
+    useEffect(() => {
+      const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+        setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+      });
+      // Inicia a observação do body para mudanças de classe
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      // Limpa o observer quando o componente é desmontado
+      return () => observer.disconnect();
+    }, []); 
+  
 
   // Carregar dados do curso e lista de escolas
   useEffect(() => {
@@ -124,6 +139,7 @@ export default function EditarCurso() {
             value={escolaSelecionada}
             onChange={(selected) => setEscolaSelecionada(selected)}
             required
+            styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
           />
         </div>
 

@@ -4,8 +4,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/navbar.css';
 import { ROUTES } from '../Routes';
 import logo from "../assets/logoIPT.png";
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { useEffect,  useState} from 'react';
 
 const Navbar = () => {
+    const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem('modo-escuro') === 'true';
+    });
+
+    useEffect(() => {
+        document.body.classList.toggle("dark-mode", darkMode);
+        localStorage.setItem("modo-escuro", darkMode);
+    }, [darkMode]);
+
     const navigate = useNavigate()
     return (
         <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-light custom-navbar">
@@ -75,6 +86,15 @@ const Navbar = () => {
                             </li>
                         </ul> */}
                         <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <button
+                                    className="nav-link btn btn-link"
+                                    onClick={() => setDarkMode(prev => !prev)}
+                                    title="Alternar modo escuro"
+                                >
+                                    {darkMode ? <FaSun /> : <FaMoon />}
+                                </button>
+                            </li>
                             <li className="nav-item">
                                 <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.LOG_IN)}}><strong>Logout</strong></button>
                             </li>

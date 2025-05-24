@@ -8,6 +8,8 @@ import CursoSelect from "../../components/common/SelectCurso";
 import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import { Select, MenuItem } from "@mui/material";
+import customDarkStyles from "../../css/darkmode";
+import { useEffect } from "react";
 
 export default function CriarTurma() {
   const [nome, setNome] = useState("");
@@ -17,6 +19,19 @@ export default function CriarTurma() {
 
   const navigate = useNavigate();
 
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains("dark-mode")); // Estado para verificar se o modo escuro está ativo
+  
+    // Hook de efeito para verificar o modo escuro
+    useEffect(() => {
+      const observer = new MutationObserver(() => { // Observa mudanças na classe do body
+        setIsDarkMode(document.body.classList.contains("dark-mode")); // Atualiza o estado se o modo escuro estiver ativo
+      });
+      // Inicia a observação do body para mudanças de classe
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      // Limpa o observer quando o componente é desmontado
+      return () => observer.disconnect();
+    }, []); 
+  
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -89,6 +104,7 @@ export default function CriarTurma() {
           label="Curso"
           value={curso}
           onChange={setCurso}
+          styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
         />
         <div className="d-flex justify-content-between mt-4">
           <SubmitButton loading={loading} text="Criar" />
