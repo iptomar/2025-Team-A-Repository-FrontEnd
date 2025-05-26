@@ -15,7 +15,12 @@ const GestaoHorarios = ({
   const [anoLetivo, setanoLetivo] = useState("");
   const [semestre, setSemestre] = useState("");
   const [turma, setTurma] = useState(null);
-  const [horarioCriado, setHorarioCriado] = useState(false); 
+
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+
+
+  const [horarioCriado, setHorarioCriado] = useState(false);
 
   // Carregar lista de horários
 
@@ -32,8 +37,8 @@ const GestaoHorarios = ({
             bloco.turmaCurso +
             " " +
             bloco.semestre +
-             " " +
-            bloco.anoCurso+
+            " " +
+            bloco.anoCurso +
             " " +
             bloco.nomeTurma,
         }));
@@ -52,7 +57,13 @@ const GestaoHorarios = ({
         anoLetivo: anoLetivo,
         semestre: semestre,
         turmaFK: turma.value,
-      };
+        dataInicio: dataInicio,
+        dataFim: dataFim,
+      };       
+      if (new Date(dataFim) <= new Date(dataInicio)) {
+        toast.error("A data de fim deve ser posterior à data de início.");
+        return;
+      }
       const response = await Api.criarHorario(dataASubmeter);
       const data = await response.json();
       if (data.erro) {
@@ -65,6 +76,8 @@ const GestaoHorarios = ({
         setanoLetivo(""); // Limpa o campo de ano letivo
         setSemestre(""); // Limpa o campo de semestre
         setTurma(null); // Limpa o campo de turma
+        setDataInicio(""); // Limpa o campo de data de início
+        setDataFim(""); // Limpa o campo de data de fim
       }
     } catch (err) {
       console.log("catch");
@@ -174,6 +187,25 @@ const GestaoHorarios = ({
                   <MenuItem value="1ºSemestre">1º Semestre</MenuItem>
                   <MenuItem value="2ºSemestre">2º Semestre</MenuItem>
                 </Select>
+                {/* Campo para Data de Início */}
+                <label className="form-label">Data de Início</label>
+                <input
+                  type="date"
+                  className="form-control mb-3"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                  required
+                />
+
+                {/* Campo para Data de Fim */}
+                <label className="form-label">Data de Fim</label>
+                <input
+                  type="date"
+                  className="form-control mb-3"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
+                  required
+                />
                 {/* Campo para selecionar a turma */}
                 <TurmasSelect
                   id="turma"
@@ -192,6 +224,12 @@ const GestaoHorarios = ({
                     className="btn btn-outline-secondary"
                     onClick={() => {
                       setMostrarCriar(false); // Esconde o formulário de criação
+                      // Limpa os campos do formulário
+                      setanoLetivo(""); // Limpa o campo de ano letivo
+                      setSemestre(""); // Limpa o campo de semestre
+                      setTurma(null); // Limpa o campo de turma
+                      setDataInicio("");
+                      setDataFim("");
                     }}
                   >
                     Cancelar

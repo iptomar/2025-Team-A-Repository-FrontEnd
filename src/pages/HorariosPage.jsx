@@ -10,7 +10,7 @@ import {
   addMinutes,
 } from "date-fns";
 import "../css/horario.css";
-import { getManchasHorarias, getHorarioById, bloquearHorario, desbloquearHorario } from "../api/api";
+import { getManchasPorHorario, getHorarioById, bloquearHorario, desbloquearHorario } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
 import GrelhaHorario from "../components/GrelhaHorarios";
