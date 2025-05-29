@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import * as Api from "../../api/api";
+import customDarkStyles from "../DarkModeFiles/darkmode"; // Importa os estilos personalizados para o modo escuro
+import useDarkMode from "../DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function EditarUCForm() {
   const { id } = useParams();
@@ -17,6 +19,8 @@ export default function EditarUCForm() {
   const [rawCursos, setRawCursos] = useState([]);
   const [listaCursos, setListaCursos] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   // Carrega a UC e os cursos disponíveis
   useEffect(() => {
@@ -182,6 +186,7 @@ export default function EditarUCForm() {
           options={listaCursos}
           value={cursosSelecionados}
           onChange={handleSelectChange}
+          styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
         />
       </div>
 

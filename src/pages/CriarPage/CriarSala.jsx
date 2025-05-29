@@ -6,12 +6,17 @@ import Select from "react-select";
 import SubmitButton from "../../components/common/SubmitButton"; 
 import ReturnButton from "../../components/common/ReturnButton"; 
 import { toast } from "react-toastify"; 
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
+
 function CriarSala() {
   const [nome, setNome] = useState(""); // estado para o nome da sala
   const [escolaSelecionada, setEscolaSelecionada] = useState(null); // estado para a escola selecionada
   const [listaEscolas, setListaEscolas] = useState([]); // lista de escolas formatada para o Select
   const [loading, setLoading] = useState(false); // estado de loading
   const navigate = useNavigate(); // hook para navegação
+
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   // Carrega escolas ao montar o componente
   // e formata para o Select
@@ -89,6 +94,7 @@ function CriarSala() {
             onChange={setEscolaSelecionada}
             placeholder="Escolha uma escola"
             required
+            styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
           />
         </div>
 

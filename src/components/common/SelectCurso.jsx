@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import * as Api from "../../api/api";
+import customDarkStyles from "../DarkModeFiles/darkmode"; // Importando o estilo personalizado para o modo escuro
+import useDarkMode from "../DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function CursoSelect({ value, onChange, isMulti = false, endpoint = "getCursos" }) {
   const [options, setOptions] = useState([]);
+
+  const isDarkMode = useDarkMode(); // Hook personalizado para verificar o modo escuro
 
   useEffect(() => {
     Api.getCursos()
@@ -26,6 +30,7 @@ export default function CursoSelect({ value, onChange, isMulti = false, endpoint
         options={options}
         value={value}
         onChange={onChange}
+        styles={isDarkMode ? customDarkStyles : {}}
       />
     </div>
   );

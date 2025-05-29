@@ -11,3 +11,10 @@
     padding: 10px;
   }
   
+  .dark-mode .custom-navbar {
+  background-color: #1f1f1f;
+}
+
+.dark-mode #title {
+  color: #ffffff;
+}

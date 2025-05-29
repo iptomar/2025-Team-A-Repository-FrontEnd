@@ -98,7 +98,8 @@
     right: 0;
     width: calc(100% - 4px);
     margin: 2px;
-    background-color: #1d4ed8;
+    /* background-color: #1d4ed8; */
+    background-color: #25a830;
     color: white;
     padding: 4px 6px;
     border-radius: 8px;
@@ -152,7 +153,8 @@
   }
   
   .bloco-aula {
-    background-color: #1e50e7;
+    /* background-color: #1e50e7; */
+    background-color: #25a830;
     color: white;
     padding: 0.5rem;
     border-radius: 8px;
@@ -173,12 +175,22 @@
   }
   
   .bloco-default {
-    background-color: #2563eb;
+    /* background-color: #2563eb; */
+    background-color: #25a830;
     color: white;
     padding: 0.5rem;
     border-radius: 8px;
     margin-bottom: 1rem;
     cursor: grab;
+  }
+
+  .bloco-bloqueado {
+    background-color: #e3342f;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    cursor: not-allowed;
   }
   
 
@@ -201,3 +213,112 @@
     padding-right: 10px; /* Espaço para evitar sobreposição com a barra de rolagem */
     box-sizing: border-box; /* Inclui o padding no cálculo do tamanho */
   }
+
+  /* Estilos para a parte de criar/selecionar os horários */
+  .collapsed-card .form-label,
+  .collapsed-card .form-select,
+  .collapsed-card form,
+  .collapsed-card .btn-link,
+  .collapsed-card .btn-primary,
+  .collapsed-card input,
+  .collapsed-card .text-muted {
+    display: none !important;
+  }
+  
+  .collapsed-card .card-body {
+    padding-bottom: 0.5rem;
+  }
+  
+body.dark-mode {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+}
+
+body.dark-mode .custom-navbar {
+  background-color: #333;
+}
+
+body.dark-mode .table,
+body.dark-mode .table-striped {
+  background-color: #2c2c2c;
+  color: #f5f5f5;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .btn,
+body.dark-mode .card {
+  background-color: #2c2c2c;
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+
+body.dark-mode .grelha,
+body.dark-mode .grelha-header,
+body.dark-mode .hora,
+body.dark-mode .slot {
+  background-color: #2c2c2c;
+  color: #f5f5f5;
+}
+
+/* Tabela no modo escuro */
+body.dark-mode table {
+  background-color: #2e2e2e;
+  color: white;
+  border-color: #555;
+}
+
+/* Células e cabeçalhos */
+body.dark-mode th,
+body.dark-mode td {
+  background-color: #3a3a3a;
+  color: white;
+  border: 1px solid #555;
+}
+
+/* Botões dentro da tabela */
+body.dark-mode .btn {
+  background-color: #333;
+  color: white;
+}
+
+body.dark-mode .btn:hover {
+  background-color: #666;
+}
+
+.dark-mode select {
+  background-color: #2e2e2e;
+  color: white;
+  border: 1px solid #555;
+}
+
+.dark-mode option {
+  background-color: #2e2e2e;
+  color: white;
+}
+
+body.dark-mode .MuiSelect-select {
+  background-color: #2e2e2e !important;
+  color: white !important;
+  border: 1px solid #555;
+}
+
+body.dark-mode .MuiPaper-root {
+  background-color: #2e2e2e !important;
+  color: white !important;
+  border: 1px solid #555;
+}
+
+body.dark-mode .MuiMenuItem-root {
+  background-color: #2e2e2e !important;
+  color: white !important;
+  border: 1px solid #555;
+}
+
+.dark-mode .text-muted {
+  color: #ccc !important;
+}
+
+.dark-mode img {
+  background-color: #ffffff;
+}

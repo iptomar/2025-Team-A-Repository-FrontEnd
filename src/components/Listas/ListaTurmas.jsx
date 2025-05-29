@@ -7,7 +7,7 @@ export default function ListaTurmas() {
   return (
     <Lista
       endpoint={Api.getTurmas}
-      colunas={["Nome", "Ano Letivo", "Curso"]}
+      colunas={["Nome", "Ano do Curso", "Curso"]}
       nomeEntidade="Turma"
       deleteFn={Api.apagaTurma}
       renderItem={(turma, handleDelete) => (
@@ -16,7 +16,7 @@ export default function ListaTurmas() {
           item={turma}
           campos={[
             (t) => t.nome,
-            (t) => t.anoLetivo,
+            (t) => t.anoCurso,
             (t) => t.curso?.nome,
           ]}
           detalhes="turmas/detalhes"
