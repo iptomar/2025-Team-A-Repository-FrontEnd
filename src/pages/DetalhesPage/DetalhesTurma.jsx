@@ -4,10 +4,10 @@ import * as Api from "../../api/api";
 export default function DetalhesTurma() {
   return (
     <Detalhes
-      entidadeNome="Turma"
+      entidadeNome="da Turma"
       campos={[
         { label: "Nome", key: "nome" },
-        { label: "Ano Letivo", key: "anoLetivo" },
+        { label: "Ano Curso", key: "anoCurso" },
         { label: "Curso", key: "curso.nome" },
       ]}
       fetchFn={Api.getDetalheTurma}

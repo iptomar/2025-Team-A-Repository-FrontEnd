@@ -4,7 +4,7 @@ import * as Api from "../../api/api";
 export default function DetalhesEscola() {
   return (
     <Detalhes
-      entidadeNome="Escolas"
+      entidadeNome=" da Escola"
       campos={[
         { label: "Nome", key: "nome" },
       ]}

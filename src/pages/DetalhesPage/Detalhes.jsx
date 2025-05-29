@@ -28,17 +28,21 @@ export default function Detalhes({ entidadeNome, campos, fetchFn, voltarPath }) 
     <div className="d-flex justify-content-center mt-5">
       <div className="card" style={{ width: '50%' }}>
         <div className="card-body">
-          <h2 className="card-title text-center">Detalhe da {entidadeNome}</h2>
+          <h2 className="card-title text-center">Detalhes {entidadeNome}</h2>
           <hr />
           {dados ? (
             <div className="text-center mb-4">
-              {campos.map(({ label, key }) => (
-                <p key={key}>
-                  <strong>{label}:</strong> {key.includes('.') 
-                    ? key.split('.').reduce((acc, curr) => acc?.[curr], dados) 
-                    : dados[key] ?? '—'}
-                </p>
-              ))}
+              {campos.map(({ label, key, render }) => {
+                const valor = key.includes('.')
+                  ? key.split('.').reduce((acc, curr) => acc?.[curr], dados)
+                  : dados[key];
+
+                return (
+                  <p key={key}>
+                    <strong>{label}:</strong> {render ? render(valor) : (valor ?? '—')}
+                  </p>
+                );
+              })}
             </div>
           ) : (
             <p>{entidadeNome} não encontrada.</p>

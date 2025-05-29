@@ -6,6 +6,8 @@ import Select from "react-select";
 import SubmitButton from "../../components/common/SubmitButton"; 
 import ReturnButton from "../../components/common/ReturnButton"; 
 import { toast } from "react-toastify"; 
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 function EditarSala() {
   const { id } = useParams(); // id da sala a editar
@@ -14,6 +16,8 @@ function EditarSala() {
   const [listaEscolas, setListaEscolas] = useState([]); // lista para o select
   const [loading, setLoading] = useState(false); // estado loading
   const navigate = useNavigate(); // hook para navegação
+
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   useEffect(() => {
     getDetalheSala(id)
@@ -96,6 +100,7 @@ function EditarSala() {
             onChange={setEscolaSelecionada}
             placeholder="Escolha uma escola"
             required
+            styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
           />
         </div>
 
