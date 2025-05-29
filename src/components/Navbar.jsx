@@ -3,10 +3,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/navbar.css';
 import { ROUTES } from '../Routes';
 import logo from "../assets/logoIPT.png";
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { useEffect,  useState} from 'react';
 import { useContext } from 'react';
 import { UserContext } from '../UserContext';
 
 const Navbar = () => {
+  const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem('modo-escuro') === 'true';
+    });
+
+    useEffect(() => {
+        document.body.classList.toggle("dark-mode", darkMode);
+        localStorage.setItem("modo-escuro", darkMode);
+    }, [darkMode]);
+  
   const navigate = useNavigate();
   const { setUser, user } = useContext(UserContext);
 
@@ -79,6 +90,15 @@ const Navbar = () => {
           </ul>
 
           <ul className="navbar-nav">
+            <li className="nav-item">
+                <button
+                    className="nav-link btn btn-link"
+                    onClick={() => setDarkMode(prev => !prev)}
+                    title="Alternar modo escuro"
+                >
+                    {darkMode ? <FaSun /> : <FaMoon />}
+                </button>
+            </li>
             {user ? (
               <>
                 <li className="nav-item nav-link">

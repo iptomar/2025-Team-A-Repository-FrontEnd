@@ -8,6 +8,8 @@ import CursoSelect from "../../components/common/SelectCurso";
 import EditarPage from "./EditarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import { Select, MenuItem } from "@mui/material";
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function EditarTurma() {
   const [nome, setNome] = useState("");
@@ -19,6 +21,8 @@ export default function EditarTurma() {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   // Carregar dados da turma e cursos disponíveis
   useEffect(() => {
@@ -134,6 +138,7 @@ export default function EditarTurma() {
           value={cursoSelecionado}
           onChange={setCursoSelecionado}
           options={cursos}
+          styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
         />
         <div className="d-flex justify-content-between mt-4">
           <SubmitButton loading={loading} text="Editar Turma" />

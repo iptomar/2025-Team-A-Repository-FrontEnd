@@ -11,6 +11,8 @@ import CriarPage from "./CriarPage";
 import ReturnButton from "../../components/common/ReturnButton";
 import Select from "react-select";
 import { Select as MUISelect, MenuItem } from "@mui/material";
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function CriarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -23,6 +25,8 @@ export default function CriarManchaHoraria() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -151,6 +155,7 @@ export default function CriarManchaHoraria() {
             isMulti={true}
             options={listaHorarios} // Passa os horarios disponíveis
             value={horariosSelecionados} // Passa os horarios selecionados para o valor da dropdown
+            styles={isDarkMode ? customDarkStyles : {}}
           />
         </div>
         <div className="d-flex justify-content-between mt-4">

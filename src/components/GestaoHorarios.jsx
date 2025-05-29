@@ -4,6 +4,9 @@ import { Select, MenuItem } from "@mui/material";
 import TurmasSelect from "./common/SelectTurma";
 import { toast } from "react-toastify";
 import { set } from "date-fns";
+import customDarkStyles from "./DarkModeFiles/darkmode"; // Importa os estilos personalizados para o modo escuro
+import useDarkMode from "./DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
+
 // Componente funcional para a gestão de horários
 const GestaoHorarios = ({
   horarioSelecionado, // Horário atualmente selecionado
@@ -15,11 +18,11 @@ const GestaoHorarios = ({
   const [anoLetivo, setanoLetivo] = useState("");
   const [semestre, setSemestre] = useState("");
   const [turma, setTurma] = useState(null);
+  
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
 
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-
-
   const [horarioCriado, setHorarioCriado] = useState(false);
 
   // Carregar lista de horários
@@ -183,6 +186,7 @@ const GestaoHorarios = ({
                   id="semestre"
                   value={semestre}
                   onChange={(e) => setSemestre(e.target.value)}
+                  styles={customDarkStyles} // Aplica estilos personalizados
                 >
                   <MenuItem value="1ºSemestre">1º Semestre</MenuItem>
                   <MenuItem value="2ºSemestre">2º Semestre</MenuItem>
@@ -212,6 +216,7 @@ const GestaoHorarios = ({
                   label="Turma"
                   value={turma}
                   onChange={setTurma} // Atualiza o estado com a turma selecionada
+                  styles={isDarkMode ? customDarkStyles : {}} // Aplica estilos personalizados
                 />
                 <div className="d-flex gap-2">
                   {/* Botão para submeter o formulário */}

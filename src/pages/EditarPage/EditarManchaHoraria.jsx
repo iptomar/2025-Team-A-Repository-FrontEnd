@@ -12,6 +12,8 @@ import SalasSelect from "../../components/common/SelectSala";
 import Select from "react-select";
 import { Select as MUISelect, MenuItem } from "@mui/material";
 import { ROUTES } from "../../Routes";
+import customDarkStyles from "../../components/DarkModeFiles/darkmode"; // Importa o estilo personalizado para o modo escuro
+import useDarkMode from "../../components/DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
 
 export default function EditarManchaHoraria() {
   const [uc, setUc] = useState(null);
@@ -26,6 +28,8 @@ export default function EditarManchaHoraria() {
   const [horariosSelecionados, setHorariosSelecionados] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const isDarkMode = useDarkMode(); // Verifica se o modo escuro está ativo
+ 
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -233,6 +237,7 @@ export default function EditarManchaHoraria() {
             options={listaHorarios}
             value={horariosSelecionados}
             onChange={handleSelectChange}
+            styles={isDarkMode ? customDarkStyles : {}}
           />
         </div>
         <div className="d-flex justify-content-between mt-4">
