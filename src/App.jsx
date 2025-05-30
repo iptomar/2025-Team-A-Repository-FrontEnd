@@ -46,63 +46,65 @@ import { ROUTES } from "./Routes";
 import { UserContext } from "./UserContext"; // importa o contexto do utilizador
 
 const AppContent = () => {
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const pathname = location.pathname;
+  // const location = useLocation();
+  // const navigate = useNavigate();
+  // const pathname = location.pathname;
 
-  const isAuthenticated = () => !!localStorage.getItem("token");
+  // const isAuthenticated = () => !!localStorage.getItem("token");
 
-  const publicRoutes = [ROUTES.LOG_IN, ROUTES.REGISTER];
-  const showNavbar = !publicRoutes.includes(pathname);
+  // const publicRoutes = [ROUTES.LOG_IN, ROUTES.REGISTER];
+  // const showNavbar = !publicRoutes.includes(pathname);
 
-  useEffect(() => {
-    // Se NÃO estiver autenticado e tentar rota privada
-    if (!isAuthenticated() && !publicRoutes.includes(pathname)) {
-      navigate(ROUTES.LOG_IN);
-    }
-    if (isAuthenticated() && publicRoutes.includes(pathname)) {      
-      navigate(ROUTES.HOME);
-    }
-  }, [pathname, isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   // Se NÃO estiver autenticado e tentar rota privada
+  //   if (!isAuthenticated() && !publicRoutes.includes(pathname)) {
+  //     navigate(ROUTES.LOG_IN);
+  //   }
+  //   if (isAuthenticated() && publicRoutes.includes(pathname)) {      
+  //     navigate(ROUTES.HOME);
+  //   }
+  // }, [pathname, isAuthenticated, navigate]);
 
-  // Função para checar se o user tem pelo menos uma das roles necessárias
-  const hasRole = (requiredRoles = []) => {
-    if (!user || !user.role) {
-      return false;
-    }
-    if (requiredRoles.length === 0) {
-      return user.role.length > 0;
-    }
-    const hasRequired = requiredRoles.some((role) => user.role.includes(role));
-    return hasRequired;
-  };
+  // // Função para checar se o user tem pelo menos uma das roles necessárias
+  // const hasRole = (requiredRoles = []) => {
+  //   if (!user || !user.role) {
+  //     return false;
+  //   }
+  //   if (requiredRoles.length === 0) {
+  //     return user.role.length > 0;
+  //   }
+  //   const hasRequired = requiredRoles.some((role) => user.role.includes(role));
+  //   return hasRequired;
+  // };
 
-  if (!isAuthenticated()) {
-    // Se não autenticado, só permite rotas públicas
-    return (
-      <>
-        <Routes>
-          <Route path={ROUTES.LOG_IN} element={<LogInPage />} />
-          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
-          <Route path="*" element={<Navigate to={ROUTES.LOG_IN} replace />} />
-        </Routes>
-      </>
-    );
-  }
+  // if (!isAuthenticated()) {
+  //   // Se não autenticado, só permite rotas públicas
+  //   return (
+  //     <>
+  //       <Routes>
+  //         <Route path={ROUTES.LOG_IN} element={<LogInPage />} />
+  //         <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+  //         <Route path="*" element={<Navigate to={ROUTES.LOG_IN} replace />} />
+  //       </Routes>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
-      {showNavbar && <Navbar />}
+      {/* {showNavbar &&  */}
+      <Navbar />
+       {/* } */}
       <ToastContainer closeButton={false} />
       <Routes>
-        {/* Rotas acessíveis a qualquer user autenticado com role */}
+        {/* Rotas acessíveis a qualquer user autenticado com role
         <Route path="/" element={<HomePage />} />
         <Route key={ROUTES.HOME} path={ROUTES.HOME} element={<HomePage />} />
 
         {hasRole() && (
-          <>
+          <> */}
             <Route key={ROUTES.SCHEDULE} path={ROUTES.SCHEDULE} element={<HorariosPage />} />
             <Route key={ROUTES.DOCENTES} path={ROUTES.DOCENTES} element={<DocentesPage />} />
             <Route key={ROUTES.ESCOLAS} path={ROUTES.ESCOLAS} element={<EscolasPage />} />
@@ -132,17 +134,17 @@ const AppContent = () => {
             <Route path={ROUTES.CRIAR_SALA} element={<CriarSala />} />
             <Route path={ROUTES.EDITAR_SALA} element={<EditarSala />} />
             <Route path={ROUTES.DETALHES_SALA} element={<DetalhesSala />} />
-          </>
-        )}
+          {/* </>
+        )} */}
 
         {/* Rotas apenas para Administrador */}
-        {hasRole(["Administrador"]) && (
+        {/* {hasRole(["Administrador"]) && (
           <>
             <Route path={ROUTES.UTILIZADORES} element={<UtilizadoresPage />} />
             <Route path={ROUTES.EDITAR_UTILIZADOR} element={<EditarUtilizador />} />
             <Route path={ROUTES.DETALHES_UTILIZADOR} element={<DetalhesUtilizador />} />
           </>
-        )}
+        )} */}
 
         {/* Caso user não tenha acesso a alguma rota (catch-all) */}
         <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
