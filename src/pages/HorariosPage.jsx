@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { mostrarToastBloqueado, mostrarToastDesbloqueado } from '../components/ToastHorarioBlocked.jsx'
+import {
+  mostrarToastBloqueado,
+  mostrarToastDesbloqueado,
+} from "../components/ToastHorarioBlocked.jsx";
 import { ToastContainer } from "react-toastify";
 import {
   add,
@@ -10,10 +13,18 @@ import {
   addMinutes,
 } from "date-fns";
 import "../css/horario.css";
-import { getManchasPorHorario, getHorarioById, bloquearHorario, desbloquearHorario } from "../api/api";
+import {
+  getManchasPorHorario,
+  getHorarioById,
+  bloquearHorario,
+  desbloquearHorario,
+  getManchasHorariasPorSala,
+} from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
+import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
+import { Tabs, Tab, Box } from "@mui/material";
 
 const HorariosPage = () => {
   // Estado para guardar o início da semana atual
@@ -30,11 +41,16 @@ const HorariosPage = () => {
   // Estado para guardar o horário atualmente selecionado
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
 
+  const [horarioSalaSelecionado, setHorarioSalaSelecionado] = useState([]);
+
   // Estado para controlar a visibilidade do formulário de criação de horário
   const [mostrarCriar, setMostrarCriar] = useState(false);
 
   // Estado para bloquear ou desbloquear horários
   const [bloqueado, setBloqueado] = useState(false);
+
+  // Estado para controlar a aba ativa
+  const [aba, setAba] = useState(0);
 
   // Gera os dias da semana atual
   const diasDaSemana = eachDayOfInterval({
@@ -43,8 +59,9 @@ const HorariosPage = () => {
   });
 
   // Gera os horários do dia (das 8:00 às 23:30, com intervalos de 30 minutos)
-  const horas = Array.from({ length: 33 }, (_, i) =>
-    addMinutes(startOfDay(new Date()), 480 + 30 * i) // Começa às 8:00 (480 minutos) e adiciona intervalos de 30 minutos
+  const horas = Array.from(
+    { length: 33 },
+    (_, i) => addMinutes(startOfDay(new Date()), 480 + 30 * i) // Começa às 8:00 (480 minutos) e adiciona intervalos de 30 minutos
   );
 
   // Função para mudar a semana exibida
@@ -71,7 +88,7 @@ const HorariosPage = () => {
   // Função para bloquear ou desbloquear horários
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5251/horarioHub", {
+      .withUrl("http://localhost:7008/horarioHub", {
         withCredentials: true,
         transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
       })
@@ -100,188 +117,281 @@ const HorariosPage = () => {
   useEffect(() => {
     const inic = async () => {
       try {
-        // Obtém as manchas horárias da API
-        const response = await getManchasPorHorario(horarioSelecionado.id);
-        const mH = await response.json();
+        let response = null;
 
-        // Formata os blocos de horários recebidos
-        const blocosFormatados = mH.map((bloco) => ({
-          id: bloco.id,
-          cadeira: bloco.uc.nome,
-          tipo: bloco.tipoDeAula,
-          horaInicio: bloco.horaInicio,
-          dia: bloco.dia,
-          professor: bloco.docente.nome,
-          sala: bloco.sala.nome,
-          duracao: bloco.numSlots * 30, // Duração em minutos
-        }));
+        if (aba === 0 && horarioSelecionado) {
+          response = await getManchasPorHorario(horarioSelecionado.id);
+        } else if (
+          aba === 1 &&
+          horarioSalaSelecionado &&
+          horarioSalaSelecionado.sala &&
+          horarioSalaSelecionado.anoLetivo &&
+          horarioSalaSelecionado.semestre
+        ) {
+          setBlocos([]);
+          setAulas([]);
+          response = await getManchasHorariasPorSala(
+            horarioSalaSelecionado.sala.value,
+            horarioSalaSelecionado.anoLetivo,
+            horarioSalaSelecionado.semestre
+          );
+        }
 
-        const b = []; // Blocos não alocados
-        const a = []; // Aulas formatadas
+        // Só processa se houver resposta
+        if (response) {
+          const mH = await response.json();
 
-        // Processa os blocos para separar os não alocados e formatar os horários
-        blocosFormatados.forEach((element) => {
-          if (
-            element.horaInicio === "00:00:00" || // Verifica se o horário não está definido
-            element.dia === "0001-01-01" // Verifica se o dia não está definido
-          ) {
-            b.push(element); // Adiciona aos blocos não alocados
+          if (Array.isArray(mH)) {
+            // Formata os blocos de horários recebidos
+            const blocosFormatados = mH.map((bloco) => ({
+              id: bloco.id,
+              cadeira: bloco.uc.nome,
+              tipo: bloco.tipoDeAula,
+              horaInicio: bloco.horaInicio,
+              dia: bloco.dia,
+              professor: bloco.docente.nome,
+              sala: bloco.sala.nome,
+              duracao: bloco.numSlots * 30,
+            }));
+
+            const b = [];
+            const a = [];
+
+            blocosFormatados.forEach((element) => {
+              if (
+                element.horaInicio === "00:00:00" ||
+                element.dia === "0001-01-01"
+              ) {
+                b.push(element);
+              }
+              a.push({
+                ...element,
+                horaInicio: format(
+                  new Date(`1970-01-01T${element.horaInicio}`),
+                  "HH:mm"
+                ),
+                horaFim: format(
+                  addMinutes(
+                    new Date(`1970-01-01T${element.horaInicio}`),
+                    element.duracao
+                  ),
+                  "HH:mm"
+                ),
+              });
+            });
+
+            setBlocos(b);
+            setAulas(a);
           }
-          a.push({
-            ...element,
-            horaInicio: format(
-              new Date(`1970-01-01T${element.horaInicio}`),
-              "HH:mm"
-            ), // Formata a hora de início
-            horaFim: format(
-              addMinutes(
-                new Date(`1970-01-01T${element.horaInicio}`),
-                element.duracao
-              ),
-              "HH:mm"
-            ), // Calcula e formata a hora de término
-          });
-        });
-
-        setBlocos(b); // Atualiza o estado com os blocos não alocados
-        setAulas(a); // Atualiza o estado com as aulas formatadas
+        } else {
+          console.error("Resposta da API não é um array:", response);
+        }
       } catch (error) {
-        console.error("Erro ao obter os dados:", error); // Loga erros no console
+        console.error("Erro ao obter os dados:", error);
       }
     };
-    inic(); // Chama a função de inicialização
-  }, [horarioSelecionado]);
+    inic();
+  }, [aba, horarioSelecionado, horarioSalaSelecionado]);
 
+  // Efeito para configurar a conexão com o SignalR
   // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5251/horarioHub", {
+      .withUrl("http://localhost:7008/horarioHub", {
         withCredentials: true,
-        transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
+        transport: signalR.HttpTransportType.WebSockets,
       })
-      .withAutomaticReconnect() // Reconecta automaticamente em caso de desconexão
+      .withAutomaticReconnect()
       .build();
 
-    // Inicia a conexão
     connection.start().then(() => {
       console.log("Ligado ao SignalR");
 
-      // Define o evento para receber atualizações de aulas
       connection.on("AulaAtualizada", async (data) => {
         console.log("Aula atualizada via socket:", data);
 
         try {
-          // Atualiza as manchas horárias ao receber uma atualização
-          const response = await getManchasPorHorario(horarioSelecionado.id);
-          const mH = await response.json();
-          const blocosFormatados = mH.map((bloco) => ({
-            id: bloco.id,
-            cadeira: bloco.uc.nome,
-            tipo: bloco.tipoDeAula,
-            horaInicio: bloco.horaInicio,
-            dia: bloco.dia,
-            professor: bloco.docente.nome,
-            sala: bloco.sala.nome,
-            duracao: bloco.numSlots * 30,
-          }));
+          let response = null;
+          if (aba === 0 && horarioSelecionado) {
+            response = await getManchasPorHorario(horarioSelecionado.id);
+          } else if (
+            aba === 1 &&
+            horarioSalaSelecionado &&
+            horarioSalaSelecionado.sala &&
+            horarioSalaSelecionado.anoLetivo &&
+            horarioSalaSelecionado.semestre
+          ) {
+            setBlocos([]);
+            setAulas([]);
+            response = await getManchasHorariasPorSala(
+              horarioSalaSelecionado.sala.value,
+              horarioSalaSelecionado.anoLetivo,
+              horarioSalaSelecionado.semestre
+            );
+          }
 
-          const b = [];
-          const a = [];
+          if (response) {
+            const mH = await response.json();
 
-          blocosFormatados.forEach((element) => {
-            if (
-              element.horaInicio === "00:00:00" ||
-              element.dia === "0001-01-01"
-            ) {
-              b.push(element);
+            if (Array.isArray(mH)) {
+              // Formata os blocos de horários recebidos
+              const blocosFormatados = mH.map((bloco) => ({
+                id: bloco.id,
+                cadeira: bloco.uc.nome,
+                tipo: bloco.tipoDeAula,
+                horaInicio: bloco.horaInicio,
+                dia: bloco.dia,
+                professor: bloco.docente.nome,
+                sala: bloco.sala.nome,
+                duracao: bloco.numSlots * 30,
+              }));
+
+              const b = [];
+              const a = [];
+
+              blocosFormatados.forEach((element) => {
+                if (
+                  element.horaInicio === "00:00:00" ||
+                  element.dia === "0001-01-01"
+                ) {
+                  b.push(element);
+                }
+                a.push({
+                  ...element,
+                  horaInicio: format(
+                    new Date(`1970-01-01T${element.horaInicio}`),
+                    "HH:mm"
+                  ),
+                  horaFim: format(
+                    addMinutes(
+                      new Date(`1970-01-01T${element.horaInicio}`),
+                      element.duracao
+                    ),
+                    "HH:mm"
+                  ),
+                });
+              });
+
+              setBlocos(b);
+              setAulas(a);
             }
-            a.push({
-              ...element,
-              horaInicio: format(
-                new Date(`1970-01-01T${element.horaInicio}`),
-                "HH:mm"
-              ),
-              horaFim: format(
-                addMinutes(
-                  new Date(`1970-01-01T${element.horaInicio}`),
-                  element.duracao
-                ),
-                "HH:mm"
-              ),
-            });
-          });
-
-          setBlocos(b);
-          setAulas(a);
+          } else {
+            console.error("Resposta da API não é um array:", response);
+          }
         } catch (error) {
           console.error("Erro ao obter os dados:", error);
         }
       });
     });
 
-    // Limpa a conexão ao desmontar o componente
     return () => {
       connection.stop();
     };
-  }, [horarioSelecionado]);
+  }, [aba, horarioSelecionado, horarioSalaSelecionado]);
+  const handleChange = (event, newValue) => {
+    console.log("Aba selecionada:", newValue);
+    setAba(newValue);
+  };
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
-      {/* Componente para gerenciar horários */}
-      <GestaoHorarios
-        horarioSelecionado={horarioSelecionado}
-        setHorarioSelecionado={setHorarioSelecionado}
-        mostrarCriar={mostrarCriar}
-        setMostrarCriar={setMostrarCriar}
-      />
 
-      {/* Exibe a grelha de horários se um horário estiver selecionado */}
-      {horarioSelecionado && (
+      {/* Abas com Material UI */}
+      <Box sx={{ borderBottom: 1, borderColor: "divider", margin: "1rem 0" }}>
+        <Tabs value={aba} onChange={handleChange} aria-label="Abas de horários">
+          <Tab label="Horários das Turmas" />
+          <Tab label="Horários das Salas" />
+          <Tab label="Horários dos Docentes" />
+        </Tabs>
+      </Box>
+
+      {/* Conteúdo das Abas */}
+      {aba === 0 && (
         <>
-<div style={{ margin: "1rem" }}>
-  {/* Botão para bloquear/desbloquear o horário */}
-  {bloqueado ? (
-    <button
-      onClick={async () => {
-        try {
-          await desbloquearHorario(horarioSelecionado.id);
-          setBloqueado(false);
-          mostrarToastDesbloqueado();
-        } catch (error) {
-          console.error("Erro ao desbloquear o horário:", error);
-        }
-      }}
-    >
-      Desbloquear horário
-    </button>
-  ) : (
-    <button
-      onClick={async () => {
-        try {
-          await bloquearHorario(horarioSelecionado.id);
-          setBloqueado(true);
-          mostrarToastBloqueado();
-        } catch (error) {
-          console.error("Erro ao bloquear o horário:", error);
-        }
-      }}
-    >
-      Bloquear horário
-    </button>
-  )}
-</div>
-        <GrelhaHorario
-          diasDaSemana={diasDaSemana}
-          horas={horas}
-          aulas={aulas}
-          blocos={blocos}
-          setAulas={setAulas}
-          setBlocos={setBlocos}
-          mudarSemana={mudarSemana}
-          bloqueado={bloqueado}
-        />
-      </>)}
+          <GestaoHorarios
+            horarioSelecionado={horarioSelecionado}
+            setHorarioSelecionado={setHorarioSelecionado}
+            mostrarCriar={mostrarCriar}
+            setMostrarCriar={setMostrarCriar}
+          />
+          {horarioSelecionado && (
+            <>
+              <div style={{ margin: "1rem" }}>
+                {bloqueado ? (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await desbloquearHorario(horarioSelecionado.id);
+                        setBloqueado(false);
+                        mostrarToastDesbloqueado();
+                      } catch (error) {
+                        console.error("Erro ao desbloquear o horário:", error);
+                      }
+                    }}
+                  >
+                    Desbloquear horário
+                  </button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await bloquearHorario(horarioSelecionado.id);
+                        setBloqueado(true);
+                        mostrarToastBloqueado();
+                      } catch (error) {
+                        console.error("Erro ao bloquear o horário:", error);
+                      }
+                    }}
+                  >
+                    Bloquear horário
+                  </button>
+                )}
+              </div>
+              <GrelhaHorario
+                diasDaSemana={diasDaSemana}
+                horas={horas}
+                aulas={aulas}
+                blocos={blocos}
+                setAulas={setAulas}
+                setBlocos={setBlocos}
+                mudarSemana={mudarSemana}
+                bloqueado={bloqueado}
+              />
+            </>
+          )}
+        </>
+      )}
+
+      {aba === 1 && (
+        <div>
+          <GestaoHorariosSalas
+            horarioSalaSelecionado={horarioSalaSelecionado}
+            setHorarioSalaSelecionado={setHorarioSalaSelecionado}
+          />
+          {horarioSalaSelecionado &&
+          horarioSalaSelecionado.sala &&
+          horarioSalaSelecionado.anoLetivo &&
+          horarioSalaSelecionado.semestre ? (
+            <GrelhaHorario
+              diasDaSemana={diasDaSemana}
+              horas={horas}
+              aulas={aulas}
+              blocos={blocos}
+              setAulas={setAulas}
+              setBlocos={setBlocos}
+              mudarSemana={mudarSemana}
+              bloqueado={bloqueado}
+            />
+          ) : null}
+        </div>
+      )}
+
+      {aba === 2 && (
+        <div>
+          <p>Em breve: Horários dos Docentes</p>
+        </div>
+      )}
     </>
   );
 };

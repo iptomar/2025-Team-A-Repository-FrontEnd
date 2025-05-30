@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -271,6 +271,24 @@ export const getManchasPorHorario = async (id) => {
   }
 };
 
+// Obter as manchas horárias por sala, ano letivo e semestre
+export const getManchasHorariasPorSala = async (
+  idSala,
+  anoLetivo,
+  semestre
+) => {
+  try {
+    return fetch(
+      `${API_URL}api/API_ManchasHorarias/Sala/${idSala}?anoLetivo=${encodeURIComponent(
+        anoLetivo
+      )}&semestre=${semestre}`
+    );
+  } catch (error) {
+    console.error("Erro ao buscar manchas horárias:", error);
+    throw error;
+  }
+};
+
 //Eliminar uma Mancha Horária
 export const deleteManchaHoraria = async (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
@@ -320,7 +338,6 @@ export async function dragBloco(id, horaInicio, dia) {
     throw new Error(errorMessage);
   }
 }
-
 
 //editar a mancha horária
 export async function updateManchaHoraria(id, dataASubmeter) {
@@ -393,13 +410,16 @@ export function criarHorario(d) {
 
 // Bloquear um horario
 export async function bloquearHorario(id) {
-  const response = await fetch(`http://localhost:5251/api/API_Horarios/Bloquear/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ Bloqueado: true }),
-  });
+  const response = await fetch(
+    `http://localhost:5251/api/API_Horarios/Bloquear/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ Bloqueado: true }),
+    }
+  );
   if (!response.ok) {
     throw new Error("Erro ao bloquear o horário");
   }
@@ -408,19 +428,21 @@ export async function bloquearHorario(id) {
 
 // Desbloquear um horario
 export async function desbloquearHorario(id) {
-  const response = await fetch(`http://localhost:5251/api/API_Horarios/Desbloquear/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ Bloqueado: false }),
-  });
+  const response = await fetch(
+    `http://localhost:5251/api/API_Horarios/Desbloquear/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ Bloqueado: false }),
+    }
+  );
   if (!response.ok) {
     throw new Error("Erro ao desbloquear o horário");
   }
   return response.json();
 }
-
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
@@ -433,7 +455,7 @@ export const login = async (email, password) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }), 
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
@@ -456,7 +478,6 @@ export const login = async (email, password) => {
     throw error;
   }
 };
-
 
 // Registo
 export const register = async (nome, email, escolaFK, cursoFK, password) => {
@@ -482,7 +503,6 @@ export const register = async (nome, email, escolaFK, cursoFK, password) => {
   }
 };
 
-
 // endpoint para obter os dados do utilizador logado
 export const getMe = async () => {
   try {
@@ -503,7 +523,6 @@ export const getMe = async () => {
 
     const data = await response.json();
     return data;
-
   } catch (error) {
     console.error("Erro na função getMe:", error);
     throw error;

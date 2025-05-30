@@ -188,8 +188,8 @@ const GestaoHorarios = ({
                   onChange={(e) => setSemestre(e.target.value)}
                   styles={customDarkStyles} // Aplica estilos personalizados
                 >
-                  <MenuItem value="1ºSemestre">1º Semestre</MenuItem>
-                  <MenuItem value="2ºSemestre">2º Semestre</MenuItem>
+                  <MenuItem value="1">1º Semestre</MenuItem>
+                  <MenuItem value="2">2º Semestre</MenuItem>
                 </Select>
                 {/* Campo para Data de Início */}
                 <label className="form-label">Data de Início</label>
