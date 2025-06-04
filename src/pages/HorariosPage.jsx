@@ -19,12 +19,14 @@ import {
   bloquearHorario,
   desbloquearHorario,
   getManchasHorariasPorSala,
+  getManchasHorariasPorDocente
 } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
 import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
+import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 const HorariosPage = () => {
   // Estado para guardar o início da semana atual
@@ -51,6 +53,9 @@ const HorariosPage = () => {
 
   // Estado para controlar a aba ativa
   const [aba, setAba] = useState(0);
+
+  // Estado para guardar o horário do docente selecionado
+  const [horarioDocenteSelecionado, setHorarioDocenteSelecionado] = useState([]);
 
   // Gera os dias da semana atual
   const diasDaSemana = eachDayOfInterval({
@@ -135,6 +140,20 @@ const HorariosPage = () => {
             horarioSalaSelecionado.anoLetivo,
             horarioSalaSelecionado.semestre
           );
+        } else if (
+          aba === 2 &&
+          horarioDocenteSelecionado &&
+          horarioDocenteSelecionado.docente &&
+          horarioDocenteSelecionado.anoLetivo &&
+          horarioDocenteSelecionado.semestre
+        ) {
+          setBlocos([]);
+          setAulas([]);
+          response = await getManchasHorariasPorDocente(
+            horarioDocenteSelecionado.docente.value,
+            horarioDocenteSelecionado.anoLetivo,
+            horarioDocenteSelecionado.semestre
+          );
         }
 
         // Só processa se houver resposta
@@ -191,7 +210,7 @@ const HorariosPage = () => {
       }
     };
     inic();
-  }, [aba, horarioSelecionado, horarioSalaSelecionado]);
+  }, [aba, horarioSelecionado, horarioSalaSelecionado, horarioDocenteSelecionado]);
 
   // Efeito para configurar a conexão com o SignalR
   // Efeito para configurar a conexão com o SignalR
@@ -227,6 +246,20 @@ const HorariosPage = () => {
               horarioSalaSelecionado.sala.value,
               horarioSalaSelecionado.anoLetivo,
               horarioSalaSelecionado.semestre
+            );
+          } else if (
+            aba === 2 &&
+            horarioDocenteSelecionado &&
+            horarioDocenteSelecionado.docente &&
+            horarioDocenteSelecionado.anoLetivo &&
+            horarioDocenteSelecionado.semestre
+          ) {
+            setBlocos([]);
+            setAulas([]);
+            response = await getManchasHorariasPorDocente(
+              horarioDocenteSelecionado.docente.value,
+              horarioDocenteSelecionado.anoLetivo,
+              horarioDocenteSelecionado.semestre
             );
           }
 
@@ -287,7 +320,7 @@ const HorariosPage = () => {
     return () => {
       connection.stop();
     };
-  }, [aba, horarioSelecionado, horarioSalaSelecionado]);
+  }, [aba, horarioSelecionado, horarioSalaSelecionado, horarioDocenteSelecionado]);
   const handleChange = (event, newValue) => {
     console.log("Aba selecionada:", newValue);
     setAba(newValue);
@@ -389,7 +422,25 @@ const HorariosPage = () => {
 
       {aba === 2 && (
         <div>
-          <p>Em breve: Horários dos Docentes</p>
+          <GestaoHorariosDocentes
+            horarioDocenteSelecionado={horarioDocenteSelecionado}
+            setHorarioDocenteSelecionado={setHorarioDocenteSelecionado}
+          />
+          {horarioDocenteSelecionado &&
+          horarioDocenteSelecionado.docente &&
+          horarioDocenteSelecionado.anoLetivo &&
+          horarioDocenteSelecionado.semestre ? (
+            <GrelhaHorario
+              diasDaSemana={diasDaSemana}
+              horas={horas}
+              aulas={aulas}
+              blocos={blocos}
+              setAulas={setAulas}
+              setBlocos={setBlocos}
+              mudarSemana={mudarSemana}
+              bloqueado={bloqueado}
+            />
+          ) : null}
         </div>
       )}
     </>
