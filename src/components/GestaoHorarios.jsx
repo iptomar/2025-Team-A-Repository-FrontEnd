@@ -40,7 +40,7 @@ const GestaoHorarios = ({
             bloco.turmaCurso +
             " " +
             bloco.semestre +
-            " " +
+            "º Semestre " +
             bloco.anoCurso +
             " " +
             bloco.nomeTurma,
