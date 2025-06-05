@@ -10,14 +10,14 @@ export default function ListaTurmas() {
       colunas={["Nome", "Ano do Curso", "Curso"]}
       nomeEntidade="Turma"
       deleteFn={Api.apagaTurma}
-      renderItem={(turma, handleDelete) => (
+      renderItem={(turma, handleDelete, highlight) => (
         <Item
           key={turma.id}
           item={turma}
           campos={[
-            (t) => t.nome,
-            (t) => t.anoCurso,
-            (t) => t.curso?.nome,
+            (t) => highlight(t.nome),
+            (t) => highlight(t.anoCurso?.toString() || ""),
+            (t) => highlight(t.curso?.nome || ""),
           ]}
           detalhes="turmas/detalhes"
           editar="turmas/editar"

@@ -10,13 +10,13 @@ export default function ListaDocentes() {
       colunas={["Nome", "Email"]}
       nomeEntidade="Docente"
       deleteFn={Api.eliminaDocente}
-      renderItem={(docente, handleDelete) => (
+      renderItem={(docente, handleDelete, highlight) => (
         <Item
           key={docente.id}
           item={docente}
           campos={[
-            (e) => e.nome,
-            (e) => e.email,
+            (e) => highlight(e.nome),
+            (e) => highlight(e.email),
           ]}
           detalhes="docentes/detalhes"
           editar="docentes/editar"

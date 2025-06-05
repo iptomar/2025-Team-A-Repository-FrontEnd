@@ -17,37 +17,44 @@ export default function ListaManchasHorarias() {
       ]}
       nomeEntidade="Mancha Horária"
       deleteFn={Api.deleteManchaHoraria}
-      renderItem={(manchaHoraria, handleDelete) => (
+      camposParaPesquisa={(mh) => [
+        mh.uc.nome,
+        mh.tipoDeAula,
+        mh.docente.nome,
+        mh.sala.nome,
+        mh.listaHorarios
+          .map(
+            (h) =>
+              `${h.anoLetivo} ${h.turma.curso.nome} ${h.semestre} ${h.turma.anoCurso || ""} ${h.turma.nome}`
+          )
+          .join(" "),
+        mh.numSlots?.toString() || "",
+      ]}
+      renderItem={(manchaHoraria, handleDelete, highlight) => (
         <Item
           key={manchaHoraria.id}
           item={manchaHoraria}
           campos={[
-            (mh) => mh.uc.nome,
-            (mh) => mh.tipoDeAula,
-            (mh) => mh.docente.nome,
-            (mh) => mh.sala.nome,
+            (mh) => highlight(mh.uc.nome),
+            (mh) => highlight(mh.tipoDeAula),
+            (mh) => highlight(mh.docente.nome),
+            (mh) => highlight(mh.sala.nome),
             (mh) => {
-              const horariosFormatados = mh.listaHorarios.map((h) => {
-                return (
-                  h.anoLetivo +
-                  " " +
-                  h.turma.curso.nome +
-                  " " +
-                  h.semestre +
-                  " " +
-                  (h.turma.anoCurso || "") + // previne null
-                  " " +
-                  h.turma.nome
-                );
-              });
-              // Juntar os horários com uma quebra de linha
-              return horariosFormatados.join("\n");
+              const horariosStr = mh.listaHorarios
+                .map(
+                  (h) =>
+                    `${h.anoLetivo} ${h.turma.curso.nome} ${h.semestre} ${
+                      h.turma.anoCurso ? `Ano ${h.turma.anoCurso}` : ""
+                    } ${h.turma.nome}`
+                )
+                .join(", ");
+              return highlight(horariosStr);
             },
-            (mh) => mh.numSlots,
+            (mh) => highlight(mh.numSlots?.toString() || ""),
           ]}
           detalhes="manchahoraria/detalhes"
           editar="manchahoraria/editar"
-          deleteFn={handleDelete}
+          deleteFn={() => handleDelete(manchaHoraria.id)}
         />
       )}
     />

@@ -10,12 +10,12 @@ export default function ListaEscolas() {
       colunas={["Nome"]}
       nomeEntidade="Escola"
       deleteFn={Api.apagaEscola}
-      renderItem={(escola, handleDelete) => (
+      renderItem={(escola, handleDelete, highlight) => (
         <Item
           key={escola.id}
           item={escola}
           campos={[
-            (e) => e.nome,
+            (e) => highlight(e.nome),
           ]}
           detalhes="escolas/detalhes"
           editar="escolas/editar"
