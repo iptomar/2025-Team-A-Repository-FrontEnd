@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ToastConfirmaDelete from '../../components/ToastConfirmaDelete';
 import * as Api from '../../api/api';
 
-export default function ItemCurso({ curso, setCursos }) {
+export default function ItemCurso({ curso, setCursos, highlight = (t) => t }) {
     // Lida com o click do botão de eliminar
     const handleDelete = (id) => {
         toast(
@@ -55,9 +55,9 @@ export default function ItemCurso({ curso, setCursos }) {
 
     return (
         <tr key={curso.codCurso}>
-            <td className="px-4">{curso.codCurso}</td>
-            <td className="px-4">{curso.nome}</td>
-            <td className="px-4">{curso.escola?.nome}</td>            
+            <td className="px-4">{highlight(curso.codCurso)}</td>
+            <td className="px-4">{highlight(curso.nome)}</td>
+            <td className="px-4">{highlight(curso.escola?.nome)}</td>
             <td className="px-4">
                 <a title="Ver" className="btn btn-info btn-sm me-2" href={`/#/cursos/detalhes/${curso.codCurso}`}>
                     <HiEye />

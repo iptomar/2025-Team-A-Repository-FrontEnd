@@ -10,16 +10,16 @@ export default function ListaUCs() {
             colunas={["Unidade Curricular", "Plano", "Semestre", "Ano", "Curso(s)"]}
             nomeEntidade="Unidade Curricular"
             deleteFn={Api.apagaUC}
-            renderItem={(uc, handleDelete) => (
+            renderItem={(uc, handleDelete, highlight) => (
                 <Item
                     key={uc.id}
                     item={uc}
                     campos={[
-                        (u) => u.nome,
-                        (u) => u.plano,
-                        (u) => u.semestre,
-                        (u) => u.ano,
-                        (u) => u.cursos?.join(", ") 
+                        (u) => highlight(u.nome),
+                        (u) => highlight(u.plano),
+                        (u) => highlight(u.semestre.toString()),
+                        (u) => highlight(u.ano.toString()),
+                        (u) => highlight(u.cursos?.join(", ")),
                     ]}
                     detalhes="ucs/detalhes"
                     editar="ucs/editar"

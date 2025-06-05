@@ -10,13 +10,13 @@ export default function ListaUtilizadores() {
             colunas={["Nome", "Email", "Email Confirmado"]}
             nomeEntidade="Utilizador"
             deleteFn={Api.eliminaUtilizador}
-            renderItem={(utilizador, handleDelete) => (
+            renderItem={(utilizador, handleDelete, highlight) => (
                 <Item
                     key={utilizador.id}
                     item={utilizador}
                     campos={[
-                        (e) => e.nome,
-                        (e) => e.email,
+                        (e) => highlight(e.nome),
+                        (e) => highlight(e.email),
                         (e) => e.emailConfirmed ? "✅" : "❌",
                     ]}
                     detalhes="utilizadores/detalhes"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ListaSalas from "../components/ListaSalas/lista_salas";
+import ListaSalas from "../components/Listas/ListaSalas";
 import { getSalas } from "../api/api";
 
 function SalasPage() {

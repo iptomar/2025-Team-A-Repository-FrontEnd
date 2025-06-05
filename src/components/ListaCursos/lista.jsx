@@ -3,16 +3,36 @@ import ItemCurso from './item';
 
 export default function ListaCursos({ cursos, setCursos }) {
   const [paginaAtual, setPaginaAtual] = useState(1);
+  const [termoPesquisa, setTermoPesquisa] = useState("");
+
   const tamanhoPagina = 10;
   const MAX_BOTOES = 3;
 
-  const totalPaginas = Math.ceil(cursos.length / tamanhoPagina);
+  const highlight = (text) => {
+    if (!termoPesquisa || typeof text !== "string") return text;
+    const partes = text.split(new RegExp(`(${termoPesquisa})`, "gi"));
+    return partes.map((parte, i) =>
+      parte.toLowerCase() === termoPesquisa.toLowerCase() ? (
+        <mark key={i}>{parte}</mark>
+      ) : (
+        parte
+      )
+    );
+  };
+
+  const cursosFiltrados = cursos.filter((curso) =>
+    Object.values(curso).some((valor) =>
+      String(valor).toLowerCase().includes(termoPesquisa.toLowerCase())
+    )
+  );
+
+  const totalPaginas = Math.ceil(cursosFiltrados.length / tamanhoPagina);
   const blocoAtual = Math.ceil(paginaAtual / MAX_BOTOES);
   const totalBlocos = Math.ceil(totalPaginas / MAX_BOTOES);
   const inicioBloco = (blocoAtual - 1) * MAX_BOTOES + 1;
   const fimBloco = Math.min(blocoAtual * MAX_BOTOES, totalPaginas);
 
-  const cursosPagina = cursos.slice(
+  const cursosPagina = cursosFiltrados.slice(
     (paginaAtual - 1) * tamanhoPagina,
     paginaAtual * tamanhoPagina
   );
@@ -23,6 +43,20 @@ export default function ListaCursos({ cursos, setCursos }) {
 
   return (
     <div className="container mt-4">
+      {/* Campo de pesquisa */}
+      <div className="mb-3 text-center">
+        <input
+          type="text"
+          className="form-control w-50 d-inline"
+          placeholder="Pesquisar..."
+          value={termoPesquisa}
+          onChange={(e) => {
+            setTermoPesquisa(e.target.value);
+            setPaginaAtual(1);
+          }}
+        />
+      </div>
+
       <div className="table-responsive">
         <table className="table table-striped">
           <thead>
@@ -35,13 +69,18 @@ export default function ListaCursos({ cursos, setCursos }) {
           </thead>
           <tbody>
             {cursosPagina.map((curso) => (
-              <ItemCurso key={curso.codCurso} curso={curso} setCursos={setCursos} />
+              <ItemCurso
+                key={curso.codCurso}
+                curso={curso}
+                setCursos={setCursos}
+                highlight={highlight}
+              />
             ))}
           </tbody>
         </table>
       </div>
 
-      {cursos.length > tamanhoPagina && (
+      {cursosFiltrados.length > tamanhoPagina && (
         <nav aria-label="Paginação" className="d-flex justify-content-center mt-3">
           <ul className="pagination">
             {/* Bloco anterior */}

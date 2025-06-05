@@ -8,19 +8,15 @@ export default function Lista({
   renderItem,
   deleteFn,
   nomeEntidade,
+  camposParaPesquisa, 
 }) {
   const [dadosCompletos, setDadosCompletos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(1);
+  const [termoPesquisa, setTermoPesquisa] = useState("");
 
   const tamanhoPagina = 10;
   const MAX_BOTOES = 3;
-
-  const totalPaginas = Math.ceil(dadosCompletos.length / tamanhoPagina);
-  const blocoAtual = Math.ceil(paginaAtual / MAX_BOTOES);
-  const totalBlocos = Math.ceil(totalPaginas / MAX_BOTOES);
-  const inicioBloco = (blocoAtual - 1) * MAX_BOTOES + 1;
-  const fimBloco = Math.min(blocoAtual * MAX_BOTOES, totalPaginas);
 
   const handleDelete = (id) => {
     // Exibe o toast de confirmação
@@ -78,7 +74,40 @@ export default function Lista({
     reloadLista();
   }, [reloadLista]);
 
-  const dadosPagina = dadosCompletos.slice(
+  // FILTRAGEM adaptada para usar camposParaPesquisa se for fornecida
+  const filtrarDados = () => {
+    if (!termoPesquisa) return dadosCompletos;
+
+    const termo = termoPesquisa.toLowerCase();
+
+    if (typeof camposParaPesquisa === "function") {
+      return dadosCompletos.filter((item) =>
+        camposParaPesquisa(item).some((campo) =>
+          String(campo).toLowerCase().includes(termo)
+        )
+      );
+    }
+
+    // fallback anterior (pode ser mantido ou removido)
+    return dadosCompletos.filter((item) =>
+      Object.values(item)
+        .flatMap((val) =>
+          Array.isArray(val)
+            ? val.map((v) => (typeof v === "object" ? JSON.stringify(v) : v))
+            : [val]
+        )
+        .some((val) => String(val).toLowerCase().includes(termo))
+    );
+  };
+
+  const dadosFiltrados = filtrarDados();
+  const totalPaginas = Math.ceil(dadosFiltrados.length / tamanhoPagina);
+  const blocoAtual = Math.ceil(paginaAtual / MAX_BOTOES);
+  const totalBlocos = Math.ceil(totalPaginas / MAX_BOTOES);
+  const inicioBloco = (blocoAtual - 1) * MAX_BOTOES + 1;
+  const fimBloco = Math.min(blocoAtual * MAX_BOTOES, totalPaginas);
+
+  const dadosPagina = dadosFiltrados.slice(
     (paginaAtual - 1) * tamanhoPagina,
     paginaAtual * tamanhoPagina
   );
@@ -87,10 +116,36 @@ export default function Lista({
     if (num >= 1 && num <= totalPaginas) setPaginaAtual(num);
   };
 
+  const highlight = (text) => {
+    if (!termoPesquisa || typeof text !== "string") return text;
+    const partes = text.split(new RegExp(`(${termoPesquisa})`, "gi"));
+    return partes.map((parte, i) =>
+      parte.toLowerCase() === termoPesquisa.toLowerCase() ? (
+        <mark key={i}>{parte}</mark>
+      ) : (
+        parte
+      )
+    );
+  };
+
   if (loading) return <div>Carregando...</div>;
 
   return (
     <div className="container mt-2">
+      {/* Campo de pesquisa */}
+      <div className="mb-3 text-center">
+        <input
+          type="text"
+          className="form-control w-50 d-inline"
+          placeholder="Pesquisar..."
+          value={termoPesquisa}
+          onChange={(e) => {
+            setTermoPesquisa(e.target.value);
+            setPaginaAtual(1);
+          }}
+        />
+      </div>
+
       <div className="d-flex justify-content-center">
         <div className="table-responsive">
           <table className="table table-striped justify-content-center table-sm w-auto">
@@ -105,14 +160,16 @@ export default function Lista({
               </tr>
             </thead>
             <tbody>
-              {dadosPagina.map((item) => renderItem(item, handleDelete))}
+              {dadosPagina.map((item) =>
+                renderItem(item, handleDelete, highlight)
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Paginação */}
-      {dadosCompletos.length > tamanhoPagina && (
+      {dadosFiltrados.length > tamanhoPagina && (
         <nav aria-label="Navegação de páginas" className="d-flex justify-content-center mt-3">
           <ul className="pagination">
             {/* Bloco anterior */}
