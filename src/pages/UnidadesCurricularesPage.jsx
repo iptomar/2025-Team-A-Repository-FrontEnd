@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ListaUC from "../components/ListaUCs/lista";
+import ListaUC from "../components/Listas/ListaUCs";
 import { getUCs } from "../api/api";
 
 export default function UnidadesCurricularesPage() {
