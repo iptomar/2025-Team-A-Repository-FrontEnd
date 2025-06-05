@@ -18,7 +18,7 @@ export default function TurmasSelect({ value, onChange, isMulti = false, endpoin
         setOptions(
           data.map((d) => ({
             value: d.id,
-            label: `${d.curso?.nome} ${d.anoCurso} - ${d.nome} `,
+            label: `${d.curso?.nome} | ${d.anoCurso} | ${d.nome} `,
           }))
         );
       })
@@ -30,7 +30,7 @@ export default function TurmasSelect({ value, onChange, isMulti = false, endpoin
 
   return (
     <div className="mb-3">
-      <label className="form-label">Selecione a Turma</label>
+      <label className="form-label">Turma</label>
       <Select
         isMulti={isMulti}
         options={options}

@@ -444,6 +444,14 @@ export async function desbloquearHorario(id) {
   return response.json();
 }
 
+// Buscar horários filtrados por ano letivo, semestre e turma
+export const getHorariosFiltrados = (anoLetivo, semestre, turmaFK) => {
+  return fetch(
+    `${API_URL}api/API_Horarios/horarios?anoLetivo=${anoLetivo}&semestre=${semestre}&turmaFK=${turmaFK}`
+  );
+};
+
+
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
 
