@@ -57,14 +57,7 @@ export default function ItemCurso({ curso, setCursos }) {
         <tr key={curso.codCurso}>
             <td className="px-4">{curso.codCurso}</td>
             <td className="px-4">{curso.nome}</td>
-            <td className="px-4">{curso.escola?.nome}</td>
-            <td className="px-4">
-                {Array.isArray(curso.listaUcs) && curso.listaUcs.length > 0 ? (
-                    curso.listaUcs.map((uc) => <div key={uc}>{uc}</div>)
-                ) : (
-                    <em>Sem UCs</em>
-                )}
-            </td>
+            <td className="px-4">{curso.escola?.nome}</td>            
             <td className="px-4">
                 <a title="Ver" className="btn btn-info btn-sm me-2" href={`/#/cursos/detalhes/${curso.codCurso}`}>
                     <HiEye />

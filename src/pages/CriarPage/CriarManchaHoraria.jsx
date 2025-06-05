@@ -52,7 +52,7 @@ export default function CriarManchaHoraria() {
       horariosList: listaHorariosIds,
     };
 
-    
+
     console.log("Dados a enviar para a API:", dataASubmeter);
 
     setLoading(true);
@@ -89,14 +89,18 @@ export default function CriarManchaHoraria() {
           value: bloco.id,
           label:
             bloco.anoLetivo +
-            " " +
-            bloco.turmaCurso +
-            " " +
+            " | " +
             bloco.semestre +
-             " " +
-            bloco.anoCurso+
-            " " +
-            bloco.nomeTurma,
+            "º Semestre | " +
+            bloco.turmaCurso +
+            " | " +
+            bloco.anoCurso +
+            " | " +
+            bloco.nomeTurma +
+            " | " +
+            new Date(bloco.dataInicio).toLocaleDateString() +
+            " - " +
+            new Date(bloco.dataFim).toLocaleDateString(),
         }));
 
         setListaHorarios(horariosFormatados);

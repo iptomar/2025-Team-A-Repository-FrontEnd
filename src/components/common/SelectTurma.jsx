@@ -12,18 +12,25 @@ export default function TurmasSelect({ value, onChange, isMulti = false, endpoin
 
   // Atualiza quando o modo escuro muda
   useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDarkMode(document.body.classList.contains("dark-mode"));
-    });
-
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-    return () => observer.disconnect();
-  }, []);
+    Api[endpoint]()
+      .then((res) => res.json())
+      .then((data) => {
+        setOptions(
+          data.map((d) => ({
+            value: d.id,
+            label: `${d.curso?.nome} | ${d.anoCurso} | ${d.nome} `,
+          }))
+        );
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar as turmas:", err);
+        toast.error("Erro ao carregar as turmas.");
+      });
+  }, [endpoint]);
 
   return (
     <div className="mb-3">
-      <label className="form-label">Selecione a Turma</label>
+      <label className="form-label">Turma</label>
       <Select
         isMulti={isMulti}
         options={options}

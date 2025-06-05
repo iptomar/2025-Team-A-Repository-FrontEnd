@@ -20,11 +20,11 @@ export default function HorariosSelect({
             value: d.id,
             label:
               d.anoLetivo +
-              " " +
-              d.turmaCurso +
-              " " +
+              " | " +
               d.semestre +
-              " " +
+              "º Semestre | " +
+              d.turmaCurso +
+              " | " +              
               d.nomeTurma,
           }))
         );

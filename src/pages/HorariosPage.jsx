@@ -1,30 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  mostrarToastBloqueado,
-  mostrarToastDesbloqueado,
-} from "../components/ToastHorarioBlocked.jsx";
+import { mostrarToastBloqueado, mostrarToastDesbloqueado} from "../components/ToastHorarioBlocked.jsx";
 import { ToastContainer } from "react-toastify";
-import {
-  add,
-  startOfWeek,
-  format,
-  eachDayOfInterval,
-  startOfDay,
-  addMinutes,
-} from "date-fns";
+import { add, startOfWeek, format, eachDayOfInterval, startOfDay, addMinutes } from "date-fns";
 import "../css/horario.css";
-import {
-  getManchasPorHorario,
-  getHorarioById,
-  bloquearHorario,
-  desbloquearHorario,
-  getManchasHorariasPorSala,
-} from "../api/api";
+import { getManchasPorHorario, getHorarioById, bloquearHorario, desbloquearHorario, getManchasHorariasPorSala } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
 import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
+
+const API_URL = "http://localhost:5251/";
 
 const HorariosPage = () => {
   // Estado para guardar o início da semana atual
@@ -88,7 +74,7 @@ const HorariosPage = () => {
   // Função para bloquear ou desbloquear horários
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:7008/horarioHub", {
+      .withUrl(`${API_URL}horarioHub`, {
         withCredentials: true,
         transport: signalR.HttpTransportType.WebSockets, // Usa WebSockets para comunicação
       })
@@ -197,7 +183,7 @@ const HorariosPage = () => {
   // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:7008/horarioHub", {
+      .withUrl(`${API_URL}horarioHub`, {
         withCredentials: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
@@ -370,9 +356,9 @@ const HorariosPage = () => {
             setHorarioSalaSelecionado={setHorarioSalaSelecionado}
           />
           {horarioSalaSelecionado &&
-          horarioSalaSelecionado.sala &&
-          horarioSalaSelecionado.anoLetivo &&
-          horarioSalaSelecionado.semestre ? (
+            horarioSalaSelecionado.sala &&
+            horarioSalaSelecionado.anoLetivo &&
+            horarioSalaSelecionado.semestre ? (
             <GrelhaHorario
               diasDaSemana={diasDaSemana}
               horas={horas}

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:7008/";
+const API_URL = "http://localhost:5251/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -411,7 +411,7 @@ export function criarHorario(d) {
 // Bloquear um horario
 export async function bloquearHorario(id) {
   const response = await fetch(
-    `http://localhost:5251/api/API_Horarios/Bloquear/${id}`,
+    `${API_URL}api/API_Horarios/Bloquear/${id}`,
     {
       method: "PUT",
       headers: {
@@ -429,7 +429,7 @@ export async function bloquearHorario(id) {
 // Desbloquear um horario
 export async function desbloquearHorario(id) {
   const response = await fetch(
-    `http://localhost:5251/api/API_Horarios/Desbloquear/${id}`,
+    `${API_URL}api/API_Horarios/Desbloquear/${id}`,
     {
       method: "PUT",
       headers: {
@@ -443,6 +443,14 @@ export async function desbloquearHorario(id) {
   }
   return response.json();
 }
+
+// Buscar horários filtrados por ano letivo, semestre e turma
+export const getHorariosFiltrados = (anoLetivo, semestre, turmaFK) => {
+  return fetch(
+    `${API_URL}api/API_Horarios/horarios?anoLetivo=${anoLetivo}&semestre=${semestre}&turmaFK=${turmaFK}`
+  );
+};
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Autenticação
