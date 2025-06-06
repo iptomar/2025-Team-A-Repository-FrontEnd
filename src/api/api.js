@@ -289,6 +289,24 @@ export const getManchasHorariasPorSala = async (
   }
 };
 
+// Obter as manchas horárias por docente, ano letivo e semestre
+export const getManchasHorariasPorDocente = async (
+  idDocente,
+  anoLetivo,
+  semestre
+) => {
+  try {
+    return fetch(
+      `${API_URL}api/API_ManchasHorarias/Docente/${idDocente}?anoLetivo=${encodeURIComponent(
+        anoLetivo
+      )}&semestre=${semestre}`
+    );
+  } catch (error) {
+    console.error("Erro ao buscar manchas horárias:", error);
+    throw error;
+  }
+};
+
 //Eliminar uma Mancha Horária
 export const deleteManchaHoraria = async (id) => {
   return fetch(`${API_URL}api/API_ManchasHorarias/${id}`, {
