@@ -34,6 +34,12 @@ import DetalhesDocente from "./pages/DetalhesPage/DetalhesDocente";
 import EditarUtilizador from "./pages/EditarPage/EditarUtilizador";
 import DetalhesUtilizador from "./pages/DetalhesPage/DetalhesUtilizador";
 import UtilizadoresPage from "./pages/UtilizadoresPage";
+
+import ImportarDados from "./pages/ImportarDados";
+import ConfirmarDados from "./pages/ConfirmarImportacao";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import CriarSala from "./pages/CriarPage/CriarSala";
 import EditarSala from "./pages/EditarPage/EditarSala";
 import DetalhesSala from "./pages/DetalhesPage/DetalhesSala";
