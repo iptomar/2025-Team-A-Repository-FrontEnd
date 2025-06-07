@@ -201,7 +201,7 @@ export default function ConfirmarImportacao() {
                         </div>
 
                         <div className="text-center mt-4">
-                            <button className="btn btn-success" onClick={handlePublish}>Publicar</button>
+                            <button className="btn btn-success" onClick={handlePublish} style={{ backgroundColor: '#71ba00', color: 'white', border: 'none' }}>Publicar</button>
                         </div>
                     </div>
                 </div>

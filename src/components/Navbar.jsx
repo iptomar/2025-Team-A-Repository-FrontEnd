@@ -22,20 +22,14 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("tokenType");
-    
-    // Limpa o user
-  setUser(null);
-
-  // Força modo claro manualmente
-  setDarkMode(false);
-  document.body.classList.remove("dark-mode");
-  localStorage.setItem("modo-escuro", "false");
-
-  // Vai para login
-  navigate(ROUTES.LOG_IN);
+    setUser(null);
+    setDarkMode(false);
+    document.body.classList.remove("dark-mode");
+    localStorage.setItem("modo-escuro", "false");
+    navigate(ROUTES.LOG_IN);
   };
 
-  // Função para verificar se o user tem pelo menos uma das roles necessárias
+  // Verifica se o utilizador tem pelo menos uma das roles necessárias
   const hasRole = (requiredRoles = []) => {
     if (!user || !user.role) return false;
     if (requiredRoles.length === 0) return user.role.length > 0;
@@ -70,8 +64,6 @@ const Navbar = () => {
 
         <div className="navbar-collapse collapse d-sm-inline-flex justify-content-between" style={{ marginLeft: '20px' }}>
           <ul className="navbar-nav flex-grow-1 align-items-center">
-
-            {/* Horários visível sempre para utilizadores com qualquer role */}
             {hasRole() && (
               <li className="nav-item">
                 <button className="nav-link btn btn-link" onClick={() => navigate(ROUTES.SCHEDULE)}>
@@ -80,7 +72,6 @@ const Navbar = () => {
               </li>
             )}
 
-            {/* Dropdown Gestão - Só mostra estas rotas se o utilizador tiver alguma role*/}
             {hasRole() && (
               <li className="nav-item dropdown">
                 <button
@@ -93,58 +84,34 @@ const Navbar = () => {
                   <strong>Gestão</strong>
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="gestaoDropdown">
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.DOCENTES)}>
-                      Docentes
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.ESCOLAS)}>
-                      Escolas
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.UNIDADES_CURRICULARES)}>
-                      Unidades Curriculares
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.SALAS)}>
-                      Salas
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.CURSOS)}>
-                      Cursos
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.TURMAS)}>
-                      Turmas
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={() => navigate(ROUTES.MANCHAS_HORARIAS)}>
-                      Manchas Horárias
-                    </button>
-                  </li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.DOCENTES)}>Docentes</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.ESCOLAS)}>Escolas</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.UNIDADES_CURRICULARES)}>Unidades Curriculares</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.SALAS)}>Salas</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.CURSOS)}>Cursos</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.TURMAS)}>Turmas</button></li>
+                  <li><button className="dropdown-item" onClick={() => navigate(ROUTES.MANCHAS_HORARIAS)}>Manchas Horárias</button></li>
                 </ul>
               </li>
             )}
 
-            {/* Apenas para Administrador */}
             {hasRole(["Administrador"]) && (
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate(ROUTES.UTILIZADORES)}>
-                  <strong>Utilizadores</strong>
-                </button>
-              </li>
+              <>
+                <li className="nav-item">
+                  <button className="nav-link btn btn-link" onClick={() => navigate(ROUTES.UTILIZADORES)}>
+                    <strong>Utilizadores</strong>
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button className="nav-link btn btn-link" onClick={() => navigate(ROUTES.IMPORTAR)}>
+                    <strong>Importar Dados</strong>
+                  </button>
+                </li>
+              </>
             )}
-
           </ul>
 
           <ul className="navbar-nav align-items-center">
-
             <li className="nav-item">
               <button
                 className="nav-link btn btn-link"
@@ -167,11 +134,6 @@ const Navbar = () => {
                   </button>
                 </li>
               </>
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <button className="nav-link btn btn-link" onClick={() => {navigate(ROUTES.IMPORTAR)}}><strong>Importar Dados</strong></button>
-                            </li>
-                        </ul>
             ) : (
               <li className="nav-item">
                 <button className="nav-link btn btn-link" onClick={() => navigate(ROUTES.LOG_IN)} type="button">
@@ -179,7 +141,6 @@ const Navbar = () => {
                 </button>
               </li>
             )}
-
           </ul>
         </div>
       </div>

@@ -44,8 +44,6 @@ import CriarSala from "./pages/CriarPage/CriarSala";
 import EditarSala from "./pages/EditarPage/EditarSala";
 import DetalhesSala from "./pages/DetalhesPage/DetalhesSala";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import { ROUTES } from "./Routes";
 
@@ -147,6 +145,8 @@ const AppContent = () => {
             <Route path={ROUTES.UTILIZADORES} element={<UtilizadoresPage />} />
             <Route path={ROUTES.EDITAR_UTILIZADOR} element={<EditarUtilizador />} />
             <Route path={ROUTES.DETALHES_UTILIZADOR} element={<DetalhesUtilizador />} />
+            <Route path={ROUTES.IMPORTAR} element={<ImportarDados />} />
+            <Route path={ROUTES.CONFIRMAR} element={<ConfirmarDados />} />
           </>
         )}
         {/* Caso user não tenha acesso a alguma rota (catch-all) */}
