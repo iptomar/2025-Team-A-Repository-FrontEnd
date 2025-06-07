@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/api';
 import { UserContext } from '../UserContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import logo from "../assets/logo_ipt.png";
 
 export default function Login() {
     const [email, setEmail] = useState('') // Mudança: 'nome' para 'email'
@@ -41,10 +42,11 @@ export default function Login() {
             <div className="container">
                 <div className="row justify-content-center mt-5">
                     <div className="col-md-4 border p-5 rounded-3 bg-light shadow">
-                        <img src='https://portal2.ipt.pt/media/manager.php?src=servico&cmd=file&target=m1_MTc1ODE'
-                            className="img-fluid d-block mx-auto mb-2 w-75"
-                            alt="logo"></img>
-                        <h2 className="mb-4">Iniciar Sessão</h2>
+                        <img src={logo}
+                            className="img-fluid d-block mx-auto mb-3"
+                            style={{ maxWidth: "150px" }}
+                            alt="logo" />
+                        <h2 className="mb-4 text-center">Iniciar Sessão</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Email:</label> {/* Mudança de 'nome' para 'email' */}
@@ -68,8 +70,21 @@ export default function Login() {
                                     placeholder="Insira a palavra-passe"
                                 />
                             </div>
-                            <button type="submit" className="btn btn-success w-25 d-block mx-auto">Entrar</button>
-                            <Link to="/register" className="d-block text-center mt-3 text-decoration-none text-dark">Criar Conta</Link>
+                            <button
+                                type="submit"
+                                className="btn w-25 d-block mx-auto"
+                                style={{ backgroundColor: '#71ba00', color: 'white', border: 'none' }}
+                            >
+                                Entrar
+                            </button>
+                            <Link
+                                to="/register"
+                                className="d-block text-center mt-3 text-dark"
+                                style={{ textDecoration: 'underline' }}
+                            >
+                                Criar Conta
+                            </Link>
+
                         </form>
                     </div>
                 </div>

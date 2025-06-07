@@ -7,7 +7,7 @@
   }
   
   .custom-navbar {
-    background-color: #d4fcd3; 
+    background-color: #76bd1e; 
     padding: 10px;
   }
   
@@ -18,3 +18,43 @@
 .dark-mode #title {
   color: #ffffff;
 }
+
+.dark-mode img.logo {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  background-color: transparent !important;
+}
+
+.navbar-nav .nav-link {
+  color: white !important;
+  font-weight: 500;
+}
+
+.navbar-nav .dropdown-menu {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.navbar-nav .dropdown-item {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Cor verde no modo normal */
+.navbar-nav .dropdown-item:hover,
+.navbar-nav .dropdown-item:focus,
+.navbar-nav .dropdown-item:active {
+  background-color: #76bd1e !important;
+  color: white !important;
+  outline: none;
+  box-shadow: none;
+}
+
+/* No modo escuro, manter fundo claro ou neutro */
+.dark-mode .navbar-nav .dropdown-item:hover,
+.dark-mode .navbar-nav .dropdown-item:focus,
+.dark-mode .navbar-nav .dropdown-item:active {
+  background-color: #333 !important;
+  color: white !important;
+}
+
