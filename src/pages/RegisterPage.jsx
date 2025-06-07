@@ -5,6 +5,7 @@ import * as Api from "../api/api";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { register } from "../api/api";
+import logo from "../assets/logo_ipt.png";
 
 export default function RegisterPage() {
   const [listaEscolas, setListaEscolas] = useState([]);
@@ -26,7 +27,7 @@ export default function RegisterPage() {
       .then(async ([resEscola, resCurso]) => {
         const dataEscola = await resEscola.json();
         const dataCurso = await resCurso.json();
-  
+
         setRawEscolas(dataEscola);
         setListaEscolas(dataEscola.map(e => ({ value: e.id, label: e.nome })));
 
@@ -38,22 +39,22 @@ export default function RegisterPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-  
+
     const escolaFK = rawEscolas.find(e => e.id === escolaSelecionada?.value);
     const cursoFK = rawCursos.find(c => c.codCurso === cursoSelecionado?.value);
-  
+
     if (!nome || !email || !escolaFK || !cursoFK || !password || !password2) {
       toast.error("Preencha todos os campos");
       return;
     }
-  
+
     if (password !== password2) {
       toast.error("As palavras-passe não coincidem");
       return;
     }
 
-    console.log(nome +";"+ email +";"+ escolaFK.id +";"+ cursoFK.codCurso +";"+ password)
-  
+    console.log(nome + ";" + email + ";" + escolaFK.id + ";" + cursoFK.codCurso + ";" + password)
+
     register(nome, email, escolaFK.id, cursoFK.codCurso, password)
       .then(() => {
         toast.success("Conta criada com sucesso!");
@@ -69,11 +70,10 @@ export default function RegisterPage() {
     <div className="container">
       <div className="row justify-content-center mt-5">
         <div className="col-md-4 border p-5 rounded-3 bg-light shadow">
-          <img
-            src="https://portal2.ipt.pt/media/manager.php?src=servico&cmd=file&target=m1_MTc1ODE"
-            className="img-fluid d-block mx-auto mb-2 w-75"
-            alt="logo"
-          />
+          <img src={logo}
+            className="img-fluid d-block mx-auto mb-3"
+            style={{ maxWidth: "150px" }}
+            alt="logo" />
           <h2 className="mb-4 text-center">Registo</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
@@ -146,8 +146,18 @@ export default function RegisterPage() {
               />
             </div>
 
-            <button type="submit" className="btn btn-success w-100">Criar Conta</button>
-            <Link to="/login" className="d-block text-center mt-3 text-decoration-none text-dark">
+            <button
+              type="submit"
+              className="btn w-100"
+              style={{ backgroundColor: '#71ba00', color: 'white', border: 'none' }}
+            >
+              Criar Conta
+            </button>
+            <Link
+              to="/login"
+              className="d-block text-center mt-3 text-dark"
+              style={{ textDecoration: 'underline' }}
+            >
               Iniciar Sessão
             </Link>
           </form>

@@ -1,0 +1,64 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  padding: 20px;
+}
+
+.home-card {
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.home-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.home-text {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.home-button {
+  background-color: #76bd1e;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #7da82f;
+}
+
+/* === Dark Mode === */
+.dark-mode .home-card {
+  background-color: #333;         
+  color: white;                  
+}
+
+.dark-mode .home-title {
+  color: white;                   
+}
+
+.dark-mode .home-text {
+  color: #ddd;                    
+}
+
+.dark-mode .home-button {
+  background-color: #545454;
+}
+
+.dark-mode .home-button:hover {
+  background-color: #232323;
+}
