@@ -14,6 +14,8 @@ const GrelhaHorario = ({
   setBlocos,
   mudarSemana,
   bloqueado,
+  anoLetivo,
+  semestre,
 }) => {
   return (
     <div style={{ margin: "1rem" }}>
@@ -55,34 +57,50 @@ const GrelhaHorario = ({
                   );
 
                   return (
-                      <div
-                        key={`${dia}-${hora}`}
-                        className="slot"
-                        style={{
-                          cursor: bloqueado ? "not-allowed" : "pointer",
-                        }}
-                        onDragOver={(e) => {
-                          if (!bloqueado) e.preventDefault();
-                        }}
-                        onDrop={(e) => {
-                          if (bloqueado) return;
-                          e.preventDefault();
-                          const data = JSON.parse(e.dataTransfer.getData("application/json"));
-                          const novaAula = {
-                            ...data,
-                            dia: format(dia, "yyyy-MM-dd"),
-                            horaInicio: format(hora, "HH:mm"),
-                            horaFim: format(addMinutes(hora, data.duracao), "HH:mm"),
-                          };
-                          dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
+                    <div
+                      key={`${dia}-${hora}`}
+                      className="slot"
+                      style={{
+                        cursor: bloqueado ? "not-allowed" : "pointer",
+                      }}
+                      onDragOver={(e) => {
+                        if (!bloqueado) e.preventDefault();
+                      }}
+                      onDrop={async (e) => {
+                        if (bloqueado) return;
+                        e.preventDefault();
+                        const data = JSON.parse(
+                          e.dataTransfer.getData("application/json")
+                        );
+                        const novaAula = {
+                          ...data,
+                          dia: format(dia, "yyyy-MM-dd"),
+                          horaInicio: format(hora, "HH:mm"),
+                          horaFim: format(
+                            addMinutes(hora, data.duracao),
+                            "HH:mm"
+                          ),
+                        };
+                        try {
+                          await dragBloco(
+                            data.id,
+                            novaAula.horaInicio,
+                            novaAula.dia,
+                            anoLetivo,
+                            semestre
+                          );
                           setAulas((prev) => [...prev, novaAula]);
-                          setBlocos((prev) => prev.filter((bloco) => bloco.id !== data.id));
-                        }}
-                      >
+                          setBlocos((prev) =>
+                            prev.filter((bloco) => bloco.id !== data.id)
+                          );
+                        } catch (error) {
+                          toast.error(error.message);
+                        }
+                      }}
+                    >
                       {aulasDoDia.map((aula, i) => {
-                        const altura =
-                          (aula.duracao * 40) / 30;
-                        
+                        const altura = (aula.duracao * 40) / 30;
+
                         if (bloqueado) {
                           return (
                             <div
@@ -100,8 +118,8 @@ const GrelhaHorario = ({
                               <div>{aula.sala}</div>
                             </div>
                           );
-                        } 
-                         const removerAula = () => {
+                        }
+                        const removerAula = () => {
                           setAulas((prev) =>
                             prev.filter(
                               (a) =>
@@ -114,7 +132,13 @@ const GrelhaHorario = ({
                             )
                           );
                           setBlocos((prev) => [...prev, aula]);
-                          dragBloco(aula.id, "00:00:00", "0001-01-01");
+                          dragBloco(
+                            aula.id,
+                            "00:00:00",
+                            "0001-01-01",
+                            anoLetivo,
+                            semestre
+                          );
                         };
 
                         return (
@@ -166,7 +190,7 @@ const GrelhaHorario = ({
               className={`bloco-default ${bloqueado ? "bloco-bloqueado" : ""}`}
               draggable={!bloqueado}
               onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
+              onDrop={async (e) => {
                 e.preventDefault();
                 const data = JSON.parse(
                   e.dataTransfer.getData("application/json")
@@ -180,11 +204,15 @@ const GrelhaHorario = ({
                     "HH:mm"
                   ),
                 };
-                dragBloco(data.id, novaAula.horaInicio, novaAula.dia);
-                setAulas((prev) => [...prev, novaAula]);
-                setBlocos((prev) =>
-                  prev.filter((b) => b.id !== data.id)
+                dragBloco(
+                  data.id,
+                  novaAula.horaInicio,
+                  novaAula.dia,
+                  anoLetivo,
+                  semestre
                 );
+                setAulas((prev) => [...prev, novaAula]);
+                setBlocos((prev) => prev.filter((b) => b.id !== data.id));
               }}
               onDragStart={(e) => {
                 e.dataTransfer.setData(

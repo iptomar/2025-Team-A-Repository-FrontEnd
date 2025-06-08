@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
@@ -341,10 +341,10 @@ export const criarManchaHoraria = async (mh) => {
 };
 
 // Atualizar posição de uma mancha horária
-export async function dragBloco(id, horaInicio, dia) {
+export async function dragBloco(id, horaInicio, dia, anoLetivo, semestre) {
   try {
     const response = await axios.put(
-      `${API_URL}api/API_ManchasHorarias/drag-bloco/${id}`,
+      `${API_URL}api/API_ManchasHorarias/drag-bloco/${id}?anoLetivo=${anoLetivo}&semestre=${semestre}`,
       { horaInicio, dia },
       { headers: { "Content-Type": "application/json" } }
     );

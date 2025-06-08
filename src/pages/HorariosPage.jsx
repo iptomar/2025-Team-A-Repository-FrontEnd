@@ -17,7 +17,7 @@ import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
 
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 const HorariosPage = () => {
@@ -115,7 +115,7 @@ const HorariosPage = () => {
     const inic = async () => {
       try {
         let response = null;
-
+        console.log("Aba selecionada:", aba);
         if (aba === 0 && horarioSelecionado) {
           response = await getManchasPorHorario(horarioSelecionado.id);
         } else if (
@@ -382,6 +382,8 @@ const HorariosPage = () => {
                 setBlocos={setBlocos}
                 mudarSemana={mudarSemana}
                 bloqueado={bloqueado}
+                anoLetivo={horarioSelecionado?.anoLetivo}
+                semestre={horarioSelecionado?.semestre}
               />
             </>
           )}
