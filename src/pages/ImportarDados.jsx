@@ -5,6 +5,7 @@ import logo from "../assets/logo_ipt.png";
 
 export default function ImportarDados() {
     const [file, setFile] = useState(null);
+    const [showInstructions, setShowInstructions] = useState(false);
     const navigate = useNavigate();
 
     function handleSubmit(e) {
@@ -15,13 +16,12 @@ export default function ImportarDados() {
             return;
         }
 
-        // Navegar para a página de confirmação e passar o ficheiro através do state
         navigate('/confirmar', { state: { file } });
     }
 
     return (
         <div className="container">
-            <div className="row justify-content-center mt-5">
+            <div className="row justify-content-center mt-5 g-4">/
                 <div className="col-md-4 border p-5 rounded-3 bg-light shadow">
                     <img src={logo}
                         className="img-fluid d-block mx-auto mb-3"
@@ -42,13 +42,76 @@ export default function ImportarDados() {
 
                         <button
                             type="submit"
-                            className="btn w-100"
+                            className="btn w-100 mb-3"
                             style={{ backgroundColor: '#71ba00', color: 'white', border: 'none' }}
                         >
                             Importar
                         </button>
+
+                        <button
+                            type="button"
+                            className="btn w-100"
+                            onClick={() => setShowInstructions(!showInstructions)}
+                            style={{
+                                backgroundColor: 'white',
+                                color: '#71ba00',
+                                border: '2px solid #71ba00',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            {showInstructions ? 'Esconder instruções' : 'Mostrar instruções'}
+                        </button>
                     </form>
                 </div>
+
+                {showInstructions && (
+                    <div className="col-md-6 border p-5 rounded-3 bg-light shadow mt-3">
+                        <h4 className="mb-4 text-center">Formato esperado do ficheiro</h4>
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-striped">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Folha</th>
+                                        <th>Campos obrigatórios</th>
+                                        <th>Notas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Escolas</td>
+                                        <td><code>nome</code></td>
+                                        <td>Nome da escola.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Docentes</td>
+                                        <td><code>nome</code>, <code>email</code></td>
+                                        <td>Email deve ser válido.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cursos</td>
+                                        <td><code>nome</code>, <code>nomeEscola</code></td>
+                                        <td><code>nomeEscola</code> deve existir na folha "Escolas".</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Salas</td>
+                                        <td><code>nome</code>, <code>nomeEscola</code></td>
+                                        <td>Mesma validação de escola.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>UCs</td>
+                                        <td><code>nome</code>, <code>plano</code>, <code>semestre</code>, <code>ano</code>, <code>listaCursos</code></td>
+                                        <td>
+                                            <ul className="mb-0">
+                                                <li><code>listaCursos</code>: nomes separados por vírgulas</li>
+                                                <li><code>semestre</code> e <code>ano</code>: numéricos</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
