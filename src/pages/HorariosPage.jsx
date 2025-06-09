@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { mostrarToastBloqueado, mostrarToastDesbloqueado} from "../components/ToastHorarioBlocked.jsx";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { add, startOfWeek, format, eachDayOfInterval, startOfDay, addMinutes } from "date-fns";
 import "../css/horario.css";
 import {
@@ -17,7 +17,7 @@ import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
 
-const API_URL = "http://localhost:7008/";
+const API_URL = "http://localhost:5251/";
 import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 const HorariosPage = () => {
@@ -150,7 +150,31 @@ const HorariosPage = () => {
 
         // Só processa se houver resposta
         if (response) {
-          const mH = await response.json();
+            const mH = await response.json();
+
+            // Filtra só manchas com horário e dia válidos
+            const manchasValidas = mH.filter(
+              m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
+            );
+
+            // Calcula o total de minutos por dia só com manchas válidas
+            const minutosPorDia = {};
+            manchasValidas.forEach(m => {
+              minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
+            });
+            const diasMais8Horas = Object.entries(minutosPorDia)
+              .filter(([_, minutos]) => minutos > 480)
+              .map(([dia, minutos]) => ({
+                Dia: dia,
+                TotalMinutos: minutos
+              }));
+
+            if (diasMais8Horas.length > 0) {
+              const dias = diasMais8Horas
+                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos/60).toFixed(1)}h)`)
+                .join(", ");
+              toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
+            }
 
           if (Array.isArray(mH)) {
             // Formata os blocos de horários recebidos
@@ -258,54 +282,77 @@ const HorariosPage = () => {
           if (response) {
             const mH = await response.json();
 
-            if (Array.isArray(mH)) {
-              // Formata os blocos de horários recebidos
-              const blocosFormatados = mH.map((bloco) => ({
-                id: bloco.id,
-                cadeira: bloco.uc.nome,
-                tipo: bloco.tipoDeAula,
-                horaInicio: bloco.horaInicio,
-                dia: bloco.dia,
-                professor: bloco.docente.nome,
-                sala: bloco.sala.nome,
-                duracao: bloco.numSlots * 30,
+            // Filtra só manchas com horário e dia válidos
+            const manchasValidas = mH.filter(
+              m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
+            );
+
+            // Calcula o total de minutos por dia só com manchas válidas
+            const minutosPorDia = {};
+            manchasValidas.forEach(m => {
+              minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
+            });
+            const diasMais8Horas = Object.entries(minutosPorDia)
+              .filter(([_, minutos]) => minutos > 480)
+              .map(([dia, minutos]) => ({
+                Dia: dia,
+                TotalMinutos: minutos
               }));
 
-              const b = [];
-              const a = [];
-
-              blocosFormatados.forEach((element) => {
-                if (
-                  element.horaInicio === "00:00:00" ||
-                  element.dia === "0001-01-01"
-                ) {
-                  b.push(element);
-                }
-                a.push({
-                  ...element,
-                  horaInicio: format(
-                    new Date(`1970-01-01T${element.horaInicio}`),
-                    "HH:mm"
-                  ),
-                  horaFim: format(
-                    addMinutes(
-                      new Date(`1970-01-01T${element.horaInicio}`),
-                      element.duracao
-                    ),
-                    "HH:mm"
-                  ),
-                });
-              });
-
-              setBlocos(b);
-              setAulas(a);
+            if (diasMais8Horas.length > 0) {
+              const dias = diasMais8Horas
+                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos/60).toFixed(1)}h)`)
+                .join(", ");
+              toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
             }
-          } else {
-            console.error("Resposta da API não é um array:", response);
+          if (Array.isArray(mH)) {
+            // Formata os blocos de horários recebidos
+            const blocosFormatados = mH.map((bloco) => ({
+              id: bloco.id,
+              cadeira: bloco.uc.nome,
+              tipo: bloco.tipoDeAula,
+              horaInicio: bloco.horaInicio,
+              dia: bloco.dia,
+              professor: bloco.docente.nome,
+              sala: bloco.sala.nome,
+              duracao: bloco.numSlots * 30,
+            }));
+
+            const b = [];
+            const a = [];
+
+            blocosFormatados.forEach((element) => {
+              if (
+                element.horaInicio === "00:00:00" ||
+                element.dia === "0001-01-01"
+              ) {
+                b.push(element);
+              }
+              a.push({
+                ...element,
+                horaInicio: format(
+                  new Date(`1970-01-01T${element.horaInicio}`),
+                  "HH:mm"
+                ),
+                horaFim: format(
+                  addMinutes(
+                    new Date(`1970-01-01T${element.horaInicio}`),
+                    element.duracao
+                  ),
+                  "HH:mm"
+                ),
+              });
+            });
+
+            setBlocos(b);
+            setAulas(a);
           }
-        } catch (error) {
-          console.error("Erro ao obter os dados:", error);
+        } else {
+          console.error("Resposta da API não é um array:", response);
         }
+      } catch (error) {
+        console.error("Erro ao obter os dados:", error);
+      }
       });
     });
 
