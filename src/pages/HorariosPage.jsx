@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { mostrarToastBloqueado, mostrarToastDesbloqueado} from "../components/ToastHorarioBlocked.jsx";
+import { mostrarToastBloqueado, mostrarToastDesbloqueado } from "../components/ToastHorarioBlocked.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import { add, startOfWeek, format, eachDayOfInterval, startOfDay, addMinutes } from "date-fns";
 import "../css/horario.css";
@@ -20,11 +20,18 @@ import { Tabs, Tab, Box } from "@mui/material";
 const API_URL = "http://localhost:5251/";
 import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
+import { useContext } from 'react';
+import { UserContext } from '../UserContext';
+
 const HorariosPage = () => {
   // Estado para guardar o início da semana atual
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 }) // Define o início da semana como segunda-feira
   );
+
+
+  // Contexto do utilizador para verificar permissões
+  const { user } = useContext(UserContext);
 
   // Estado para guardar as aulas formatadas
   const [aulas, setAulas] = useState([]);
@@ -48,6 +55,39 @@ const HorariosPage = () => {
 
   // Estado para guardar o horário do docente selecionado
   const [horarioDocenteSelecionado, setHorarioDocenteSelecionado] = useState([]);
+
+
+  // Verifica se o Utilizador é Administrador ou Comissão de Horários
+  const podeMostrarBotaoBloquear = (user, horario) => {
+
+    if (!user || !user.role || !horario || !horario.escolaId) {
+      console.log("Falha na validação inicial: dados incompletos.");
+      return false;
+    }
+
+    // Verifica se o utilizador tem uma ou mais roles
+    const roles = Array.isArray(user.role) ? user.role : [user.role];
+
+    // Verifica se o utilizador é admin
+    if (roles.includes("Administrador")) {
+      console.log("Utilizador é Administrador, permite bloquear.");
+      return true;
+    }
+
+    // Verifica se o utilizador é Comissão de Horários
+    if (roles.includes("ComissaoHorarios")) {    
+      // Verifica se o curso do horário pertence à escola do utilizador  
+      if (horario.escolaId === user.escola) {
+        console.log("Utilizador é Comissão de Horários e tem permissão para bloquear.");
+        return true;
+      } else {
+        console.log("Utilizador é Comissão de Horários, mas não tem permissão para bloquear este horário.");
+      }
+    }
+
+    console.log("Utilizador não tem permissão para bloquear.");
+    return false;
+  };
 
   // Gera os dias da semana atual
   const diasDaSemana = eachDayOfInterval({
@@ -150,31 +190,31 @@ const HorariosPage = () => {
 
         // Só processa se houver resposta
         if (response) {
-            const mH = await response.json();
+          const mH = await response.json();
 
-            // Filtra só manchas com horário e dia válidos
-            const manchasValidas = mH.filter(
-              m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
-            );
+          // Filtra só manchas com horário e dia válidos
+          const manchasValidas = mH.filter(
+            m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
+          );
 
-            // Calcula o total de minutos por dia só com manchas válidas
-            const minutosPorDia = {};
-            manchasValidas.forEach(m => {
-              minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
-            });
-            const diasMais8Horas = Object.entries(minutosPorDia)
-              .filter(([_, minutos]) => minutos > 480)
-              .map(([dia, minutos]) => ({
-                Dia: dia,
-                TotalMinutos: minutos
-              }));
+          // Calcula o total de minutos por dia só com manchas válidas
+          const minutosPorDia = {};
+          manchasValidas.forEach(m => {
+            minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
+          });
+          const diasMais8Horas = Object.entries(minutosPorDia)
+            .filter(([_, minutos]) => minutos > 480)
+            .map(([dia, minutos]) => ({
+              Dia: dia,
+              TotalMinutos: minutos
+            }));
 
-            if (diasMais8Horas.length > 0) {
-              const dias = diasMais8Horas
-                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos/60).toFixed(1)}h)`)
-                .join(", ");
-              toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
-            }
+          if (diasMais8Horas.length > 0) {
+            const dias = diasMais8Horas
+              .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos / 60).toFixed(1)}h)`)
+              .join(", ");
+            toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
+          }
 
           if (Array.isArray(mH)) {
             // Formata os blocos de horários recebidos
@@ -301,58 +341,58 @@ const HorariosPage = () => {
 
             if (diasMais8Horas.length > 0) {
               const dias = diasMais8Horas
-                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos/60).toFixed(1)}h)`)
+                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos / 60).toFixed(1)}h)`)
                 .join(", ");
               toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
             }
-          if (Array.isArray(mH)) {
-            // Formata os blocos de horários recebidos
-            const blocosFormatados = mH.map((bloco) => ({
-              id: bloco.id,
-              cadeira: bloco.uc.nome,
-              tipo: bloco.tipoDeAula,
-              horaInicio: bloco.horaInicio,
-              dia: bloco.dia,
-              professor: bloco.docente.nome,
-              sala: bloco.sala.nome,
-              duracao: bloco.numSlots * 30,
-            }));
+            if (Array.isArray(mH)) {
+              // Formata os blocos de horários recebidos
+              const blocosFormatados = mH.map((bloco) => ({
+                id: bloco.id,
+                cadeira: bloco.uc.nome,
+                tipo: bloco.tipoDeAula,
+                horaInicio: bloco.horaInicio,
+                dia: bloco.dia,
+                professor: bloco.docente.nome,
+                sala: bloco.sala.nome,
+                duracao: bloco.numSlots * 30,
+              }));
 
-            const b = [];
-            const a = [];
+              const b = [];
+              const a = [];
 
-            blocosFormatados.forEach((element) => {
-              if (
-                element.horaInicio === "00:00:00" ||
-                element.dia === "0001-01-01"
-              ) {
-                b.push(element);
-              }
-              a.push({
-                ...element,
-                horaInicio: format(
-                  new Date(`1970-01-01T${element.horaInicio}`),
-                  "HH:mm"
-                ),
-                horaFim: format(
-                  addMinutes(
+              blocosFormatados.forEach((element) => {
+                if (
+                  element.horaInicio === "00:00:00" ||
+                  element.dia === "0001-01-01"
+                ) {
+                  b.push(element);
+                }
+                a.push({
+                  ...element,
+                  horaInicio: format(
                     new Date(`1970-01-01T${element.horaInicio}`),
-                    element.duracao
+                    "HH:mm"
                   ),
-                  "HH:mm"
-                ),
+                  horaFim: format(
+                    addMinutes(
+                      new Date(`1970-01-01T${element.horaInicio}`),
+                      element.duracao
+                    ),
+                    "HH:mm"
+                  ),
+                });
               });
-            });
 
-            setBlocos(b);
-            setAulas(a);
+              setBlocos(b);
+              setAulas(a);
+            }
+          } else {
+            console.error("Resposta da API não é um array:", response);
           }
-        } else {
-          console.error("Resposta da API não é um array:", response);
+        } catch (error) {
+          console.error("Erro ao obter os dados:", error);
         }
-      } catch (error) {
-        console.error("Erro ao obter os dados:", error);
-      }
       });
     });
 
@@ -390,34 +430,36 @@ const HorariosPage = () => {
           {horarioSelecionado && (
             <>
               <div style={{ margin: "1rem" }}>
-                {bloqueado ? (
-                  <button
-                    onClick={async () => {
-                      try {
-                        await desbloquearHorario(horarioSelecionado.id);
-                        setBloqueado(false);
-                        mostrarToastDesbloqueado();
-                      } catch (error) {
-                        console.error("Erro ao desbloquear o horário:", error);
-                      }
-                    }}
-                  >
-                    Desbloquear horário
-                  </button>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      try {
-                        await bloquearHorario(horarioSelecionado.id);
-                        setBloqueado(true);
-                        mostrarToastBloqueado();
-                      } catch (error) {
-                        console.error("Erro ao bloquear o horário:", error);
-                      }
-                    }}
-                  >
-                    Bloquear horário
-                  </button>
+                {podeMostrarBotaoBloquear(user, horarioSelecionado) && (
+                  bloqueado ? (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await desbloquearHorario(horarioSelecionado.id);
+                          setBloqueado(false);
+                          mostrarToastDesbloqueado();
+                        } catch (error) {
+                          console.error("Erro ao desbloquear o horário:", error);
+                        }
+                      }}
+                    >
+                      Desbloquear horário
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await bloquearHorario(horarioSelecionado.id);
+                          setBloqueado(true);
+                          mostrarToastBloqueado();
+                        } catch (error) {
+                          console.error("Erro ao bloquear o horário:", error);
+                        }
+                      }}
+                    >
+                      Bloquear horário
+                    </button>
+                  )
                 )}
               </div>
               <GrelhaHorario
@@ -468,9 +510,9 @@ const HorariosPage = () => {
             setHorarioDocenteSelecionado={setHorarioDocenteSelecionado}
           />
           {horarioDocenteSelecionado &&
-          horarioDocenteSelecionado.docente &&
-          horarioDocenteSelecionado.anoLetivo &&
-          horarioDocenteSelecionado.semestre ? (
+            horarioDocenteSelecionado.docente &&
+            horarioDocenteSelecionado.anoLetivo &&
+            horarioDocenteSelecionado.semestre ? (
             <GrelhaHorario
               diasDaSemana={diasDaSemana}
               horas={horas}
