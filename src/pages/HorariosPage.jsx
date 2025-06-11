@@ -20,7 +20,9 @@ import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
 
-const API_URL = "http://localhost:7008/";
+import { verificarHorario } from "../components/common/verificarHorario.jsx";
+
+const API_URL = "http://localhost:5251/";
 import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 import { useContext } from "react";
@@ -182,35 +184,10 @@ const HorariosPage = () => {
         // Só processa se houver resposta
         if (response) {
           const mH = await response.json();
-
-          // Filtra só manchas com horário e dia válidos
-          const manchasValidas = mH.filter(
-            (m) => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
-          );
-
-          //Calcula o total de minutos por dia só com manchas válidas
-          const minutosPorDia = {};
-          manchasValidas.forEach((m) => {
-            minutosPorDia[m.dia] =
-              (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
-          });
-          const diasMais8Horas = Object.entries(minutosPorDia)
-            .filter(([_, minutos]) => minutos > 480)
-            .map(([dia, minutos]) => ({
-              Dia: dia,
-              TotalMinutos: minutos,
-            }));
-
-          if (diasMais8Horas.length > 0) {
-            const dias = diasMais8Horas
-              .map(
-                (d) =>
-                  `${new Date(d.Dia).toLocaleDateString()} (${(
-                    d.TotalMinutos / 60
-                  ).toFixed(1)}h)`
-              )
-              .join(", ");
-            toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
+          
+          // Verifica se o docente tem mais de 8 horas de aulas em um dia e pelo menos 1h de almoço
+          if(aba === 2) {
+            verificarHorario(mH, toast);
           }
 
           if (Array.isArray(mH)) {
@@ -321,51 +298,26 @@ const HorariosPage = () => {
               horarioDocenteSelecionado.semestre
             );
           }
+            if (response) {
+              const mH = await response.json();
 
-          if (response) {
-            const mH = await response.json();
-
-            // Filtra só manchas com horário e dia válidos
-            const manchasValidas = mH.filter(
-              (m) => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
-            );
-
-            // Calcula o total de minutos por dia só com manchas válidas
-            const minutosPorDia = {};
-            manchasValidas.forEach((m) => {
-              minutosPorDia[m.dia] =
-                (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
-            });
-            const diasMais8Horas = Object.entries(minutosPorDia)
-              .filter(([_, minutos]) => minutos > 480)
-              .map(([dia, minutos]) => ({
-                Dia: dia,
-                TotalMinutos: minutos,
-              }));
-
-            if (diasMais8Horas.length > 0) {
-              const dias = diasMais8Horas
-                .map(
-                  (d) =>
-                    `${new Date(d.Dia).toLocaleDateString()} (${(
-                      d.TotalMinutos / 60
-                    ).toFixed(1)}h)`
-                )
-                .join(", ");
-              toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
-            }
-            if (Array.isArray(mH)) {
-              // Formata os blocos de horários recebidos
-              const blocosFormatados = mH.map((bloco) => ({
-                id: bloco.id,
-                cadeira: bloco.uc.nome,
-                tipo: bloco.tipoDeAula,
-                horaInicio: bloco.horaInicio,
-                dia: bloco.dia,
-                professor: bloco.docente.nome,
-                sala: bloco.sala.nome,
-                duracao: bloco.numSlots * 30,
-              }));
+              // Verifica se o docente tem mais de 8 horas de aulas em um dia e pelo menos 1h de almoço
+              if(aba === 2) {
+                verificarHorario(mH, toast);
+              }
+              
+          if (Array.isArray(mH)) {
+            // Formata os blocos de horários recebidos
+            const blocosFormatados = mH.map((bloco) => ({
+              id: bloco.id,
+              cadeira: bloco.uc.nome,
+              tipo: bloco.tipoDeAula,
+              horaInicio: bloco.horaInicio,
+              dia: bloco.dia,
+              professor: bloco.docente.nome,
+              sala: bloco.sala.nome,
+              duracao: bloco.numSlots * 30,
+            }));
 
               const b = [];
               const a = [];
