@@ -1,64 +1,58 @@
 import React from "react";
-import { format, addMinutes } from "date-fns";
-import pt from "date-fns/locale/pt";
 import "../css/horario.css";
+import { addMinutes } from "date-fns";
 import { dragBloco } from "../api/api";
 import { toast } from "react-toastify";
 
+// Array com os nomes dos dias (1=Segunda, ..., 6=Sábado)
+const nomesDias = [
+  "", // 0 = não atribuído
+  "Segunda-Feira",
+  "Terça-Feira",
+  "Quarta-Feira",
+  "Quinta-Feira",
+  "Sexta-Feira",
+  "Sábado",
+];
+
 const GrelhaHorario = ({
-  diasDaSemana,
   horas,
   aulas,
   blocos,
   setAulas,
   setBlocos,
-  mudarSemana,
   bloqueado,
   anoLetivo,
   semestre,
 }) => {
+  // Dias da semana de 1 a 6
+  const diasDaSemana = [1, 2, 3, 4, 5, 6];
+
   return (
     <div style={{ margin: "1rem" }}>
-      <div className="header">
-        <button onClick={() => mudarSemana(-1)}>← Semana anterior</button>
-        <h2>
-          {`${format(diasDaSemana[0], "EEEE, dd 'de' MMMM", {
-            locale: pt,
-          })} - ${format(
-            diasDaSemana[diasDaSemana.length - 1],
-            "EEEE, dd 'de' MMMM",
-            {
-              locale: pt,
-            }
-          )}`}
-        </h2>
-        <button onClick={() => mudarSemana(1)}>Semana seguinte →</button>
-      </div>
-
       <div className="main-grid">
         <div className="grelha">
           <div className="grelha-header">
             <div className="hora"></div>
-            {diasDaSemana.map((dia) => (
-              <div key={dia} className="dia">
-                {format(dia, "EEEE, dd 'de' MMMM", { locale: pt })}
+            {diasDaSemana.map((diaInt) => (
+              <div key={diaInt} className="dia">
+                {nomesDias[diaInt]}
               </div>
             ))}
           </div>
           <div className="grelha-body">
             {horas.map((hora, index) => (
               <div key={index} className="linha">
-                <div className="hora">{format(hora, "HH:mm")}</div>
-                {diasDaSemana.map((dia) => {
+                <div className="hora">{hora}</div>
+                {diasDaSemana.map((diaInt) => {
+                  // Filtra aulas para este dia e hora
                   const aulasDoDia = aulas.filter(
-                    (a) =>
-                      a.dia === format(dia, "yyyy-MM-dd") &&
-                      a.horaInicio === format(hora, "HH:mm")
+                    (a) => a.dia === diaInt && a.horaInicio === hora
                   );
 
                   return (
                     <div
-                      key={`${dia}-${hora}`}
+                      key={`${diaInt}-${hora}`}
                       className="slot"
                       style={{
                         cursor: bloqueado ? "not-allowed" : "pointer",
@@ -74,12 +68,14 @@ const GrelhaHorario = ({
                         );
                         const novaAula = {
                           ...data,
-                          dia: format(dia, "yyyy-MM-dd"),
-                          horaInicio: format(hora, "HH:mm"),
-                          horaFim: format(
-                            addMinutes(hora, data.duracao),
-                            "HH:mm"
-                          ),
+                          dia: diaInt,
+                          horaInicio: hora,
+                          horaFim: addMinutes(
+                            new Date(`1970-01-01T${hora}`),
+                            data.duracao
+                          )
+                            .toTimeString()
+                            .slice(0, 5),
                         };
                         try {
                           await dragBloco(
@@ -104,7 +100,7 @@ const GrelhaHorario = ({
                         if (bloqueado) {
                           return (
                             <div
-                              key={`${dia}-${hora}-${i}`}
+                              key={`${diaInt}-${hora}-${i}`}
                               className="aula"
                               style={{
                                 height: `${altura}px`,
@@ -135,7 +131,7 @@ const GrelhaHorario = ({
                           dragBloco(
                             aula.id,
                             "00:00:00",
-                            "0001-01-01",
+                            0,
                             anoLetivo,
                             semestre
                           );
@@ -143,7 +139,7 @@ const GrelhaHorario = ({
 
                         return (
                           <div
-                            key={`${dia}-${hora}-${i}`}
+                            key={`${diaInt}-${hora}-${i}`}
                             className="aula"
                             style={{
                               height: `${altura}px`,
@@ -197,12 +193,14 @@ const GrelhaHorario = ({
                 );
                 const novaAula = {
                   ...data,
-                  dia: format(bloco.dia, "yyyy-MM-dd"),
-                  horaInicio: format(bloco.horaInicio, "HH:mm"),
-                  horaFim: format(
-                    addMinutes(bloco.horaInicio, bloco.duracao),
-                    "HH:mm"
-                  ),
+                  dia: bloco.dia,
+                  horaInicio: bloco.horaInicio,
+                  horaFim: addMinutes(
+                    new Date(`1970-01-01T${bloco.horaInicio}`),
+                    bloco.duracao
+                  )
+                    .toTimeString()
+                    .slice(0, 5),
                 };
                 dragBloco(
                   data.id,
