@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { mostrarToastBloqueado, mostrarToastDesbloqueado } from "../components/ToastHorarioBlocked.jsx";
+import {
+  mostrarToastBloqueado,
+  mostrarToastDesbloqueado,
+} from "../components/ToastHorarioBlocked.jsx";
 import { ToastContainer, toast } from "react-toastify";
-import { add, startOfWeek, format, eachDayOfInterval, startOfDay, addMinutes } from "date-fns";
+import { format, startOfDay, addMinutes } from "date-fns";
 import "../css/horario.css";
 import {
   getManchasPorHorario,
@@ -9,7 +12,7 @@ import {
   bloquearHorario,
   desbloquearHorario,
   getManchasHorariasPorSala,
-  getManchasHorariasPorDocente
+  getManchasHorariasPorDocente,
 } from "../api/api";
 import * as signalR from "@microsoft/signalr";
 import GestaoHorarios from "../components/GestaoHorarios";
@@ -17,19 +20,13 @@ import GestaoHorariosSalas from "../components/GestaoHorariosSalas";
 import GrelhaHorario from "../components/GrelhaHorarios";
 import { Tabs, Tab, Box } from "@mui/material";
 
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
-import { useContext } from 'react';
-import { UserContext } from '../UserContext';
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 
 const HorariosPage = () => {
-  // Estado para guardar o início da semana atual
-  const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 }) // Define o início da semana como segunda-feira
-  );
-
-
   // Contexto do utilizador para verificar permissões
   const { user } = useContext(UserContext);
 
@@ -54,13 +51,16 @@ const HorariosPage = () => {
   const [aba, setAba] = useState(0);
 
   // Estado para guardar o horário do docente selecionado
-  const [horarioDocenteSelecionado, setHorarioDocenteSelecionado] = useState([]);
-
+  const [horarioDocenteSelecionado, setHorarioDocenteSelecionado] = useState(
+    []
+  );
 
   // Verifica se o Utilizador é Administrador ou Comissão de Horários
   const podeMostrarBotaoBloquear = (user, horario) => {
-
     if (!user || !user.role || !horario || !horario.escolaId) {
+      console.log("user:", user);
+      console.log("horario:", horario);
+
       console.log("Falha na validação inicial: dados incompletos.");
       return false;
     }
@@ -75,13 +75,17 @@ const HorariosPage = () => {
     }
 
     // Verifica se o utilizador é Comissão de Horários
-    if (roles.includes("ComissaoHorarios")) {    
-      // Verifica se o curso do horário pertence à escola do utilizador  
+    if (roles.includes("ComissaoHorarios")) {
+      // Verifica se o curso do horário pertence à escola do utilizador
       if (horario.escolaId === user.escola) {
-        console.log("Utilizador é Comissão de Horários e tem permissão para bloquear.");
+        console.log(
+          "Utilizador é Comissão de Horários e tem permissão para bloquear."
+        );
         return true;
       } else {
-        console.log("Utilizador é Comissão de Horários, mas não tem permissão para bloquear este horário.");
+        console.log(
+          "Utilizador é Comissão de Horários, mas não tem permissão para bloquear este horário."
+        );
       }
     }
 
@@ -89,23 +93,10 @@ const HorariosPage = () => {
     return false;
   };
 
-  // Gera os dias da semana atual
-  const diasDaSemana = eachDayOfInterval({
-    start: currentWeekStart,
-    end: add(currentWeekStart, { days: 5 }), // Inclui de segunda a sexta-feira
-  });
-
   // Gera os horários do dia (das 8:00 às 23:30, com intervalos de 30 minutos)
-  const horas = Array.from(
-    { length: 33 },
-    (_, i) => addMinutes(startOfDay(new Date()), 480 + 30 * i) // Começa às 8:00 (480 minutos) e adiciona intervalos de 30 minutos
+  const horas = Array.from({ length: 33 }, (_, i) =>
+    format(addMinutes(startOfDay(new Date()), 480 + 30 * i), "HH:mm")
   );
-
-  // Função para mudar a semana exibida
-  const mudarSemana = (direcao) => {
-    const novaSemana = add(currentWeekStart, { weeks: direcao }); // Adiciona ou subtrai semanas
-    setCurrentWeekStart(novaSemana); // Atualiza o estado com a nova semana
-  };
 
   // Efeito para obter o estado de bloqueio do horário selecionado
   useEffect(() => {
@@ -194,24 +185,30 @@ const HorariosPage = () => {
 
           // Filtra só manchas com horário e dia válidos
           const manchasValidas = mH.filter(
-            m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
+            (m) => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
           );
 
-          // Calcula o total de minutos por dia só com manchas válidas
+          //Calcula o total de minutos por dia só com manchas válidas
           const minutosPorDia = {};
-          manchasValidas.forEach(m => {
-            minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
+          manchasValidas.forEach((m) => {
+            minutosPorDia[m.dia] =
+              (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
           });
           const diasMais8Horas = Object.entries(minutosPorDia)
             .filter(([_, minutos]) => minutos > 480)
             .map(([dia, minutos]) => ({
               Dia: dia,
-              TotalMinutos: minutos
+              TotalMinutos: minutos,
             }));
 
           if (diasMais8Horas.length > 0) {
             const dias = diasMais8Horas
-              .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos / 60).toFixed(1)}h)`)
+              .map(
+                (d) =>
+                  `${new Date(d.Dia).toLocaleDateString()} (${(
+                    d.TotalMinutos / 60
+                  ).toFixed(1)}h)`
+              )
               .join(", ");
             toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
           }
@@ -266,7 +263,12 @@ const HorariosPage = () => {
       }
     };
     inic();
-  }, [aba, horarioSelecionado, horarioSalaSelecionado, horarioDocenteSelecionado]);
+  }, [
+    aba,
+    horarioSelecionado,
+    horarioSalaSelecionado,
+    horarioDocenteSelecionado,
+  ]);
 
   // Efeito para configurar a conexão com o SignalR
   // Efeito para configurar a conexão com o SignalR
@@ -289,6 +291,7 @@ const HorariosPage = () => {
           let response = null;
           if (aba === 0 && horarioSelecionado) {
             response = await getManchasPorHorario(horarioSelecionado.id);
+            console.log("Obtendo manchas por horário:", response);
           } else if (
             aba === 1 &&
             horarioSalaSelecionado &&
@@ -324,24 +327,30 @@ const HorariosPage = () => {
 
             // Filtra só manchas com horário e dia válidos
             const manchasValidas = mH.filter(
-              m => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
+              (m) => m.horaInicio !== "00:00:00" && m.dia !== "0001-01-01"
             );
 
             // Calcula o total de minutos por dia só com manchas válidas
             const minutosPorDia = {};
-            manchasValidas.forEach(m => {
-              minutosPorDia[m.dia] = (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
+            manchasValidas.forEach((m) => {
+              minutosPorDia[m.dia] =
+                (minutosPorDia[m.dia] || 0) + m.numSlots * 30;
             });
             const diasMais8Horas = Object.entries(minutosPorDia)
               .filter(([_, minutos]) => minutos > 480)
               .map(([dia, minutos]) => ({
                 Dia: dia,
-                TotalMinutos: minutos
+                TotalMinutos: minutos,
               }));
 
             if (diasMais8Horas.length > 0) {
               const dias = diasMais8Horas
-                .map(d => `${new Date(d.Dia).toLocaleDateString()} (${(d.TotalMinutos / 60).toFixed(1)}h)`)
+                .map(
+                  (d) =>
+                    `${new Date(d.Dia).toLocaleDateString()} (${(
+                      d.TotalMinutos / 60
+                    ).toFixed(1)}h)`
+                )
                 .join(", ");
               toast.warn(`O docente tem mais de 8 horas nalguns dias: ${dias}`);
             }
@@ -399,7 +408,12 @@ const HorariosPage = () => {
     return () => {
       connection.stop();
     };
-  }, [aba, horarioSelecionado, horarioSalaSelecionado, horarioDocenteSelecionado]);
+  }, [
+    aba,
+    horarioSelecionado,
+    horarioSalaSelecionado,
+    horarioDocenteSelecionado,
+  ]);
   const handleChange = (event, newValue) => {
     console.log("Aba selecionada:", newValue);
     setAba(newValue);
@@ -430,8 +444,8 @@ const HorariosPage = () => {
           {horarioSelecionado && (
             <>
               <div style={{ margin: "1rem" }}>
-                {podeMostrarBotaoBloquear(user, horarioSelecionado) && (
-                  bloqueado ? (
+                {podeMostrarBotaoBloquear(user, horarioSelecionado) &&
+                  (bloqueado ? (
                     <button
                       onClick={async () => {
                         try {
@@ -439,7 +453,10 @@ const HorariosPage = () => {
                           setBloqueado(false);
                           mostrarToastDesbloqueado();
                         } catch (error) {
-                          console.error("Erro ao desbloquear o horário:", error);
+                          console.error(
+                            "Erro ao desbloquear o horário:",
+                            error
+                          );
                         }
                       }}
                     >
@@ -459,17 +476,14 @@ const HorariosPage = () => {
                     >
                       Bloquear horário
                     </button>
-                  )
-                )}
+                  ))}
               </div>
               <GrelhaHorario
-                diasDaSemana={diasDaSemana}
                 horas={horas}
                 aulas={aulas}
                 blocos={blocos}
                 setAulas={setAulas}
                 setBlocos={setBlocos}
-                mudarSemana={mudarSemana}
                 bloqueado={bloqueado}
                 anoLetivo={horarioSelecionado?.anoLetivo}
                 semestre={horarioSelecionado?.semestre}
@@ -486,17 +500,15 @@ const HorariosPage = () => {
             setHorarioSalaSelecionado={setHorarioSalaSelecionado}
           />
           {horarioSalaSelecionado &&
-            horarioSalaSelecionado.sala &&
-            horarioSalaSelecionado.anoLetivo &&
-            horarioSalaSelecionado.semestre ? (
+          horarioSalaSelecionado.sala &&
+          horarioSalaSelecionado.anoLetivo &&
+          horarioSalaSelecionado.semestre ? (
             <GrelhaHorario
-              diasDaSemana={diasDaSemana}
               horas={horas}
               aulas={aulas}
               blocos={blocos}
               setAulas={setAulas}
               setBlocos={setBlocos}
-              mudarSemana={mudarSemana}
               bloqueado={bloqueado}
             />
           ) : null}
@@ -510,17 +522,15 @@ const HorariosPage = () => {
             setHorarioDocenteSelecionado={setHorarioDocenteSelecionado}
           />
           {horarioDocenteSelecionado &&
-            horarioDocenteSelecionado.docente &&
-            horarioDocenteSelecionado.anoLetivo &&
-            horarioDocenteSelecionado.semestre ? (
+          horarioDocenteSelecionado.docente &&
+          horarioDocenteSelecionado.anoLetivo &&
+          horarioDocenteSelecionado.semestre ? (
             <GrelhaHorario
-              diasDaSemana={diasDaSemana}
               horas={horas}
               aulas={aulas}
               blocos={blocos}
               setAulas={setAulas}
               setBlocos={setBlocos}
-              mudarSemana={mudarSemana}
               bloqueado={bloqueado}
             />
           ) : null}

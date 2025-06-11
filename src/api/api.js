@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ModalFooter } from "react-bootstrap";
-const API_URL = "http://localhost:5251/";
+const API_URL = "http://localhost:7008/";
 
 // ////////////////////////////////////////////////////////////////////////////
 // UCs
