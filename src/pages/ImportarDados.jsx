@@ -21,7 +21,7 @@ export default function ImportarDados() {
 
     return (
         <div className="container">
-            <div className="row justify-content-center mt-5 g-4">/
+            <div className="row justify-content-center mt-5 g-4">
                 <div className="col-md-4 border p-5 rounded-3 bg-light shadow">
                     <img src={logo}
                         className="img-fluid d-block mx-auto mb-3"
