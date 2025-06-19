@@ -41,6 +41,7 @@ const HorariosPage = () => {
   // Estado para guardar o horário atualmente selecionado
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
 
+  // Estado para guardar o horário da sala selecionada
   const [horarioSalaSelecionado, setHorarioSalaSelecionado] = useState([]);
 
   // Estado para controlar a visibilidade do formulário de criação de horário
@@ -62,7 +63,6 @@ const HorariosPage = () => {
     if (!user || !user.role || !horario || !horario.escolaId) {
       console.log("user:", user);
       console.log("horario:", horario);
-
       console.log("Falha na validação inicial: dados incompletos.");
       return false;
     }
@@ -96,9 +96,13 @@ const HorariosPage = () => {
   };
 
   // Gera os horários do dia (das 8:00 às 23:30, com intervalos de 30 minutos)
-  const horas = Array.from({ length: 33 }, (_, i) =>
-    format(addMinutes(startOfDay(new Date()), 480 + 30 * i), "HH:mm")
-  );
+  // Gera no formato "HH:mm - HH:mm"
+  // Exemplo: "08:00 - 08:30"
+  const horas = Array.from({ length: 32 }, (_, i) => {
+    const inicio = addMinutes(startOfDay(new Date()), 480 + 30 * i);
+    const fim = addMinutes(inicio, 30);
+    return `${format(inicio, "HH:mm")} - ${format(fim, "HH:mm")}`;
+  });
 
   // Efeito para obter o estado de bloqueio do horário selecionado
   useEffect(() => {
@@ -247,7 +251,6 @@ const HorariosPage = () => {
     horarioDocenteSelecionado,
   ]);
 
-  // Efeito para configurar a conexão com o SignalR
   // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -439,6 +442,10 @@ const HorariosPage = () => {
                 bloqueado={bloqueado}
                 anoLetivo={horarioSelecionado?.anoLetivo}
                 semestre={horarioSelecionado?.semestre}
+                // Passa o nome do horário para a grelha
+                horarioInfo={{
+                  nome: horarioSelecionado.nomeHorario || 'Horário'
+                }}
               />
             </>
           )}
@@ -466,7 +473,6 @@ const HorariosPage = () => {
           ) : null}
         </div>
       )}
-
       {aba === 2 && (
         <div>
           <GestaoHorariosDocentes
