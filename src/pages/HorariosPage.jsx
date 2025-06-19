@@ -27,6 +27,36 @@ import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
+import html2pdf from "html2pdf.js"; // Importa html2pdf
+
+// Tratamento de download do horário em formato de PDF
+const handleDownloadPDF = async () => {
+  const element = document.getElementById("grelha-pdf"); // <div id="grelha-pdf">
+
+  if (!element) { // Verifica se o elemento existe
+    // Se não existir, exibe uma mensagem de erro
+    console.error("Elemento da grelha não encontrado!");
+    return;
+  }  
+
+  // Define as opções para o html2pdf
+  // Estas opções controlam como o PDF será gerado
+  const opt = {
+    filename: "horario.pdf",  // Nome do arquivo
+    
+    // Opções para o html2canvas
+    html2canvas: {            
+      scale: 3                // Escala da imagem
+    },
+    
+    // Opções para o jsPDF
+    jsPDF: {
+      unit: "px",             // Unidade de medida
+      format: [1200, 1398],   // Formato do PDF
+    },
+  };
+  await html2pdf().set(opt).from(element).save(); // Gera o PDF e faz o download
+};
 
 const HorariosPage = () => {
   // Contexto do utilizador para verificar permissões
@@ -399,6 +429,10 @@ const HorariosPage = () => {
           {horarioSelecionado && (
             <>
               <div style={{ margin: "1rem" }}>
+                {/*Botão para fazer download do horário atual*/}
+                <button onClick={handleDownloadPDF} className="download-button flex item-center py-2 px-3">
+                  Baixar Horário atual
+                </button>  
                 {podeMostrarBotaoBloquear(user, horarioSelecionado) &&
                   (bloqueado ? (
                     <button
