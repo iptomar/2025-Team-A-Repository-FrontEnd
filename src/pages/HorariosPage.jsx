@@ -52,7 +52,7 @@ const handleDownloadPDF = async () => {
     // Opções para o jsPDF
     jsPDF: {
       unit: "px",             // Unidade de medida
-      format: [1200, 1398],   // Formato do PDF
+      format: [1200, 1420],   // Formato do PDF
     },
   };
   await html2pdf().set(opt).from(element).save(); // Gera o PDF e faz o download
@@ -476,6 +476,8 @@ const HorariosPage = () => {
                 bloqueado={bloqueado}
                 anoLetivo={horarioSelecionado?.anoLetivo}
                 semestre={horarioSelecionado?.semestre}
+                dataInicio={horarioSelecionado.dataInicio}
+                dataFim={horarioSelecionado.dataFim}
                 // Passa o nome do horário para a grelha
                 horarioInfo={{
                   nome: horarioSelecionado.nomeHorario || 'Horário'

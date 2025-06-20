@@ -3,6 +3,9 @@ import { addMinutes } from "date-fns";
 import { dragBloco } from "../api/api";
 import { toast } from "react-toastify";
 
+// Função para cortar a data no formato "YYYY-MM-DD HH:mm:ss" para "YYYY-MM-DD"
+const cortarData = (data) => data ? data.slice(0, -9) : "";
+
 // Array com os nomes dos dias (1=Segunda, ..., 6=Sábado)
 const nomesDias = [
   "", // 0 = não atribuído
@@ -14,6 +17,8 @@ const nomesDias = [
   "Sábado",
 ];
 
+// Componente GrelhaHorario 
+// Recebe diversos props para renderizar a grelha de horários
 const GrelhaHorario = ({
   horas,
   aulas,
@@ -23,6 +28,8 @@ const GrelhaHorario = ({
   bloqueado,
   anoLetivo,
   semestre,
+  dataInicio,
+  dataFim,
   horarioInfo,
 }) => {
   // Dias da semana de 1 a 6
@@ -61,6 +68,12 @@ const GrelhaHorario = ({
                   </span>
                 ))}
               </div>
+              {/* Exibe a data de início e fim do horário, se disponíveis, no formato corretos */}
+              <span>
+                {dataInicio && dataFim
+                  ? `${cortarData(dataInicio)} a ${cortarData(dataFim)}`
+                  : cortarData(dataInicio) || cortarData(dataFim) || ""}
+              </span>
             </div>
         )}
           <div className="grelha-header">
