@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "../css/horario.css";
 import { addMinutes } from "date-fns";
 import { dragBloco } from "../api/api";
@@ -34,6 +35,31 @@ const GrelhaHorario = ({
 }) => {
   // Dias da semana de 1 a 6
   const diasDaSemana = [1, 2, 3, 4, 5, 6];
+
+  useEffect(() => {
+  const scrollSpeed = 20;
+  const threshold = 100; // distância ao topo/fundo para ativar scroll
+
+  const handleDrag = (e) => {
+    const y = e.clientY;
+
+    // Scroll para baixo
+    if (window.innerHeight - y < threshold) {
+      window.scrollBy(0, scrollSpeed);
+    }
+
+    // Scroll para cima
+    if (y < threshold) {
+      window.scrollBy(0, -scrollSpeed);
+    }
+  };
+
+  window.addEventListener("dragover", handleDrag);
+
+  return () => {
+    window.removeEventListener("dragover", handleDrag);
+  };
+}, []);
 
   return (
     <div style={{ margin: "1rem" }}>
