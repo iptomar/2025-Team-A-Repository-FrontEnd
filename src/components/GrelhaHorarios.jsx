@@ -1,8 +1,11 @@
-import React from "react";
+import { useEffect } from "react";
 import "../css/horario.css";
 import { addMinutes } from "date-fns";
 import { dragBloco } from "../api/api";
 import { toast } from "react-toastify";
+
+// Função para cortar a data no formato "YYYY-MM-DD HH:mm:ss" para "YYYY-MM-DD"
+const cortarData = (data) => data ? data.slice(0, -9) : "";
 
 // Array com os nomes dos dias (1=Segunda, ..., 6=Sábado)
 const nomesDias = [
@@ -15,6 +18,8 @@ const nomesDias = [
   "Sábado",
 ];
 
+// Componente GrelhaHorario 
+// Recebe diversos props para renderizar a grelha de horários
 const GrelhaHorario = ({
   horas,
   aulas,
@@ -24,14 +29,69 @@ const GrelhaHorario = ({
   bloqueado,
   anoLetivo,
   semestre,
+  dataInicio,
+  dataFim,
+  horarioInfo,
 }) => {
   // Dias da semana de 1 a 6
   const diasDaSemana = [1, 2, 3, 4, 5, 6];
 
+  useEffect(() => {
+  const scrollSpeed = 20;
+  const threshold = 100; // distância ao topo/fundo para ativar scroll
+
+  const handleDrag = (e) => {
+    const y = e.clientY;
+
+    // Scroll para baixo
+    if (window.innerHeight - y < threshold) {
+      window.scrollBy(0, scrollSpeed);
+    }
+
+    // Scroll para cima
+    if (y < threshold) {
+      window.scrollBy(0, -scrollSpeed);
+    }
+  };
+
+  window.addEventListener("dragover", handleDrag);
+
+  return () => {
+    window.removeEventListener("dragover", handleDrag);
+  };
+}, []);
+
   return (
     <div style={{ margin: "1rem" }}>
       <div className="main-grid">
-        <div className="grelha">
+        <div id="grelha-pdf" className="grelha">
+          {/* Cabeçalho para o PDF - só aparece quando horarioInfo é fornecido */}
+          {horarioInfo && (
+            <div className="pdf-header">
+              <div style={{ 
+                color: '#000',
+                fontSize: '16px',
+                fontWeight: 'normal',
+                lineHeight: '1.4'
+              }}>
+                {/* Quebra a string pelos separadores | e formata */}
+                {horarioInfo.nome.split(' | ').map((parte, index, array) => (
+                  <span key={index}>
+                    <strong>{parte.trim()}</strong>
+                    {index < array.length - 1 && (
+                      <span style={{ margin: '0 10px' }}>|</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+              {/* Exibe a data de início e fim do horário, se disponíveis, no formato corretos */}
+              <span>
+                {dataInicio && dataFim
+                  ? `${cortarData(dataInicio)} a ${cortarData(dataFim)}`
+                  : cortarData(dataInicio) || cortarData(dataFim) || ""}
+              </span>
+            </div>
+        )}
           <div className="grelha-header">
             <div className="hora"></div>
             {diasDaSemana.map((diaInt) => (
@@ -46,8 +106,11 @@ const GrelhaHorario = ({
                 <div className="hora">{hora}</div>
                 {diasDaSemana.map((diaInt) => {
                   // Filtra aulas para este dia e hora
+                  // Considera que a hora está no formato "HH:mm - HH:mm"
+                  // Separa a hora de início
+                  const horaInicioGrelha = hora.split(" - ")[0];
                   const aulasDoDia = aulas.filter(
-                    (a) => a.dia === diaInt && a.horaInicio === hora
+                    (a) => a.dia === diaInt && a.horaInicio === horaInicioGrelha
                   );
 
                   return (
@@ -69,7 +132,8 @@ const GrelhaHorario = ({
                         const novaAula = {
                           ...data,
                           dia: diaInt,
-                          horaInicio: hora,
+                          // Define a hora de início e fim com base na duração
+                          horaInicio: hora.split(" - ")[0],
                           horaFim: addMinutes(
                             new Date(`1970-01-01T${hora}`),
                             data.duracao

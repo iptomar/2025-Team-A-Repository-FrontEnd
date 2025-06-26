@@ -41,7 +41,7 @@ export default function Login() {
         <>
             <div className="container">
                 <div className="row justify-content-center mt-5">
-                    <div className="col-md-4 border p-5 rounded-3 bg-light shadow">
+                    <div className="col-md-4 border p-5 rounded-3 shadow login-card">
                         <img src={logo}
                             className="img-fluid d-block mx-auto mb-3"
                             style={{ maxWidth: "150px" }}

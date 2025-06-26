@@ -27,6 +27,36 @@ import GestaoHorariosDocentes from "../components/GestaoHorariosDocentes";
 
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
+import html2pdf from "html2pdf.js"; // Importa html2pdf
+
+// Tratamento de download do horário em formato de PDF
+const handleDownloadPDF = async () => {
+  const element = document.getElementById("grelha-pdf"); // <div id="grelha-pdf">
+
+  if (!element) { // Verifica se o elemento existe
+    // Se não existir, exibe uma mensagem de erro
+    console.error("Elemento da grelha não encontrado!");
+    return;
+  }  
+
+  // Define as opções para o html2pdf
+  // Estas opções controlam como o PDF será gerado
+  const opt = {
+    filename: "horario.pdf",  // Nome do arquivo
+    
+    // Opções para o html2canvas
+    html2canvas: {            
+      scale: 3                // Escala da imagem
+    },
+    
+    // Opções para o jsPDF
+    jsPDF: {
+      unit: "px",             // Unidade de medida
+      format: [1200, 1420],   // Formato do PDF
+    },
+  };
+  await html2pdf().set(opt).from(element).save(); // Gera o PDF e faz o download
+};
 
 const HorariosPage = () => {
   // Contexto do utilizador para verificar permissões
@@ -41,6 +71,7 @@ const HorariosPage = () => {
   // Estado para guardar o horário atualmente selecionado
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
 
+  // Estado para guardar o horário da sala selecionada
   const [horarioSalaSelecionado, setHorarioSalaSelecionado] = useState([]);
 
   // Estado para controlar a visibilidade do formulário de criação de horário
@@ -62,7 +93,6 @@ const HorariosPage = () => {
     if (!user || !user.role || !horario || !horario.escolaId) {
       console.log("user:", user);
       console.log("horario:", horario);
-
       console.log("Falha na validação inicial: dados incompletos.");
       return false;
     }
@@ -96,9 +126,13 @@ const HorariosPage = () => {
   };
 
   // Gera os horários do dia (das 8:00 às 23:30, com intervalos de 30 minutos)
-  const horas = Array.from({ length: 33 }, (_, i) =>
-    format(addMinutes(startOfDay(new Date()), 480 + 30 * i), "HH:mm")
-  );
+  // Gera no formato "HH:mm - HH:mm"
+  // Exemplo: "08:00 - 08:30"
+  const horas = Array.from({ length: 32 }, (_, i) => {
+    const inicio = addMinutes(startOfDay(new Date()), 480 + 30 * i);
+    const fim = addMinutes(inicio, 30);
+    return `${format(inicio, "HH:mm")} - ${format(fim, "HH:mm")}`;
+  });
 
   // Efeito para obter o estado de bloqueio do horário selecionado
   useEffect(() => {
@@ -248,7 +282,6 @@ const HorariosPage = () => {
   ]);
 
   // Efeito para configurar a conexão com o SignalR
-  // Efeito para configurar a conexão com o SignalR
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(`${API_URL}horarioHub`, {
@@ -396,6 +429,10 @@ const HorariosPage = () => {
           {horarioSelecionado && (
             <>
               <div style={{ margin: "1rem" }}>
+                {/*Botão para fazer download do horário atual*/}
+                <button onClick={handleDownloadPDF} className="download-button flex item-center py-2 px-3">
+                  Baixar Horário atual
+                </button>  
                 {podeMostrarBotaoBloquear(user, horarioSelecionado) &&
                   (bloqueado ? (
                     <button
@@ -439,6 +476,12 @@ const HorariosPage = () => {
                 bloqueado={bloqueado}
                 anoLetivo={horarioSelecionado?.anoLetivo}
                 semestre={horarioSelecionado?.semestre}
+                dataInicio={horarioSelecionado.dataInicio}
+                dataFim={horarioSelecionado.dataFim}
+                // Passa o nome do horário para a grelha
+                horarioInfo={{
+                  nome: horarioSelecionado.nomeHorario || 'Horário'
+                }}
               />
             </>
           )}
@@ -466,7 +509,6 @@ const HorariosPage = () => {
           ) : null}
         </div>
       )}
-
       {aba === 2 && (
         <div>
           <GestaoHorariosDocentes
