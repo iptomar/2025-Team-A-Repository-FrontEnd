@@ -5,6 +5,7 @@ import Select from "react-select";
 import { useNavigate } from 'react-router-dom';
 import customDarkStyles from "../DarkModeFiles/darkmode"; // Importa os estilos personalizados para o modo escuro
 import useDarkMode from "../DarkModeFiles/useDarkMode"; // Importa o hook para verificar o modo escuro
+import ReturnButton from "../../components/common/ReturnButton"; 
 
 export default function CriarUCForm() {
   const [nome, setNome] = useState("");
@@ -191,9 +192,12 @@ export default function CriarUCForm() {
         />
       </div>
 
-      <button type="submit" className="btn btn-primary" disabled={loading}>
+      <div className="d-flex justify-content-between mt-3">
+        <button type="submit" className="btn btn-primary" disabled={loading}>
         {loading ? "Aguarde..." : "Criar UC"}
-      </button>
+        </button>
+        <ReturnButton text="Voltar" endpoint="/unidades_curriculares" />
+      </div>
     </form>
   );
 }

@@ -14,7 +14,7 @@ export default function ToastConfirmaDelete({ id, action, closeToast, item, relo
 
   return (
     <div style={styles.toastContainer}>
-      <p style={styles.toastText}>Tem certeza que deseja eliminar {item}?</p>
+      <p style={styles.toastText}>Tem a certeza que deseja eliminar {item}?</p>
       <div style={styles.buttonContainer}>
         <button
           style={styles.buttonYes}

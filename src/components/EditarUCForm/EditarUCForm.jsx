@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import * as Api from "../../api/api";
 import customDarkStyles from "../DarkModeFiles/darkmode"; // Importa os estilos personalizados para o modo escuro
 import useDarkMode from "../DarkModeFiles/useDarkMode"; // Hook personalizado para verificar o modo escuro
+import ReturnButton from "../../components/common/ReturnButton"; 
 
 export default function EditarUCForm() {
   const { id } = useParams();
@@ -190,9 +191,13 @@ export default function EditarUCForm() {
         />
       </div>
 
-      <button type="submit" className="btn btn-primary" disabled={loading}>
+      
+      <div className="d-flex justify-content-between mt-3">
+        <button type="submit" className="btn btn-primary" disabled={loading}>
         {loading ? "A guardar..." : "Guardar alterações"}
-      </button>
+        </button>
+        <ReturnButton text="Voltar" endpoint="/unidades_curriculares" />
+      </div>
     </form>
   );
 }

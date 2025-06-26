@@ -134,20 +134,49 @@ const HorariosPage = () => {
     return `${format(inicio, "HH:mm")} - ${format(fim, "HH:mm")}`;
   });
 
-  // Efeito para obter o estado de bloqueio do horário selecionado
-  useEffect(() => {
-    const obterEstadoBloqueado = async () => {
-      if (!horarioSelecionado) return;
-      try {
-        const response = await getHorarioById(horarioSelecionado.id);
-        const data = await response.json();
-        setBloqueado(data.bloqueado);
-      } catch (error) {
-        console.error("Erro ao obter estado bloqueado:", error);
-      }
-    };
-    obterEstadoBloqueado();
-  }, [horarioSelecionado]);
+// Efeito para verificar se o horário está bloqueado ou desbloqueado
+// Verifica as permissões do utilizador e o estado do horário selecionado  
+useEffect(() => {
+  const verificarBloqueio = async () => {
+    if (!horarioSelecionado || aba !== 0 || !user) return;
+
+    // Primeiro verifica as permissões do utilizador
+    const roles = Array.isArray(user.role) ? user.role : [user.role];
+    let podeEditar = false;
+
+    if (roles.includes("Administrador")) {
+      podeEditar = true;
+    } else if (
+      roles.includes("ComissaoHorarios") &&
+      horarioSelecionado.escolaId === user.escola
+    ) {
+      podeEditar = true;
+    } else if (
+      roles.includes("ComissaoCurso") &&
+      user.curso === horarioSelecionado.cursoId
+    ) {
+      podeEditar = true;
+    }
+
+    // Se não pode editar, bloqueia independentemente do estado no servidor
+    if (!podeEditar) {
+      setBloqueado(true);
+      return;
+    }
+
+    // Se pode editar, verifica o estado no servidor
+    try {
+      const response = await getHorarioById(horarioSelecionado.id);
+      const data = await response.json();
+      setBloqueado(data.bloqueado);
+    } catch (error) {
+      console.error("Erro ao obter estado bloqueado:", error);
+      setBloqueado(true); // Em caso de erro, bloqueia por segurança
+    }
+  };
+
+  verificarBloqueio();
+}, [aba, user, horarioSelecionado]);
 
   // Função para bloquear ou desbloquear horários
   useEffect(() => {
@@ -504,7 +533,7 @@ const HorariosPage = () => {
               blocos={blocos}
               setAulas={setAulas}
               setBlocos={setBlocos}
-              bloqueado={bloqueado}
+              bloqueado={true}
             />
           ) : null}
         </div>
@@ -525,7 +554,7 @@ const HorariosPage = () => {
               blocos={blocos}
               setAulas={setAulas}
               setBlocos={setBlocos}
-              bloqueado={bloqueado}
+              bloqueado={true}
             />
           ) : null}
         </div>
