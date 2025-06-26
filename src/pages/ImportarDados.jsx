@@ -42,22 +42,15 @@ export default function ImportarDados() {
 
                         <button
                             type="submit"
-                            className="btn w-100 mb-3"
-                            style={{ backgroundColor: '#71ba00', color: 'white', border: 'none' }}
+                            className="btn w-100 btn-importar mb-3"
                         >
                             Importar
                         </button>
 
                         <button
                             type="button"
-                            className="btn w-100"
+                            className="btn w-100 btn-instrucoes"
                             onClick={() => setShowInstructions(!showInstructions)}
-                            style={{
-                                backgroundColor: 'white',
-                                color: '#71ba00',
-                                border: '2px solid #71ba00',
-                                fontWeight: 'bold'
-                            }}
                         >
                             {showInstructions ? 'Esconder instruções' : 'Mostrar instruções'}
                         </button>
@@ -65,7 +58,7 @@ export default function ImportarDados() {
                 </div>
 
                 {showInstructions && (
-                    <div className="col-md-6 border p-5 rounded-3 bg-light shadow mt-3">
+                    <div className="col-md-6 border p-5 rounded-3 bg-light shadow">
                         <h4 className="mb-4 text-center">Formato esperado do ficheiro</h4>
                         <div className="table-responsive">
                             <table className="table table-bordered table-striped">

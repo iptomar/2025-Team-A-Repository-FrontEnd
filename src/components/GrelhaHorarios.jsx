@@ -67,17 +67,7 @@ const GrelhaHorario = ({
         <div id="grelha-pdf" className="grelha">
           {/* Cabeçalho para o PDF - só aparece quando horarioInfo é fornecido */}
           {horarioInfo && (
-            <div className="pdf-header" style={{
-              textAlign: 'center',
-              padding: '20px',
-              borderBottom: '2px solid #000',
-              fontSize: '14px',
-              fontWeight: 'bold',
-              backgroundColor: '#ffffff',
-              fontFamily: 'Arial, sans-serif',
-              borderRight: '1px solid #000',
-              marginBottom: '0'
-            }}>
+            <div className="pdf-header">
               <div style={{ 
                 color: '#000',
                 fontSize: '16px',
