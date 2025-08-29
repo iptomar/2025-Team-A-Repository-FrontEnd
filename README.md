@@ -1,12 +1,31 @@
-# React + Vite
+# Projeto Final de Gestão de Projetos 2025
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto trata-se da componente front-end do projeto final da cadeira de Gestão de Projetos da Licenciatura em Engenharia Informática no Instituto Politécnico de Tomar.
 
-Currently, two official plugins are available:
+## Objetivo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+No Instituto Politécnico de Tomar existe uma grande necessidade de uma plataforma que permita aos responsáveis de cada curso criarem horários que alinhem com a disponibilidade do docente, das salas e cumpram com as necessidades horárias de cada unidade curricular em cada turma.
+O objetivo principal deste projeto é criar uma aplicação que ofereça essa mesma funcionalidade em tempo real, para que não haja sobreposições acidentais de manchas horárias.
 
-## Expanding the ESLint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Criar uma conta para a Comissão de Horários (tem de ser aprovada no backend para poder efetuar login)
+- Criação de blocos horários com Unidade Curricular, Docente e Sala
+- Drag & Drop blocos horários numa grelha horária
+- Visualização de blocos já ocupados em cada semana
+
+## Tecnologias Utilizadas
+
+- React 18 + Vite
+- Tailwind CSS
+
+## Instalação (bash)
+
+- Instalar dependências
+npm install
+
+- Para desenvolvimento (hot-reload)
+npm run dev
+
+- Para build de produção
+npm run build
