@@ -1,32 +1,39 @@
-# Projeto Final de Gestão de Projetos 2025
+# Final Project – Project Management 2025
 
-Este projeto trata-se da componente front-end do projeto final da cadeira de Gestão de Projetos da Licenciatura em Engenharia Informática no Instituto Politécnico de Tomar.
+This project refers to the front-end component of the final project for the Project Management course of the Bachelor’s Degree in Computer Engineering at the Polytechnic Institute of Tomar.
 
-## Objetivo
+## Objective
 
-No Instituto Politécnico de Tomar existe uma grande necessidade de uma plataforma que permita aos responsáveis de cada curso criarem horários que alinhem com a disponibilidade do docente, das salas e cumpram com as necessidades horárias de cada unidade curricular em cada turma.
-O objetivo principal deste projeto é criar uma aplicação que ofereça essa mesma funcionalidade em tempo real, para que não haja sobreposições acidentais de manchas horárias.
+At the Polytechnic Institute of Tomar, there is a strong need for a platform that allows those responsible for each degree program to create timetables that align with teacher availability, room allocation, and meet the scheduling requirements of each curricular unit for each class.
+The main goal of this project is to create an application that provides this functionality in real time, preventing accidental overlaps in schedules.
 
-## Funcionalidades
+## Features
 
-- Criar uma conta para a Comissão de Horários (tem de ser aprovada no backend para poder efetuar login)
-- Criação de blocos horários com Unidade Curricular, Docente e Sala
-- Drag & Drop blocos horários numa grelha horária
-- Visualização de blocos já ocupados em cada semana
-- Efetuar commit para bloquear novas mudanças no horário
+- Create an account for the Timetable Committee (must be approved in the backend to allow login)
 
-## Tecnologias Utilizadas
+- Create time blocks with Curricular Unit, Teacher, and Room
+
+- Drag & Drop time blocks on a timetable grid
+
+- View already occupied blocks for each week
+
+- Commit changes to lock the timetable and prevent further modifications
+
+## Technologies Used
 
 - React 18 + Vite
+
 - Tailwind CSS
 
-## Instalação (bash)
+## Installation (bash)
+### Install dependencies
 
-### Instalar dependências
 npm install
 
-### Para desenvolvimento (hot-reload)
+### For development (hot-reload)
+
 npm run dev
 
-### Para build de produção
+### For production build
+
 npm run build
