@@ -21,11 +21,11 @@ O objetivo principal deste projeto é criar uma aplicação que ofereça essa me
 
 ## Instalação (bash)
 
-- Instalar dependências
+### Instalar dependências
 npm install
 
-- Para desenvolvimento (hot-reload)
+### Para desenvolvimento (hot-reload)
 npm run dev
 
-- Para build de produção
+### Para build de produção
 npm run build
