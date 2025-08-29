@@ -13,6 +13,7 @@ O objetivo principal deste projeto é criar uma aplicação que ofereça essa me
 - Criação de blocos horários com Unidade Curricular, Docente e Sala
 - Drag & Drop blocos horários numa grelha horária
 - Visualização de blocos já ocupados em cada semana
+- Efetuar commit para bloquear novas mudanças no horário
 
 ## Tecnologias Utilizadas
 
